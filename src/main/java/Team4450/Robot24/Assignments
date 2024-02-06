@@ -22,6 +22,11 @@ Port	Device			Description
 12      SparkMax        Shooter motor 2.
 13      SparkMax        Shooter feeder motor.
 14      SparkMax        Shooter pivot motor.
+15(?)   SparkMax        [RESERVED] for potential extra pivot motor.
+16      SparkMax        Elevator motor 1.
+17      SparkMax        Elevator motor 2.
+18      SparkMax        Elevator motor 3 (inner carriage).
+19(?)   SparkMax        Potential extra motor for "roller"? (ask Gabe)
 
 PWM Ports
 Port	Device			Description
