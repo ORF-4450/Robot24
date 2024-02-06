@@ -1,0 +1,129 @@
+Port and Button Assignments.
+
+CTRE CAN Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+SparkMax CAN Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+1       SparkMax        FL drive motor.
+2       SparkMax        FL steer motor.
+3       SparkMax        FR drive motor.
+4       SparkMax        FR steer motor.
+5       SparkMax        RL drive motor.
+6       SparkMax        RL steer motor.
+7       SparkMax        RR drive motor.
+8       SparkMax        RR steer motor.
+9       SparkMax        Intake motor 1.
+10      SparkMax        Intake motor 2.
+11      SparkMax        Shooter motor 1.
+12      SparkMax        Shooter motor 2.
+13      SparkMax        Shooter feeder motor.
+14      SparkMax        Shooter pivot motor.
+
+PWM Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+PDP Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+0       REV PDH         REV power distribution Hub.
+0       CTRE PDB        CTRE distribution board.
+
+
+PCM 0 Ports
+Port	Device blk-pos	Description
+-----------------------------------------------------------------------------------
+       
+
+PCM 1 Ports
+Port	Device blk-pos	Description
+-----------------------------------------------------------------------------------
+
+
+Digital I/O Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+Analog I/O Ports
+Port	Device			Description
+-----------------------------------------------------------------------------------
+
+
+Driver GamePad - Left Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+Y Axis					Forward/Backward driving.
+X Axis                  Left/Right strafe (sideways movement).
+
+
+Driver GamePad - Right Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+X Axis                  Rotate.
+
+
+Driver GamePad - Buttons
+Button Name				Function
+-----------------------------------------------------------------------------------
+LEFT_TRIGGER            Slow mode (Hold down).
+RIGHT_TRIGGER           
+BACK                    Toggle field/robot orientation driving.
+START                   Reset Navx to reorient field direction.
+LEFT_BUMPER             Park Mode (hold down).
+RIGHT_BUMPER       		Alternate Drive Mode (hold down).
+POV_?                   Auto rotate to the POV direction.
+?                       Reset simulated yaw.
+?                       Reset simulated distance traveled.
+?                       Switch Shuffleboard tab.
+?                       Switch Camera.
+B                       Toggle drive wheel brake mode.
+X                       
+A                       Toggle April Tag Tracking mode.
+
+
+Utility GamePad - Left Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+
+
+Utility GamePad - Right Joystick
+Button Name				Function
+-----------------------------------------------------------------------------------
+
+
+Utility GamePad - Buttons
+Button Name				Function
+-----------------------------------------------------------------------------------
+B                       Toggles Intake Motors.
+
+
+Dashboard Indicators/Controls
+Name					Type			Description
+-----------------------------------------------------------------------------------
+AutoTarget				boolean			True when targeting code is running.
+TargetLocked			boolean			True when targeting completed with target
+                                        detected.
+Disabled				boolean			True when robot is disabled.
+Auto Mode				boolean			True when robot is in autonomous mode.
+Teleop Mode				boolean			True when robot is in teleop mode.
+FMS						boolean			True when robot is connected to the FMS.
+Brakes					boolean			True when drive motors are in brake mode.
+Low Battery				boolean			True when battery is low.
+Overload				boolean			True when brownout has occurred.
+Auto Program            Chooser         List of autonomous programs.
+Autonomous active       boolean         True if any auto program is active.
+Field Oriented          boolean         True when swerve drive is in field orientation mode.
+Shooter                 boolean         True when shooter motors are running.
+Alternate Drive         boolean         True when alternate driving mode is enabled.
+Tracking                boolean         True when tracking mode is enabled.
+Intake                  boolean         True when intake motors are running.
+feeder                  boolean         True when feeder motor is running.
+
+Drive Base gearbox ratios: MaxSwerve 14 tooth pinion for approx 15.7 f/s or 4.8 m/s.
+
