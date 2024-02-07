@@ -50,7 +50,7 @@ public final class Constants
     public static final int     SHOOTER_MOTOR_PIVOT = 14;
 
     public static final double  SHOOTER_SPEED = 1;
-    public static final double  SHOOTER_FEED_SPEED = 1;
+    public static final double  SHOOTER_FEED_SPEED = 0.2;
 
     // gear ratio of revolutions of shaft to revolutions of assembly
     public static final double  SHOOTER_PIVOT_FACTOR = 0.1; // TODO: add correct gear ratios

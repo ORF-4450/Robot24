@@ -46,6 +46,7 @@ public class Shooter extends SubsystemBase {
         Util.consoleLog();
 
         motorBottom.follow(motorTop);
+        motorFeeder.setInverted(true);
         SmartDashboard.putNumber("shooter_speed", shooterSpeed);
         SmartDashboard.putNumber("shooter_feedspeed", feedSpeed);
 

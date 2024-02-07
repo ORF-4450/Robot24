@@ -373,7 +373,7 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getRightBumper())
 			.toggleOnTrue(new StartEndCommand(shooter::startShooting, shooter::stopShooting));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.toggleOnTrue(new StartEndCommand(shooter::startFeeding, shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(shooter::startFeeding, shooter::stopFeeding));
 
 	}
 
