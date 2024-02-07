@@ -47,6 +47,7 @@ public final class Constants
     public static final int     SHOOTER_MOTOR_BOTTOM = 12;
     public static final int     SHOOTER_MOTOR_FEEDER = 13;
     public static final int     SHOOTER_MOTOR_PIVOT = 14;
+    // public static final int     SHOOTER_MOTOR_PIVOT_2 = 15; // if we have to add one
 
     public static final double  SHOOTER_SPEED = 1;
     public static final double  SHOOTER_FEED_SPEED = 0.9;
