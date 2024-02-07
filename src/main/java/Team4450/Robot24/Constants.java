@@ -40,7 +40,6 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-
     public static final double  INTAKE_SPEED = 1;
 
     // SHOOTER ======
@@ -50,10 +49,15 @@ public final class Constants
     public static final int     SHOOTER_MOTOR_PIVOT = 14;
 
     public static final double  SHOOTER_SPEED = 1;
-    public static final double  SHOOTER_FEED_SPEED = 0.2;
+    public static final double  SHOOTER_FEED_SPEED = 0.9;
 
     // gear ratio of revolutions of shaft to revolutions of assembly
-    public static final double  SHOOTER_PIVOT_FACTOR = 0.1; // TODO: add correct gear ratios
+    public static final double  SHOOTER_PIVOT_FACTOR = (765.0 / 13.0);
+
+    // ELEVATOR
+    public static final int     ELEVATOR_MOTOR_RIGHT = 16;
+    public static final int     ELEVATOR_MOTOR_LEFT = 17;
+    public static final int     ELEVATOR_MOTOR_INNER = 18;
 
     public static final int     REV_PDB = 0;
 	
