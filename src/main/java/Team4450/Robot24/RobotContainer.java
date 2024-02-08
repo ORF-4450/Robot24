@@ -54,7 +54,6 @@ public class RobotContainer
 	public static PhotonVision	pvPoseCamera;
 	public static PhotonVision	pvBackCamera;
 	public static PhotonVision	pvFrontCamera;
-	//public static LimeLight		limeLight;
 	private final Intake       	intake;
 	private final Shooter       shooter;
 	
@@ -174,7 +173,6 @@ public class RobotContainer
 		pvFrontCamera = new PhotonVision(CAMERA_FRONT);
 		intake = new Intake();
 		shooter = new Shooter();
-		//limeLight = new LimeLight();
 
 		// Create any persistent commands.
 
