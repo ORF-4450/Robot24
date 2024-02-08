@@ -15,6 +15,7 @@ import Team4450.Lib.XboxController;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
+import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.DriveBase;
@@ -380,13 +381,16 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBButton())
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 		
+		new Trigger(() -> utilityController.getLeftBumper())
+			.onTrue(new IntakeNote(intake, shooter));
+		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
 			.toggleOnTrue(new StartEndCommand(shooter::startShooting, shooter::stopShooting));
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(shooter::feedInverse, shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(shooter::startFeeding, shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(1), shooter::stopFeeding));
 
 	}
 

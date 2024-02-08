@@ -48,8 +48,6 @@ public class Shooter extends SubsystemBase {
 
         motorBottom.follow(motorTop);
         motorFeeder.setInverted(true);
-        SmartDashboard.putNumber("shooter_speed", shooterSpeed);
-        SmartDashboard.putNumber("shooter_feedspeed", feedSpeed);
 
         pivotEncoder = motorPivot.getEncoder();
         pivotPID = motorPivot.getPIDController();
@@ -62,37 +60,18 @@ public class Shooter extends SubsystemBase {
         pivotPID.setOutputRange(-1, 1);
     }
 
-    @Override
-    public void periodic() {
-        shooterSpeed = SmartDashboard.getNumber("shooter_speef", SHOOTER_SPEED);
-        feedSpeed = SmartDashboard.getNumber("shooter_feedspeed", SHOOTER_FEED_SPEED);
-        if (inverted) {
-            feedSpeed *= -1;
-        }
-
-        if (isShooting) motorTop.set(shooterSpeed);
-        if (isFeeding) motorFeeder.set(feedSpeed);
-    }
-
     /**
      * enables the feed motor (sushi rollers) to push the Note into
      * the rolling shooter wheels (which must be enabled seperately)
      */
-    public void startFeeding() {
+    public void startFeeding(double speedfactor) {
         isFeeding = true;
-        motorFeeder.set(feedSpeed);
+        motorFeeder.set(Util.clampValue(speedfactor, 1) * feedSpeed);
     }
     /** stops the feed motor */
     public void stopFeeding() {
-        inverted = false;
         isFeeding = false;
         motorFeeder.set(0);
-    }
-
-    public void feedInverse() {
-        isFeeding = true;
-        inverted = true;
-        motorFeeder.set(feedSpeed);
     }
 
     /** spins the shooter wheels in preperation for a Note */

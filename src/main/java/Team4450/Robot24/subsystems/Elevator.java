@@ -5,6 +5,7 @@ import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_LEFT;
 import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_RIGHT;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
@@ -20,7 +21,8 @@ public class Elevator extends SubsystemBase {
     private SparkLimitSwitch lowerLimitSwitch;
     private SparkLimitSwitch upperLimitSwitch;
   
-    
+    private RelativeEncoder mainEncoder;
+    private RelativeEncoder innerEncoder;
 
     public Elevator() {
         Util.consoleLog();
@@ -31,5 +33,14 @@ public class Elevator extends SubsystemBase {
 
         lowerLimitSwitch.enableLimitSwitch(true);
         upperLimitSwitch.enableLimitSwitch(true);
+
+        mainEncoder = motorMain.getEncoder();
+        innerEncoder = motorInner.getEncoder();
+    }
+
+    @Override
+    public void periodic() {
+        if (lowerLimitSwitch.isPressed())
+            mainEncoder.setPosition(0);
     }
 }
