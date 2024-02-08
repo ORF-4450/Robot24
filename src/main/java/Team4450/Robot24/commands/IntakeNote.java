@@ -1,5 +1,6 @@
 package Team4450.Robot24.commands;
 
+import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.Shooter;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -15,6 +16,7 @@ public class IntakeNote extends Command {
     private static enum State {INTAKING, FEEDING, IN_SHOOTER};
 
     private State state = State.INTAKING;
+    private double feedTime = 0;
 
     public IntakeNote(Intake intake, Shooter shooter) {
         this.shooter = shooter;
@@ -36,9 +38,10 @@ public class IntakeNote extends Command {
                     intake.start(0.2); // slow it down, not restart it
                     shooter.startFeeding(0.5);
                 }
+                feedTime = Util.timeStamp();
                 break;
-            case FEEDING:
-                if (shooterNoteSensor.get()) {
+            case FEEDING:// feed for 0.5 sec
+                if (Util.getElaspedTime(feedTime) > 0.5){//shooterNoteSensor.get()) {
                     state = State.IN_SHOOTER;
                     intake.stop();
                     shooter.stopFeeding();

@@ -43,4 +43,8 @@ public class Elevator extends SubsystemBase {
         if (lowerLimitSwitch.isPressed())
             mainEncoder.setPosition(0);
     }
+
+    public void move(double speed) {
+        motorMain.set(speed);
+    }
 }

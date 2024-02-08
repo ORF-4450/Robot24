@@ -1,17 +1,20 @@
 package Team4450.Robot24.commands;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ShootNote extends Command {
+public class ShootSpeaker extends Command {
     private final Shooter shooter;
+    private final Elevator elevator;
     private double startTime;
     private boolean hasNote = true; //TODO: change this
 
-    public ShootNote(Shooter shooter) {
+    public ShootSpeaker(Shooter shooter, Elevator elevator) {
         this.shooter = shooter;
-        addRequirements(shooter);
+        this.elevator = elevator;
+        addRequirements(shooter, elevator);
     }
     @Override
     public void initialize() {

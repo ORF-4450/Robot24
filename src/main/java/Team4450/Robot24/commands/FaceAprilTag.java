@@ -22,7 +22,7 @@ public class FaceAprilTag extends Command {
     PIDController   pidController = new PIDController(0.01, 0, 0);
     AprilTagNames   tagNames = new AprilTagNames(Alliance.Red);
 
-    public FaceAprilTag(PhotonVision cameraSubsystem, DriveBase robotDrive) {
+    public FaceAprilTag(DriveBase robotDrive, PhotonVision cameraSubsystem) {
         Util.consoleLog();
 
         // tolerance is in degrees.

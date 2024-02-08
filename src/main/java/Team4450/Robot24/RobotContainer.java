@@ -17,9 +17,10 @@ import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
-import Team4450.Robot24.commands.ShootNote;
+import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.DriveBase;
+import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.Intake;
@@ -56,6 +57,7 @@ public class RobotContainer
 	public static PhotonVision	pvFrontCamera;
 	private final Intake       	intake;
 	private final Shooter       shooter;
+	private final Elevator      elevator;
 	
 	// Subsystem Default Commands.
 
@@ -173,6 +175,7 @@ public class RobotContainer
 		pvFrontCamera = new PhotonVision(CAMERA_FRONT);
 		intake = new Intake();
 		shooter = new Shooter();
+		elevator = new Elevator();
 
 		// Create any persistent commands.
 
@@ -213,6 +216,14 @@ public class RobotContainer
 			()->shooter.movePivotRelative(
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)
 			), shooter));
+		
+		// up and down on right operator controller joystick moves elevator assembly
+		shooter.setDefaultCommand(new RunCommand(
+			()->elevator.move(
+				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)
+			), elevator));
+		
+		
 
 
 			// new RunCommand(
@@ -310,7 +321,7 @@ public class RobotContainer
 
 		// the "A" button (or cross on PS4 controller) toggles tracking mode.
 		new Trigger(() -> driverController.getAButton())
-			.toggleOnTrue(new FaceAprilTag(pvPoseCamera, driveBase));
+			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
@@ -385,7 +396,7 @@ public class RobotContainer
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootNote(shooter));
+			.toggleOnTrue(new ShootSpeaker(shooter, elevator));
 			
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
@@ -445,8 +456,13 @@ public class RobotContainer
 		
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
-		NamedCommands.registerCommand("StartIntake", new InstantCommand(intake::start));
-		NamedCommands.registerCommand("StopIntake", new InstantCommand(intake::stop));
+
+		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator));
+
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera));
+		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
+		
 
 		// Create a chooser with the PathPlanner Autos located in the PP
 		// folders.
