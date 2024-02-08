@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3110725700618069,
-      "y": 5.540905326602319
+      "x": 1.418950497871234,
+      "y": 5.553308403863832
     },
     "rotation": 0
   },
@@ -15,6 +15,12 @@
           "type": "named",
           "data": {
             "name": "AutoStart"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Drive Out"
           }
         },
         {

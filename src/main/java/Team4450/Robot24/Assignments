@@ -26,7 +26,7 @@ Port	Device			Description
 16      SparkMax        Elevator motor 1.
 17      SparkMax        Elevator motor 2.
 18      SparkMax        Elevator motor 3 (inner carriage).
-19(?)   SparkMax        Potential extra motor for "roller"? (ask Gabe)
+19(?)   SparkMax        [RESERVED] potential extra motor for "roller"? (ask Gabe)
 
 PWM Ports
 Port	Device			Description
