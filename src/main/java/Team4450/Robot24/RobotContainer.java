@@ -49,7 +49,9 @@ public class RobotContainer
 
 	public static ShuffleBoard	shuffleBoard;
 	public static DriveBase 	driveBase;
-	public static PhotonVision	photonVision;
+	public static PhotonVision	pvPoseCamera;
+	public static PhotonVision	pvBackCamera;
+	public static PhotonVision	pvFrontCamera;
 	//public static LimeLight		limeLight;
 	private final Intake       	intake;
 	private final Shooter       shooter;
@@ -165,7 +167,9 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		photonVision = new PhotonVision("4450-LL");
+		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, CAMERA_POSE_TRANSFORM);
+		pvBackCamera = new PhotonVision(CAMERA_BACK);
+		pvFrontCamera = new PhotonVision(CAMERA_FRONT);
 		intake = new Intake();
 		shooter = new Shooter();
 		//limeLight = new LimeLight();
@@ -177,7 +181,7 @@ public class RobotContainer
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them).
 
-    	photonVision.setDefaultCommand(new UpdateVisionPose(photonVision, driveBase));
+    	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -306,7 +310,7 @@ public class RobotContainer
 
 		// the "A" button (or cross on PS4 controller) toggles tracking mode.
 		new Trigger(() -> driverController.getAButton())
-			.toggleOnTrue(new FaceAprilTag(photonVision, driveBase));
+			.toggleOnTrue(new FaceAprilTag(pvPoseCamera, driveBase));
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
@@ -327,7 +331,7 @@ public class RobotContainer
 
 		// toggle Note tracking.
 	    new Trigger(() -> driverController.getBButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, photonVision));
+    	    .toggleOnTrue(new DriveToNote(driveBase, pvPoseCamera));
 
 		// Advance DS tab display.
 		//new Trigger(() -> driverPad.getPOVAngle(90))

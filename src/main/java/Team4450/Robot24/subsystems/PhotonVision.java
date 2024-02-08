@@ -19,9 +19,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class PhotonVision extends SubsystemBase
 {
-    private PhotonCamera            camera = new PhotonCamera("FaceTime_HD_Camera");
+    private PhotonCamera            camera;
     private PhotonPipelineResult    latestResult;
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
@@ -46,18 +44,28 @@ public class PhotonVision extends SubsystemBase
     private AprilTagFieldLayout     fieldLayout;
     private PhotonPoseEstimator     poseEstimator;
 
-    private Transform3d robotToCam;
+    private Transform3d             robotToCam;
 
+    /**
+     * Create an instance of PhotonVision class for a camera.
+     * @param cameraName The name of the camera.
+     */
     public PhotonVision(String cameraName) {
         this(cameraName, new Transform3d());
     }
+
+    /**
+     * Create an instance of PhotonVision class for a camera.
+     * @param cameraName The name of the camera.
+     * @param robotToCam A Transform3d locating the camera on the robot chassis.
+     */
 	public PhotonVision(String cameraName, Transform3d robotToCam)
 	{
         camera = new PhotonCamera(cameraName);
         this.robotToCam = robotToCam;
         fieldLayout = fields.loadAprilTagLayoutField();
 
-        // setup the AprilTag pose etimator
+        // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
             fieldLayout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -67,7 +75,7 @@ public class PhotonVision extends SubsystemBase
 
         setLedMode(ledMode);
 
-		Util.consoleLog("PhotonVision created!");
+		Util.consoleLog("PhotonVision (%s) created!", cameraName);
 
         SmartDashboard.putData(field);
 	}

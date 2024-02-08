@@ -7,7 +7,10 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -59,6 +62,17 @@ public final class Constants
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
     public static final int     ELEVATOR_MOTOR_INNER = 18;
+
+
+    // CAMERAS
+    public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
+        new Translation3d(0, 0, 0),
+        new Rotation3d(0, 0, 0)
+    );
+    public static String        CAMERA_POSE_ESTIMATOR = "4450-LL";
+    public static String        CAMERA_FRONT = "4450-LL";
+    public static String        CAMERA_BACK = "4450-LL";
+    
 
     public static final int     REV_PDB = 0;
 	

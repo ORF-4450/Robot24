@@ -44,9 +44,10 @@ public class PointToYaw extends Command {
         // fetches desired yaw
         double desiredYaw = yawSupplier.getAsDouble();
 
-        pidController.setSetpoint(desiredYaw);
+        if (!Double.isNaN(desiredYaw)) // if NaN just finish up with last value
+            pidController.setSetpoint(desiredYaw);
 
-        if (Double.isNaN(desiredYaw)) {
+        if (Double.isNaN(desiredYaw) && !wait) {
             // if desiredYaw is NaN, that means that joystick is centered or POV
             // buttons aren't pressed or some other reason to temporarily ignore
             // the output of this command
@@ -54,14 +55,11 @@ public class PointToYaw extends Command {
             // if setTrackingRotation uses NaN, then the drivebase will ignore it and
             // just use joystick values
             robotDrive.setTrackingRotation(desiredYaw);
-
-            // make robot stationary if waiting
-            if (wait) robotDrive.drive(0,0,0,false);
             return;
         }
 
         // calculate needed rotation with robot yaw (in radians) as input
-        double rotation = pidController.calculate(robotDrive.getYawR());
+        double rotation = -pidController.calculate(robotDrive.getYawR() % (Math.PI * 2));
 
         if (wait) {
             // if this command is only one running on drivebase (wait) then command it to run
@@ -90,8 +88,8 @@ public class PointToYaw extends Command {
         Util.consoleLog();
 
         pidController.reset();
-        pidController.setTolerance(.01);      // in radians.
-        pidController.enableContinuousInput(-Math.PI, Math.PI); // rotation is continuous: full circle repeats
+        pidController.setTolerance(.05);      // in radians.
+        pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
         robotDrive.enableTracking();
     }
 
@@ -105,9 +103,11 @@ public class PointToYaw extends Command {
 
     @Override
     public boolean isFinished() {
-        // end command when at setpoint
-        double error = Math.abs(pidController.getSetpoint() - robotDrive.getYaw());
-        return error < 0.1;
+        // end command when at setpoint if waiting otherwise just don't end
+        if (wait)
+            return pidController.atSetpoint();
+        else
+            return false;
     }
 
     /**
@@ -124,8 +124,8 @@ public class PointToYaw extends Command {
             // converts the 0 to 360 degree output of POV to yaw-style radian heading
             double radians = Math.toRadians(pov);
 
-            if (radians < -Math.PI) {
-                double overshoot = radians + Math.PI;
+            if (radians > Math.PI) {
+                double overshoot = radians - Math.PI;
                 radians = -overshoot;
             }
 
@@ -142,7 +142,8 @@ public class PointToYaw extends Command {
     * @return yaw
     */
     public static double yawFromAxes(double xAxis, double yAxis) {
-        double theta = Math.atan2(xAxis, yAxis);
+        double theta = Math.atan2(xAxis, yAxis) + Math.PI;
+        Util.consoleLog("%f", theta);
         double magnitude = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
 
         if (magnitude > 0.2) {
