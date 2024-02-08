@@ -218,7 +218,7 @@ public class RobotContainer
 			), shooter));
 		
 		// up and down on right operator controller joystick moves elevator assembly
-		shooter.setDefaultCommand(new RunCommand(
+		elevator.setDefaultCommand(new RunCommand(
 			()->elevator.move(
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)
 			), elevator));

@@ -8,12 +8,14 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
     private CANSparkMax motor1 = new CANSparkMax(INTAKE_MOTOR_1, MotorType.kBrushless);
     private CANSparkMax motor2 = new CANSparkMax(INTAKE_MOTOR_2, MotorType.kBrushless);
+    private final DigitalInput intakeNoteSensor = new DigitalInput(1);
 
     private double  motorSpeed = INTAKE_SPEED;
     private boolean isrunning = false;
@@ -21,6 +23,10 @@ public class Intake extends SubsystemBase {
     public Intake() {
         motor2.follow(motor1);        
         Util.consoleLog("Intake created!");
+    }
+
+    public boolean hasNote() {
+        return intakeNoteSensor.get();
     }
 
     /**

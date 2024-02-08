@@ -20,6 +20,7 @@ import com.revrobotics.SparkPIDController;
 // import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,6 +32,7 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorBottom = new CANSparkMax(SHOOTER_MOTOR_BOTTOM, MotorType.kBrushless);
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
+    private final DigitalInput shooterNoteSensor = new DigitalInput(2);
 
     private RelativeEncoder pivotEncoder;
 
@@ -58,6 +60,10 @@ public class Shooter extends SubsystemBase {
         pivotPID.setIZone(0);
         pivotPID.setFF(0);
         pivotPID.setOutputRange(-1, 1);
+    }
+
+    public boolean hasNote() {
+        return shooterNoteSensor.get();
     }
 
     /**
