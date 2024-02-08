@@ -19,44 +19,46 @@ public class Intake extends SubsystemBase {
     private boolean isrunning = false;
 
     public Intake() {
-        motor2.follow(motor1);
-
-        // note: we should probably use the `subsystem_property` format in
-        // NetworkTables because of how AdvantageScope parses it. - Cole W.
-        SmartDashboard.putNumber("intake_speed", motorSpeed);
-
-        updateDS();
-        
+        motor2.follow(motor1);        
         Util.consoleLog("Intake created!");
     }
 
-    @Override
-    public void periodic() {
-        motorSpeed = SmartDashboard.getNumber("intake_speed", motorSpeed);
-
-        if (isrunning) motor1.set(motorSpeed);
-    }
-
-    public void start() {
+    /**
+     * run the intake at INTAKE_SPEED x speedfactor
+     * @param speedfactor from -1 to 0 to 1
+     */
+    public void start(double speedfactor) {
         Util.consoleLog();
 
         isrunning = true;
-
-        motor1.set(motorSpeed);
-
         updateDS();
+
+        motor1.set(Util.clampValue(speedfactor, 1) * motorSpeed);
     }
 
+    /**
+     * start the intake running at full speed
+     */
+    public void start() {
+        start(1);
+    }
+
+
+    /**
+     * stop the intake
+     */
     public void stop() {
         Util.consoleLog();
 
-        isrunning = false;
-
         motor1.stopMotor();
 
+        isrunning = false;
         updateDS();
     }
 
+    /**
+     * update DriverStation status
+     */
     private void updateDS()
     {
         SmartDashboard.putBoolean("Intake", isrunning);
