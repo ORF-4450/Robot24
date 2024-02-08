@@ -33,7 +33,7 @@ public class IntakeNote extends Command {
             case INTAKING:
                 if (intakeNoteSensor.get()) {
                     state = State.FEEDING;
-                    intake.start(0.2); // slow it down
+                    intake.start(0.2); // slow it down, not restart it
                     shooter.startFeeding(0.5);
                 }
                 break;
