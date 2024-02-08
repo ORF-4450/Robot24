@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class PhotonVision extends SubsystemBase
 {
-    private PhotonCamera            camera = new PhotonCamera("4450-LL");
+    private PhotonCamera            camera = new PhotonCamera("FaceTime_HD_Camera");
     private PhotonPipelineResult    latestResult;
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 

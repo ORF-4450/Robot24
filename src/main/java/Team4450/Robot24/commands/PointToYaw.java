@@ -106,7 +106,8 @@ public class PointToYaw extends Command {
     @Override
     public boolean isFinished() {
         // end command when at setpoint
-        return pidController.atSetpoint();
+        double error = Math.abs(pidController.getSetpoint() - robotDrive.getYaw());
+        return error < 0.1;
     }
 
     /**

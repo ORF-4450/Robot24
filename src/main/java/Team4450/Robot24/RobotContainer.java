@@ -204,6 +204,13 @@ public class RobotContainer
 									driverController.getRightXDS(),
 									driverController));
 
+		// up and down on left operator controller joystick pivots shooter assembly
+		shooter.setDefaultCommand(new RunCommand(
+			()->shooter.movePivotRelative(
+				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)
+			), shooter));
+
+
 			// new RunCommand(
 			// 	() -> driveBase.drive(
 			// 		-MathUtil.applyDeadband(driverController.getLeftY(), DRIVE_DEADBAND),
@@ -372,6 +379,8 @@ public class RobotContainer
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
 			.toggleOnTrue(new StartEndCommand(shooter::startShooting, shooter::stopShooting));
+		new Trigger(() -> utilityController.getLeftTrigger())
+			.whileTrue(new StartEndCommand(shooter::feedInverse, shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
 			.whileTrue(new StartEndCommand(shooter::startFeeding, shooter::stopFeeding));
 
