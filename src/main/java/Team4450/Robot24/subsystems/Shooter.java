@@ -41,11 +41,13 @@ public class Shooter extends SubsystemBase {
 
     private boolean isShooting = false;
     private boolean isFeeding = false;
+    private boolean inverted = false;
 
     public Shooter() {
         Util.consoleLog();
 
         motorBottom.follow(motorTop);
+        motorFeeder.setInverted(true);
         SmartDashboard.putNumber("shooter_speed", shooterSpeed);
         SmartDashboard.putNumber("shooter_feedspeed", feedSpeed);
 
@@ -64,6 +66,9 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         shooterSpeed = SmartDashboard.getNumber("shooter_speef", SHOOTER_SPEED);
         feedSpeed = SmartDashboard.getNumber("shooter_feedspeed", SHOOTER_FEED_SPEED);
+        if (inverted) {
+            feedSpeed *= -1;
+        }
 
         if (isShooting) motorTop.set(shooterSpeed);
         if (isFeeding) motorFeeder.set(feedSpeed);
@@ -79,8 +84,15 @@ public class Shooter extends SubsystemBase {
     }
     /** stops the feed motor */
     public void stopFeeding() {
+        inverted = false;
         isFeeding = false;
         motorFeeder.set(0);
+    }
+
+    public void feedInverse() {
+        isFeeding = true;
+        inverted = true;
+        motorFeeder.set(feedSpeed);
     }
 
     /** spins the shooter wheels in preperation for a Note */
@@ -114,5 +126,13 @@ public class Shooter extends SubsystemBase {
      */
     private double angleToEncoderCounts(double angle) {
         return (angle / 360.0) / SHOOTER_PIVOT_FACTOR;
+    }
+
+    /**
+     * Sets the shooter assembly speed (for manual joystick use)
+     * @param speed the speed
+     */
+    public void movePivotRelative(double speed) {
+        motorPivot.set(speed);
     }
 }

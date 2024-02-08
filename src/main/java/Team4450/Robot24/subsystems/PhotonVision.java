@@ -19,9 +19,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,42 +34,48 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class PhotonVision extends SubsystemBase
 {
-    private PhotonCamera            camera = new PhotonCamera("4450-LL");
+    private PhotonCamera            camera;
     private PhotonPipelineResult    latestResult;
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
     private Field2d                 field = new Field2d();
 
-    // adams code ==========
     private final AprilTagFields    fields = AprilTagFields.k2024Crescendo;
     private AprilTagFieldLayout     fieldLayout;
     private PhotonPoseEstimator     poseEstimator;
 
-    // end adams code=============
+    private Transform3d             robotToCam;
 
-	public PhotonVision() 
+    /**
+     * Create an instance of PhotonVision class for a camera.
+     * @param cameraName The name of the camera.
+     */
+    public PhotonVision(String cameraName) {
+        this(cameraName, new Transform3d());
+    }
+
+    /**
+     * Create an instance of PhotonVision class for a camera.
+     * @param cameraName The name of the camera.
+     * @param robotToCam A Transform3d locating the camera on the robot chassis.
+     */
+	public PhotonVision(String cameraName, Transform3d robotToCam)
 	{
+        camera = new PhotonCamera(cameraName);
+        this.robotToCam = robotToCam;
         fieldLayout = fields.loadAprilTagLayoutField();
 
-        // setup the AprilTag pose etimator
-        
+        // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
             fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, // strategy to use for tag to pose calculation
-            camera, // the PhotonCamera
-
-            // a series of transformations from Camera pos. to robot pos. (where camera is on robot)
-            new Transform3d(
-                new Translation3d(0,0,0.3), // approximate height // TODO: change these values to be correct - Cole W.
-                new Rotation3d(0,0,Math.PI) // in radians pi is 180deg from front
-            )
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            camera,
+            robotToCam
         );
 
         setLedMode(ledMode);
 
-		Util.consoleLog("PhotonVision created!");
-
-        // This sim field2d shows vision estimate of robot position.
+		Util.consoleLog("PhotonVision (%s) created!", cameraName);
 
         SmartDashboard.putData(field);
 	}

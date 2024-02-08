@@ -24,8 +24,8 @@ public class DriveToNote extends Command {
         this.robotDrive = robotDrive;
         this.photonVision = photonVision;
 
-        SendableRegistry.addLW(translationController, "TrackNote Translation PID");
-        SendableRegistry.addLW(rotationController, "TrackNote Rotation PID");
+        SendableRegistry.addLW(translationController, "DriveToNote Translation PID");
+        SendableRegistry.addLW(rotationController, "DriveToNote Rotation PID");
         //SmartDashboard.putData("trackNoteTranslationPID", translationController);
         //SmartDashboard.putData("trackNoteRotationPID", rotationController);
     }
@@ -39,7 +39,7 @@ public class DriveToNote extends Command {
         rotationController.setSetpoint(0); // target should be at yaw=0 degrees
         rotationController.setTolerance(0.5); // withing 0.5 degrees of 0
 
-        translationController.setSetpoint(90); // target should fill 90% of total camera FOV
+        translationController.setSetpoint(0.7); // target should fill 70% of total camera FOV
     }
 
     @Override
