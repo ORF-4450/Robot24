@@ -17,6 +17,7 @@ import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
+import Team4450.Robot24.commands.ShootNote;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -386,7 +387,8 @@ public class RobotContainer
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new StartEndCommand(shooter::startShooting, shooter::stopShooting));
+			.toggleOnTrue(new ShootNote(shooter));
+			
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
