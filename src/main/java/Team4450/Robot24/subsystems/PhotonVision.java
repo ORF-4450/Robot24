@@ -42,36 +42,32 @@ public class PhotonVision extends SubsystemBase
 
     private Field2d                 field = new Field2d();
 
-    // adams code ==========
     private final AprilTagFields    fields = AprilTagFields.k2024Crescendo;
     private AprilTagFieldLayout     fieldLayout;
     private PhotonPoseEstimator     poseEstimator;
 
-    // end adams code=============
+    private Transform3d robotToCam;
 
-	public PhotonVision() 
+    public PhotonVision(String cameraName) {
+        this(cameraName, new Transform3d());
+    }
+	public PhotonVision(String cameraName, Transform3d robotToCam)
 	{
+        camera = new PhotonCamera(cameraName);
+        this.robotToCam = robotToCam;
         fieldLayout = fields.loadAprilTagLayoutField();
 
         // setup the AprilTag pose etimator
-        
         poseEstimator = new PhotonPoseEstimator(
             fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, // strategy to use for tag to pose calculation
-            camera, // the PhotonCamera
-
-            // a series of transformations from Camera pos. to robot pos. (where camera is on robot)
-            new Transform3d(
-                new Translation3d(0,0,0.3), // approximate height // TODO: change these values to be correct - Cole W.
-                new Rotation3d(0,0,Math.PI) // in radians pi is 180deg from front
-            )
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            camera,
+            robotToCam
         );
 
         setLedMode(ledMode);
 
 		Util.consoleLog("PhotonVision created!");
-
-        // This sim field2d shows vision estimate of robot position.
 
         SmartDashboard.putData(field);
 	}
