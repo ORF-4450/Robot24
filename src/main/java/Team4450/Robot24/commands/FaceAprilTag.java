@@ -1,5 +1,7 @@
 package Team4450.Robot24.commands;
 
+import static Team4450.Robot24.Constants.alliance;
+
 import java.util.ArrayList;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -20,9 +22,10 @@ public class FaceAprilTag extends Command {
     DriveBase       robotDrive;
     PhotonVision    photonVision;
     PIDController   pidController = new PIDController(0.01, 0, 0);
-    AprilTagNames   tagNames = new AprilTagNames(Alliance.Red);
+    AprilTagNames   tagNames;
 
     public FaceAprilTag(DriveBase robotDrive, PhotonVision cameraSubsystem) {
+        tagNames = new AprilTagNames(alliance);
         Util.consoleLog();
 
         // tolerance is in degrees.
