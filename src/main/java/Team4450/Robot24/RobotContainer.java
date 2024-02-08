@@ -298,7 +298,7 @@ public class RobotContainer
 
 		// the "A" button (or cross on PS4 controller) toggles tracking mode.
 		new Trigger(() -> driverController.getAButton())
-			.toggleOnTrue(new FaceAprilTag(pvPoseCamera, driveBase));
+			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
