@@ -9,8 +9,8 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
 public class DriveToNote extends Command {
-    PIDController rotationController = new PIDController(0.1, 0, 0); // for rotating drivebase
-    PIDController translationController = new PIDController(0.7, 0, 0); // for moving drivebase in X,Y plane
+    PIDController rotationController = new PIDController(0.05, 0, 0); // for rotating drivebase
+    PIDController translationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
     DriveBase robotDrive;
     PhotonVision photonVision;
 
@@ -36,7 +36,7 @@ public class DriveToNote extends Command {
         rotationController.setSetpoint(0); // target should be at yaw=0 degrees
         rotationController.setTolerance(0.5); // withing 0.5 degrees of 0
 
-        translationController.setSetpoint(0.7); // target should fill 70% of total camera FOV
+        translationController.setSetpoint(-12); // target should be at 0 pitch
     }
 
     @Override
@@ -47,11 +47,11 @@ public class DriveToNote extends Command {
             double rotation = rotationController.calculate(photonVision.getYaw());
             robotDrive.driveRobotRelative(0, 0, rotation);
         }
-        // otherwise drive to the target (only forwards backwards)
-        else {
-            double movement = translationController.calculate(photonVision.getArea());
-            robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
-        }
+        // // otherwise drive to the target (only forwards backwards)
+        // else {
+        //     double movement = translationController.calculate(photonVision.getPitch());
+        //     robotDrive.driveRobotRelative(0, movement, 0); // negative because camera backwards.
+        // }
     }
 
     @Override

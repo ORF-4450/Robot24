@@ -387,12 +387,15 @@ public class RobotContainer
 			//.onTrue(new InstantCommand(pickup::toggleDeploy, pickup));
 		//	.onTrue(new NotifierCommand(pickup::toggleDeploy, 0.0, "DeployPickup", pickup));
 
-		// run shooter (manupulator controller)
+		// run intake (manupulator controller)
 		new Trigger(() -> utilityController.getBButton())
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
-		
 		new Trigger(() -> utilityController.getLeftBumper())
 			.onTrue(new IntakeNote(intake, shooter));
+
+		// shoot then intake
+		new Trigger(() -> utilityController.getYButton())
+			.onTrue(new IntakeNote(intake, shooter).andThen(new ShootSpeaker(shooter, elevator)));
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())

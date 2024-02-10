@@ -18,14 +18,17 @@ public class ShootSpeaker extends Command {
     }
     @Override
     public void initialize() {
-        shooter.startShooting();
-        shooter.startFeeding(1);
+        shooter.startFeeding(-0.3);
         startTime = Util.timeStamp();
     }
 
     @Override
     public void execute() {
-        if (Util.getElaspedTime(startTime) > 0.5) {
+        if (Util.getElaspedTime(startTime) > 0.2) {
+            shooter.startShooting();
+            shooter.startFeeding(1);
+        }
+        if (Util.getElaspedTime(startTime) > 1.2) {
             shooter.stopFeeding();
             shooter.stopShooting();
         }
@@ -33,7 +36,7 @@ public class ShootSpeaker extends Command {
 
     @Override
     public boolean isFinished() {
-        boolean timeHasElasped = Util.getElaspedTime(startTime) > 0.55;
+        boolean timeHasElasped = Util.getElaspedTime(startTime) > 1.7;
         return timeHasElasped || !hasNote;
     }
 }

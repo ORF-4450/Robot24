@@ -14,6 +14,7 @@ public class IntakeNote extends Command {
 
     private State state = State.INTAKING;
     private double feedTime = 0;
+    private double intakeTime = 0;
 
     public IntakeNote(Intake intake, Shooter shooter) {
         this.shooter = shooter;
@@ -24,27 +25,31 @@ public class IntakeNote extends Command {
     @Override
     public void initialize() {
         intake.start();
+        shooter.startFeeding(1);
+        intakeTime = Util.timeStamp();
+        state = State.INTAKING;
     }
 
     @Override
     public void execute() {
         switch (state) {
             case INTAKING:
-                if (intake.hasNote()) {
+                if (Util.getElaspedTime(intakeTime) > 0.3) {
                     state = State.FEEDING;
-                    intake.start(0.2); // slow it down, not restart it
-                    shooter.startFeeding(0.5);
+                    // intake.start(0.8); // slow it down, not restart it
                 }
                 feedTime = Util.timeStamp();
                 break;
             case FEEDING:// feed for 0.5 sec
-                if (Util.getElaspedTime(feedTime) > 0.5){//shooter.hasNote()) {
-                    state = State.IN_SHOOTER;
+                if (Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
                     intake.stop();
                     shooter.stopFeeding();
+                    state = State.IN_SHOOTER;
                 }
                 break;
             case IN_SHOOTER:
+                intake.stop();
+                shooter.stopFeeding();
                 break;
         }
     }
@@ -52,5 +57,10 @@ public class IntakeNote extends Command {
     @Override
     public boolean isFinished() {
         return state == State.IN_SHOOTER;
+    }
+    @Override
+    public void end(boolean interrupted) {
+        intake.stop();
+        shooter.stopFeeding();
     }
 }

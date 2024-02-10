@@ -170,6 +170,15 @@ public class PhotonVision extends SubsystemBase
             return 0;
     }
 
+    public double getPitch()
+    {
+        if (hasTargets()) 
+            return latestResult.getBestTarget().getPitch();
+        else
+            return 0;
+    }
+
+
     /**
      * Returns the Fiducial ID of the current best target, you should call
      * hasTargets() first!
