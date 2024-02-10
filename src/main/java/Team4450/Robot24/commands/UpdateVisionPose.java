@@ -1,7 +1,6 @@
 package Team4450.Robot24.commands;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -13,8 +12,11 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
 /**
- * TODO
- * Need some doc on what this class does.
+ * This class runs as the default command of a PhotonVision
+ * subsystem and regularly updates the SwerveDrivePoseEstimator
+ * object with timestamped vision poses. The pose estimator then
+ * merges these predicted poses with what the actual odometry on
+ * the robot is doing and produces a smoothed "true" pose.
  */
 public class UpdateVisionPose extends Command {
     PhotonVision    cameraSubsystem;
@@ -49,7 +51,7 @@ public class UpdateVisionPose extends Command {
 
         if (estimatedPoseOptional.isPresent()) {
             EstimatedRobotPose estimatedPoseContainer = estimatedPoseOptional.get();
-             // pose2d to pose3d (ignore the Z axis which is height off ground)
+             // convert a pose3d to pose2d (we ignore the Z axis which is just height off ground)
             Pose2d pose2d = new Pose2d(
                 estimatedPoseContainer.estimatedPose.getX(),
                 estimatedPoseContainer.estimatedPose.getY(),
