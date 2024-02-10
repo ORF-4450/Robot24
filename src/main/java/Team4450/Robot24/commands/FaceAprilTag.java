@@ -16,7 +16,6 @@ import Team4450.Robot24.utility.AprilTagNames;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
-
 public class FaceAprilTag extends Command {
     DriveBase       robotDrive;
     PhotonVision    photonVision;
@@ -24,8 +23,9 @@ public class FaceAprilTag extends Command {
     AprilTagNames   tagNames;
 
     public FaceAprilTag(DriveBase robotDrive, PhotonVision cameraSubsystem) {
-        tagNames = new AprilTagNames(alliance);
         Util.consoleLog();
+
+        tagNames = new AprilTagNames(alliance);
 
         // tolerance is in degrees.
         pidController.setTolerance(0.3);
