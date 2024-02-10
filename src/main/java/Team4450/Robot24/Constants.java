@@ -68,10 +68,10 @@ public final class Constants
         new Translation3d(0, 0, 0),
         new Rotation3d(0, 0, 0)
     );
-
-    public static String        CAMERA_POSE_ESTIMATOR = "4450-LL";
+    // the names of the cameras in the PhotonVision software
+    public static String        CAMERA_POSE_ESTIMATOR = "";
     public static String        CAMERA_FRONT = "4450-LL";
-    public static String        CAMERA_BACK = "4450-LL";
+    public static String        CAMERA_BACK = "back";
 
     public static final int     REV_PDB = 0;
 	
@@ -103,7 +103,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 1.0;
+        public static final double kMaxSpeedMetersPerSecond = 4.8;
         public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 
