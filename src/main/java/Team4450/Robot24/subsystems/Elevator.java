@@ -5,12 +5,19 @@ import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_LEFT;
 import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_RIGHT;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import Team4450.Lib.Util;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Elevator extends SubsystemBase {
@@ -24,6 +31,10 @@ public class Elevator extends SubsystemBase {
     private RelativeEncoder mainEncoder;
     private RelativeEncoder innerEncoder;
 
+    private Mechanism2d mechanism = new Mechanism2d(100,100);
+    private MechanismRoot2d mechRoot = mechanism.getRoot("root", 5, 0);
+    private MechanismLigament2d elevatorLigament = mechRoot.append(new MechanismLigament2d("elevator", 50, 90));
+
     public Elevator() {
         Util.consoleLog();
 
@@ -36,13 +47,25 @@ public class Elevator extends SubsystemBase {
 
         mainEncoder = motorMain.getEncoder();
         innerEncoder = motorInner.getEncoder();
+
+        if (RobotBase.isSimulation()) {
+            REVPhysicsSim.getInstance().addSparkMax(motorMain, DCMotor.getNEO(1));
+        }
+
+        SmartDashboard.putData("Elevator", mechanism);
     }
 
     @Override
     public void periodic() {
         if (lowerLimitSwitch.isPressed())
             mainEncoder.setPosition(0);
+        elevatorLigament.setLength(mainEncoder.getPosition());
     }
+
+    // @Override
+    // public void simulationPeriodic() {
+    //     REVPhysicsSim.getInstance().run();
+    // }
 
     /**
      * move elevator in direction based on speed
@@ -50,6 +73,8 @@ public class Elevator extends SubsystemBase {
      */
     public void move(double speed) {
         motorMain.set(speed);
+        // mainEncoder.setPosition(mainEncoder.getPosition() + speed);
+        // Util.consoleLog("%f", mainEncoder.getPosition());
     }
 
     /**

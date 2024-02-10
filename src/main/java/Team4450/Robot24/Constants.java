@@ -77,7 +77,7 @@ public final class Constants
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
-    public static final double  DRIVE_DEADBAND = 0.05, ROTATION_DEADBAND = .05;
+    public static final double  DRIVE_DEADBAND = 0.1, ROTATION_DEADBAND = .1;
 
 	// Pneumatic valve controller port assignments.
 	//public static final int		COMPRESSOR = 0;
