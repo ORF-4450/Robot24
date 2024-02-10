@@ -9,6 +9,10 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
+import org.photonvision.estimation.TargetModel;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -38,6 +42,8 @@ public class PhotonVision extends SubsystemBase
     private PhotonPipelineResult    latestResult;
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
+    private VisionSystemSim         visionSim;
+
     private Field2d                 field = new Field2d();
 
     private final AprilTagFields    fields = AprilTagFields.k2024Crescendo;
@@ -45,13 +51,16 @@ public class PhotonVision extends SubsystemBase
     private PhotonPoseEstimator     poseEstimator;
 
     private Transform3d             robotToCam;
+    private PipelineType            pipelineType;
+
+    public static enum PipelineType {APRILTAG_TRACKING, OBJECT_TRACKING};
 
     /**
      * Create an instance of PhotonVision class for a camera.
      * @param cameraName The name of the camera.
      */
-    public PhotonVision(String cameraName) {
-        this(cameraName, new Transform3d());
+    public PhotonVision(String cameraName, PipelineType pipelineType) {
+        this(cameraName, pipelineType, new Transform3d());
     }
 
     /**
@@ -59,11 +68,22 @@ public class PhotonVision extends SubsystemBase
      * @param cameraName The name of the camera.
      * @param robotToCam A Transform3d locating the camera on the robot chassis.
      */
-	public PhotonVision(String cameraName, Transform3d robotToCam)
+	public PhotonVision(String cameraName, PipelineType pipelineType, Transform3d robotToCam)
 	{
         camera = new PhotonCamera(cameraName);
         this.robotToCam = robotToCam;
         fieldLayout = fields.loadAprilTagLayoutField();
+
+        // adds a simulated camera to the vision sim: "real" camera will
+        // act just like normal on real robot and in sim!
+        visionSim = new VisionSystemSim(cameraName);
+        PhotonCameraSim cameraSim = new PhotonCameraSim(camera);
+        cameraSim.enableDrawWireframe(true);
+        visionSim.addCamera(cameraSim, robotToCam);
+
+        selectPipeline(pipelineType);
+
+        setUpSimTargets();
 
         // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
@@ -76,9 +96,78 @@ public class PhotonVision extends SubsystemBase
         setLedMode(ledMode);
 
 		Util.consoleLog("PhotonVision (%s) created!", cameraName);
-
         SmartDashboard.putData(field);
 	}
+
+    /**
+     * sets up simulation targets for simulated vision system
+     */
+    private void setUpSimTargets() {
+        visionSim.clearAprilTags();
+        visionSim.clearVisionTargets();
+
+        switch (pipelineType) {
+            case APRILTAG_TRACKING:
+                visionSim.addAprilTags(fieldLayout);
+                break;
+
+            case OBJECT_TRACKING:
+                // approximate coordinates on on-field notes
+                addNoteSimTarget(2.9, 7, 0);
+                addNoteSimTarget(2.9, 5.6, 1);
+                addNoteSimTarget(2.9, 4.1, 2);
+                addNoteSimTarget(8.3, 7.5, 3);
+                addNoteSimTarget(8.3, 5.8, 4);
+                addNoteSimTarget(8.3, 4.1, 5);
+                addNoteSimTarget(8.3, 2.4, 6);
+                addNoteSimTarget(8.3, 0.75, 7);
+                addNoteSimTarget(13.65, 7, 8);
+                addNoteSimTarget(13.65, 5.6, 9);
+                addNoteSimTarget(13.65, 4.1, 10);
+                break;
+        }
+    }
+
+    /**
+     * adds a sim target of a Note
+     * @param x field coordinate X
+     * @param y field coordinate Y
+     * @param id zero-based index of note
+     */
+    private void addNoteSimTarget(double x, double y, int id) {
+        TargetModel noteModel = new TargetModel(0.3556, 0.3556, 0.0508);
+        
+        VisionTargetSim target = new VisionTargetSim(
+            new Pose3d(new Pose2d(x, y, new Rotation2d())),
+            noteModel
+        );
+        
+        visionSim.addVisionTargets("note"+Integer.toString(id), target);
+    }
+
+
+    @Override
+    public void simulationPeriodic() {
+        if (pipelineType == PipelineType.OBJECT_TRACKING) {
+            // this stuff allows us to drag around the note in simgui
+            // to change position of the note
+            for (int noteID = 0; noteID < 11; noteID++) {
+                String name = "note" + Integer.toString(noteID);
+                Pose2d fieldPose = visionSim.getDebugField().getObject(name).getPose();
+                if (fieldPose.getX() == 0 && fieldPose.getY() == 0) continue;
+                visionSim.getVisionTargets(name).forEach((target)->target.setPose(new Pose3d(fieldPose)));
+            }
+        }
+    }
+
+    /**
+     * Updates the simulated pose of the robot for use in the PhotonVision
+     * simulated vision code.
+     * @param pose The pose of robot (ONLY BASED OFF OF ODOMETRY: NOT ANY POSE ESTIMATORS).
+     */
+    public void updateSimulationPose(Pose2d pose) {
+        visionSim.update(pose);
+    }
 
     /**
      * Get the lastest target results object returned by the camera.
@@ -104,9 +193,9 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
-     * Returns the target with the given Fiducial ID
-     * @param id the desired Fiducial ID
-     * @return the target or null if the ID is not currently being tracked
+     * Returns the target with the given Fiducial ID.
+     * @param id the desired Fiducial ID.
+     * @return The target or null if the ID is not currently being tracked.
      */
     public PhotonTrackedTarget getTarget(int id)
     {
@@ -125,9 +214,9 @@ public class PhotonVision extends SubsystemBase
     }
     
     /**
-     * Get an array of the currently tracked Fiducial IDs
+     * Get an array of the currently tracked Fiducial IDs.
      * 
-     * @return an ArrayList of the tracked IDs
+     * @return An ArrayList of the tracked IDs.
      */
     public ArrayList<Integer> getTrackedIDs() {
         ArrayList<Integer> ids = new ArrayList<Integer>();
@@ -145,10 +234,10 @@ public class PhotonVision extends SubsystemBase
 
     /**
      * Checks whether or not the camera currently sees a target
-     * with the given Fiducial ID
+     * with the given Fiducial ID.
      * 
-     * @param id the Fiducial ID
-     * @return whether the camera sees the ID
+     * @param id The Fiducial ID.
+     * @return True if the camera sees the ID.
      */
     public boolean hasTarget(int id) {
         return getTrackedIDs().contains(id);
@@ -160,7 +249,7 @@ public class PhotonVision extends SubsystemBase
      * Returns the yaw angle of the best target in the latest camera results
      * list. Must call hasTargets() before calling this function.
      * @return Best target yaw value from straight ahead or zero. -yaw means
-     * target is left of robot center.
+     * target is left of robot center. (degrees)
      */
     public double getYaw()
     {
@@ -173,6 +262,10 @@ public class PhotonVision extends SubsystemBase
     /**
      * Returns pitch value of the best target in latest camera results.
      * @return Best target pitch value.
+     * Returns the pitch angle of the best target in the latest camera results
+     * list. Must call hasTargets() before calling this function.
+     * @return Best target pitch value from straight ahead or zero. -pitch means
+     * target is below camera center. (degrees)
      */
     public double getPitch()
     {
@@ -185,7 +278,7 @@ public class PhotonVision extends SubsystemBase
     /**
      * Returns the Fiducial ID of the current best target, you should call
      * hasTargets() first!
-     * @return the ID or -1 if no targets
+     * @return The ID or -1 if no targets.
      */
     public int getFiducialID()
     {
@@ -219,6 +312,17 @@ public class PhotonVision extends SubsystemBase
         Util.consoleLog("%d", index);
 
         camera.setPipelineIndex(index);
+    }
+
+    /**
+     * Sets the pipline of the photonvision camera given an enum type.
+     * This also allows us to use simulation pretty well!
+     * @param type The type of pipeline.
+     */
+    public void selectPipeline(PipelineType type) {
+        this.pipelineType = type;
+        setUpSimTargets();
+        selectPipeline(type.ordinal());
     }
 
     /**
@@ -279,11 +383,11 @@ public class PhotonVision extends SubsystemBase
 	}
     
     /**
-     * returns an Optional value of the robot's estimated 
+     * Returns an Optional value of the robot's estimated 
      * field-centric pose given current tags that it sees.
      * (and also the timestamp)
      * 
-     * @return the Optional estimated pose (empty optional means no pose or uncertain/bad pose)
+     * @return The Optional estimated pose (empty optional means no pose or uncertain/bad pose).
      */
     public Optional<EstimatedRobotPose> getEstimatedPose() {
         Optional<EstimatedRobotPose> estimatedPoseOptional = poseEstimator.update();
