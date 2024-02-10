@@ -11,6 +11,7 @@ import static Team4450.Robot24.Constants.SHOOTER_MOTOR_FEEDER;
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_PIVOT;
 
 import static Team4450.Robot24.Constants.SHOOTER_SPEED;
+import static Team4450.Robot24.Constants.NOTE_SENSOR_SHOOTER;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
 
@@ -21,7 +22,6 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorBottom = new CANSparkMax(SHOOTER_MOTOR_BOTTOM, MotorType.kBrushless);
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
-    private final DigitalInput shooterNoteSensor = new DigitalInput(2);
+    private final DigitalInput shooterNoteSensor = new DigitalInput(NOTE_SENSOR_SHOOTER);
 
     private RelativeEncoder pivotEncoder;
 
@@ -41,9 +41,9 @@ public class Shooter extends SubsystemBase {
 
     private SparkPIDController pivotPID;
 
-    private boolean isShooting = false;
-    private boolean isFeeding = false;
-    private boolean inverted = false;
+    // NOTE: I removed the shuffleboard speed setting because they were too
+    // much of a hassle to handle with all of the different speed states the shooter could be in
+    // (feeding, slow feeding, inverse feeding, shooting, etc.)
 
     public Shooter() {
         Util.consoleLog();
@@ -71,23 +71,19 @@ public class Shooter extends SubsystemBase {
      * the rolling shooter wheels (which must be enabled seperately)
      */
     public void startFeeding(double speedfactor) {
-        isFeeding = true;
         motorFeeder.set(Util.clampValue(speedfactor, 1) * feedSpeed);
     }
     /** stops the feed motor */
     public void stopFeeding() {
-        isFeeding = false;
         motorFeeder.set(0);
     }
 
     /** spins the shooter wheels in preperation for a Note */
     public void startShooting() {
-        isShooting = true;
         motorTop.set(shooterSpeed);
     }
     /** stops the shooter wheels */
     public void stopShooting() {
-        isShooting = false;
         motorTop.set(0);
     }
 

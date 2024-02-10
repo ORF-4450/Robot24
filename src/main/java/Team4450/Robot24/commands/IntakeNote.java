@@ -3,7 +3,6 @@ package Team4450.Robot24.commands;
 import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.Shooter;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeNote extends Command {
@@ -34,13 +33,14 @@ public class IntakeNote extends Command {
     public void execute() {
         switch (state) {
             case INTAKING:
-                if (Util.getElaspedTime(intakeTime) > 0.3) {
+                // once the intake has the note, slow it down
+                if (intake.hasNote()) {
                     state = State.FEEDING;
-                    // intake.start(0.8); // slow it down, not restart it
+                    intake.start(0.9); // slow it down a little
                 }
                 feedTime = Util.timeStamp();
                 break;
-            case FEEDING:// feed for 0.5 sec
+            case FEEDING:// feed for 3 sec
                 if (Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
                     intake.stop();
                     shooter.stopFeeding();
@@ -60,6 +60,7 @@ public class IntakeNote extends Command {
     }
     @Override
     public void end(boolean interrupted) {
+        Util.consoleLog("interrupted=%b", interrupted);
         intake.stop();
         shooter.stopFeeding();
     }

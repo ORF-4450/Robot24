@@ -9,7 +9,6 @@ public class ShootSpeaker extends Command {
     private final Shooter shooter;
     private final Elevator elevator;
     private double startTime;
-    private boolean hasNote = true; //TODO: change this
 
     public ShootSpeaker(Shooter shooter, Elevator elevator) {
         this.shooter = shooter;
@@ -18,6 +17,7 @@ public class ShootSpeaker extends Command {
     }
     @Override
     public void initialize() {
+        // start by feeding the note backwards a bit (0.2 seconds)
         shooter.startFeeding(-0.3);
         startTime = Util.timeStamp();
     }
@@ -28,15 +28,23 @@ public class ShootSpeaker extends Command {
             shooter.startShooting();
             shooter.startFeeding(1);
         }
-        if (Util.getElaspedTime(startTime) > 1.2) {
-            shooter.stopFeeding();
-            shooter.stopShooting();
-        }
+        // commented because handled in end():
+        // if (Util.getElaspedTime(startTime) > 1.2) {
+        //     shooter.stopFeeding();
+        //     shooter.stopShooting();
+        // }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        Util.consoleLog("interrupted=%b", interrupted);
+        shooter.stopFeeding();
+        shooter.stopShooting();
     }
 
     @Override
     public boolean isFinished() {
         boolean timeHasElasped = Util.getElaspedTime(startTime) > 1.7;
-        return timeHasElasped || !hasNote;
+        return timeHasElasped;// run for 1.7 sec //  || !shooter.hasNote(); // for 1.7 sec OR the note is gone.
     }
 }

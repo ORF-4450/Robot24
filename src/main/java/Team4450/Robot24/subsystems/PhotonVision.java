@@ -170,15 +170,6 @@ public class PhotonVision extends SubsystemBase
             return 0;
     }
 
-    public double getPitch()
-    {
-        if (hasTargets()) 
-            return latestResult.getBestTarget().getPitch();
-        else
-            return 0;
-    }
-
-
     /**
      * returns pitch value of the best target in latest camera results
      * @return best target pitch value
