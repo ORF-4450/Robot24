@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.38,
-      "y": 5.54
+      "x": 1.418950497871234,
+      "y": 5.553308403863832
     },
-    "rotation": -90.9691858298383
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -20,13 +20,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "speaker to note"
+            "pathName": "Drive Out"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "note to note to trap"
+            "name": "IntakeNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
           }
         },
         {

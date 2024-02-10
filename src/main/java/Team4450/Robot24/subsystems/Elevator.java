@@ -43,4 +43,22 @@ public class Elevator extends SubsystemBase {
         if (lowerLimitSwitch.isPressed())
             mainEncoder.setPosition(0);
     }
+
+    /**
+     * move elevator in direction based on speed
+     * @param speed (such as from a joystick value)
+     */
+    public void move(double speed) {
+        motorMain.set(speed);
+    }
+
+    /**
+     * The height of the elevator (measured at shooter pivot)
+     * above the ground
+     * @return the height in meters of pivot above ground
+     */
+    public double getHeight() {
+        return 1; // TODO: fix this because its just made up.
+    }
+
 }

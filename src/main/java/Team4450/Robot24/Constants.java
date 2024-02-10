@@ -53,26 +53,25 @@ public final class Constants
     // public static final int     SHOOTER_MOTOR_PIVOT_2 = 15; // if we have to add one
 
     public static final double  SHOOTER_SPEED = 1;
-    public static final double  SHOOTER_FEED_SPEED = 0.9;
+    public static final double  SHOOTER_FEED_SPEED = 1;
 
-    // gear ratio of revolutions of shaft to revolutions of assembly
-    public static final double  SHOOTER_PIVOT_FACTOR = (765.0 / 13.0);
-
+    // multiplied by motor rotations to get degrees of shooter angle
+    public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+    
     // ELEVATOR
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
     public static final int     ELEVATOR_MOTOR_INNER = 18;
-
 
     // CAMERAS
     public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 0),
         new Rotation3d(0, 0, 0)
     );
+
     public static String        CAMERA_POSE_ESTIMATOR = "4450-LL";
     public static String        CAMERA_FRONT = "4450-LL";
     public static String        CAMERA_BACK = "4450-LL";
-    
 
     public static final int     REV_PDB = 0;
 	
@@ -84,6 +83,8 @@ public final class Constants
 	//public static final int		COMPRESSOR = 0;
 
 	// Digital Input port assignments. Encoder takes 2 ports.
+    public static final int     NOTE_SENSOR_INTAKE = 0;
+    public static final int     NOTE_SENSOR_SHOOTER = 1;
 	  
 	// Analog Input port assignments.
 	
@@ -102,7 +103,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 4.8;
+        public static final double kMaxSpeedMetersPerSecond = 1.0;
         public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 

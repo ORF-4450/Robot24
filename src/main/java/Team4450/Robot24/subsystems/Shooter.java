@@ -1,8 +1,8 @@
 package Team4450.Robot24.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.Robot;
 
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_TOP;
 import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
@@ -11,16 +11,20 @@ import static Team4450.Robot24.Constants.SHOOTER_MOTOR_FEEDER;
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_PIVOT;
 
 import static Team4450.Robot24.Constants.SHOOTER_SPEED;
+import static Team4450.Robot24.Constants.NOTE_SENSOR_SHOOTER;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-// import com.revrobotics.SparkRelativeEncoder;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -31,17 +35,20 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorBottom = new CANSparkMax(SHOOTER_MOTOR_BOTTOM, MotorType.kBrushless);
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
+    private final DigitalInput shooterNoteSensor = new DigitalInput(NOTE_SENSOR_SHOOTER);
 
     private RelativeEncoder pivotEncoder;
+    private RelativeEncoder topMotorEncoder;
+    private RelativeEncoder bottomMotorEncoder;
 
     private double shooterSpeed = SHOOTER_SPEED;
     private double feedSpeed = SHOOTER_FEED_SPEED;
 
     private SparkPIDController pivotPID;
 
-    private boolean isShooting = false;
-    private boolean isFeeding = false;
-    private boolean inverted = false;
+    // NOTE: I removed the shuffleboard speed setting because they were too
+    // much of a hassle to handle with all of the different speed states the shooter could be in
+    // (feeding, slow feeding, inverse feeding, shooting, etc.)
 
     public Shooter() {
         Util.consoleLog();
@@ -50,6 +57,9 @@ public class Shooter extends SubsystemBase {
         motorFeeder.setInverted(true);
 
         pivotEncoder = motorPivot.getEncoder();
+        topMotorEncoder = motorTop.getEncoder();
+        bottomMotorEncoder = motorBottom.getEncoder();
+
         pivotPID = motorPivot.getPIDController();
 
         pivotPID.setP(0.1);
@@ -60,38 +70,58 @@ public class Shooter extends SubsystemBase {
         pivotPID.setOutputRange(-1, 1);
     }
 
+    public boolean hasNote() {
+        return shooterNoteSensor.get();
+    }
+
     /**
      * enables the feed motor (sushi rollers) to push the Note into
      * the rolling shooter wheels (which must be enabled seperately)
      */
     public void startFeeding(double speedfactor) {
-        isFeeding = true;
         motorFeeder.set(Util.clampValue(speedfactor, 1) * feedSpeed);
     }
     /** stops the feed motor */
     public void stopFeeding() {
-        isFeeding = false;
         motorFeeder.set(0);
     }
 
     /** spins the shooter wheels in preperation for a Note */
     public void startShooting() {
-        isShooting = true;
         motorTop.set(shooterSpeed);
     }
     /** stops the shooter wheels */
     public void stopShooting() {
-        isShooting = false;
         motorTop.set(0);
     }
 
     /**
      * Sets the shooter assembly to a given angle
-     * @param angle the angle with 0deg straight down
+     * @param angle the angle in degrees
      */
-    public void pointPivot(double angle) {
-        // math...
-        pivotPID.setReference(angleToEncoderCounts(angle), ControlType.kPosition);
+    public void setAngle(double angle) {
+        pivotPID.setReference(angle / SHOOTER_PIVOT_FACTOR, ControlType.kPosition);
+    }
+
+    /**
+     * Get the angle of the shooter assembly
+     * @return the angle in degrees
+     */
+    public double getAngle() {
+        return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR;
+    }
+
+    /**
+     * Get the average wheel speed of top and bottom
+     * shooter rollers
+     * @return the average wheel speed in meters per second
+     */
+    public double getWheelSpeed() {
+        double wheelRadius = 1.5 * 0.0254; // in -> m
+        double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
+        double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
+        double averageWheelSpeed = 0.5 * (topWheelSpeed + bottomWheelSpeed);
+        return averageWheelSpeed;
     }
 
     public boolean isAtAngle(double angle) {

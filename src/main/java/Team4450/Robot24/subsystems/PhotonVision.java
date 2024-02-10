@@ -171,6 +171,18 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
+     * returns pitch value of the best target in latest camera results
+     * @return best target pitch value
+     */
+    public double getPitch()
+    {
+        if (hasTargets()) 
+            return latestResult.getBestTarget().getPitch();
+        else
+            return 0;
+    }
+
+    /**
      * Returns the Fiducial ID of the current best target, you should call
      * hasTargets() first!
      * @return the ID or -1 if no targets

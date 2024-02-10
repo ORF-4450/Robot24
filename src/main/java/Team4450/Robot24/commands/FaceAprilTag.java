@@ -1,5 +1,7 @@
 package Team4450.Robot24.commands;
 
+import static Team4450.Robot24.Constants.alliance;
+
 import java.util.ArrayList;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -7,7 +9,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -15,15 +16,16 @@ import Team4450.Robot24.utility.AprilTagNames;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
-
 public class FaceAprilTag extends Command {
     DriveBase       robotDrive;
     PhotonVision    photonVision;
     PIDController   pidController = new PIDController(0.01, 0, 0);
-    AprilTagNames   tagNames = new AprilTagNames(Alliance.Red);
+    AprilTagNames   tagNames;
 
-    public FaceAprilTag(PhotonVision cameraSubsystem, DriveBase robotDrive) {
+    public FaceAprilTag(DriveBase robotDrive, PhotonVision cameraSubsystem) {
         Util.consoleLog();
+
+        tagNames = new AprilTagNames(alliance);
 
         // tolerance is in degrees.
         pidController.setTolerance(0.3);
@@ -32,7 +34,6 @@ public class FaceAprilTag extends Command {
         this.photonVision = cameraSubsystem;
 
         SendableRegistry.addLW(pidController, "AprilTag Rotate PID");
-        //SmartDashboard.putData("AprilTag Rotate PID", pidController);
     }
 
     @Override
