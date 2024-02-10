@@ -43,6 +43,11 @@ public class UpdateVisionPose extends Command {
     }
 
     @Override
+    public boolean runsWhenDisabled() {
+        return true;
+    }
+    
+    @Override
     public void initialize() {
         Util.consoleLog();
     }
