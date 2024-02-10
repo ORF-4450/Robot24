@@ -72,7 +72,6 @@ public class PhotonVision extends SubsystemBase
 	{
         camera = new PhotonCamera(cameraName);
         this.robotToCam = robotToCam;
-        selectPipeline(pipelineType);
         fieldLayout = fields.loadAprilTagLayoutField();
 
         // adds a simulated camera to the vision sim: "real" camera will
@@ -82,6 +81,7 @@ public class PhotonVision extends SubsystemBase
         cameraSim.enableDrawWireframe(true);
         visionSim.addCamera(cameraSim, robotToCam);
 
+        selectPipeline(pipelineType);
         setUpSimTargets();
 
         // setup the AprilTag pose etimator.
