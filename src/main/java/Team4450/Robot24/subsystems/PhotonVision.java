@@ -11,6 +11,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
 import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -23,6 +24,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -40,6 +42,7 @@ public class PhotonVision extends SubsystemBase
 {
     private PhotonCamera            camera;
     private PhotonPipelineResult    latestResult;
+
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
     private VisionSystemSim         visionSim;
@@ -77,11 +80,14 @@ public class PhotonVision extends SubsystemBase
         // adds a simulated camera to the vision sim: "real" camera will
         // act just like normal on real robot and in sim!
         visionSim = new VisionSystemSim(cameraName);
-        PhotonCameraSim cameraSim = new PhotonCameraSim(camera);
+        SimCameraProperties cameraProp = new SimCameraProperties();
+        cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
+        PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
         cameraSim.enableDrawWireframe(true);
         visionSim.addCamera(cameraSim, robotToCam);
 
         selectPipeline(pipelineType);
+
         setUpSimTargets();
 
         // setup the AprilTag pose etimator.
@@ -120,6 +126,9 @@ public class PhotonVision extends SubsystemBase
                 addNoteSimTarget(13.65, 7, 8);
                 addNoteSimTarget(13.65, 5.6, 9);
                 addNoteSimTarget(13.65, 4.1, 10);
+
+                // test note
+                // addNoteSimTarget(5, 5, 10);
                 break;
         }
     }
@@ -203,6 +212,26 @@ public class PhotonVision extends SubsystemBase
             }
 
             return null;
+        }
+        else
+            return null;
+    }
+
+    /**
+     * returns the closes target to center of camera crosshair (yaw-wise)
+     * @return the raw PhotonTrackedTarget
+     */
+    public PhotonTrackedTarget getClosestTarget() {
+        PhotonTrackedTarget closest;
+        if (hasTargets()) {
+            List<PhotonTrackedTarget> targets = latestResult.getTargets();
+            closest = targets.get(0);
+
+            for (int i = 0; i < targets.size(); i++) {
+                if (Math.abs(targets.get(i).getYaw()) < Math.abs(closest.getYaw()))
+                    closest = targets.get(i);
+            }
+            return closest;
         }
         else
             return null;
