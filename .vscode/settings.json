@@ -28,5 +28,6 @@
   "java.test.defaultConfig": "WPIlibUnitTests",
   "wpilib.selectDefaultSimulateExtension": false,
   "wpilib.skipSelectSimulateExtension": true,
-  "editor.fontSize": 13
+  "editor.fontSize": 13,
+  "editor.inlayHints.enabled": "off"
 }
