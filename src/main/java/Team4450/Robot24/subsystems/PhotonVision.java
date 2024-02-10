@@ -171,8 +171,10 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
-     * returns pitch value of the best target in latest camera results
-     * @return best target pitch value
+     * Returns the pitch angle of the best target in the latest camera results
+     * list. Must call hasTargets() before calling this function.
+     * @return Best target pitch value from straight ahead or zero. -pitch means
+     * target is below camera center. (degrees)
      */
     public double getPitch()
     {
