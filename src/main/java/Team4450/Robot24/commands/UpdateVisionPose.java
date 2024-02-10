@@ -8,6 +8,7 @@ import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import Team4450.Robot24.Robot;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
@@ -43,6 +44,11 @@ public class UpdateVisionPose extends Command {
 
     @Override
     public void execute() {
+        if (Robot.isSimulation()) {
+            cameraSubsystem.updateSimRobotPose(robotDrive.getPose());
+            return;
+        }
+
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
         // update pose estimator pose with current epoch timestamp and the pose from the camera

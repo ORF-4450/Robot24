@@ -9,6 +9,11 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.common.hardware.VisionLEDMode;
+import org.photonvision.estimation.TargetModel;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.simulation.VisionTargetSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -19,6 +24,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -35,7 +41,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PhotonVision extends SubsystemBase
 {
     private PhotonCamera            camera;
+    private VisionSystemSim         visionSim;
     private PhotonPipelineResult    latestResult;
+
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
     private Field2d                 field = new Field2d();
@@ -64,7 +72,7 @@ public class PhotonVision extends SubsystemBase
         camera = new PhotonCamera(cameraName);
         this.robotToCam = robotToCam;
         fieldLayout = fields.loadAprilTagLayoutField();
-
+   
         // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
             fieldLayout,
@@ -78,7 +86,23 @@ public class PhotonVision extends SubsystemBase
 		Util.consoleLog("PhotonVision (%s) created!", cameraName);
 
         SmartDashboard.putData(field);
+
+        // The simulation of this camera. Its values used in real robot code will be updated.
+        visionSim = new VisionSystemSim("SimulatedVision");
+        visionSim.addAprilTags(fieldLayout);
+        TargetModel noteTarget = new TargetModel(0.3556, 0.3556, 0.0508);
+        PhotonCameraSim cameraSim = new PhotonCameraSim(camera, new SimCameraProperties());
+        visionSim.addVisionTargets("Note", new VisionTargetSim(
+            new Pose3d(3, 3, 0, new Rotation3d()),
+            noteTarget
+        ));
+        cameraSim.enableDrawWireframe(true);
+        visionSim.addCamera(cameraSim, robotToCam);
 	}
+
+    public void updateSimRobotPose(Pose2d pose) {
+        visionSim.update(pose);
+    }
 
     /**
      * Get the lastest target results object returned by the camera.
