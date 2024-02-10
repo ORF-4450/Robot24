@@ -53,8 +53,9 @@ Port	Device blk-pos	Description
 Digital I/O Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       QMRN Beam Break note sensor for intake
-1       QMRN Beam Break note sensor for shooter
+0       QMRN Beam Break note sensor for intake.
+1       QMRN Beam Break note sensor for shooter.
+
 
 Analog I/O Ports
 Port	Device			Description
