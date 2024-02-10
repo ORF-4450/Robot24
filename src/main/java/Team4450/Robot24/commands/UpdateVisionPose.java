@@ -47,6 +47,11 @@ public class UpdateVisionPose extends Command {
     }
 
     @Override
+    public boolean runsWhenDisabled() {
+        return true; // because we always want this running
+    }
+
+    @Override
     public void execute() {
         if (Robot.isSimulation()) {
             cameraSubsystem.updateSimulationPose(robotDrive.getPose());
