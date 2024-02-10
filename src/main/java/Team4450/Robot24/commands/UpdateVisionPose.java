@@ -8,6 +8,7 @@ import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import Team4450.Robot24.Robot;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
@@ -17,6 +18,10 @@ import Team4450.Robot24.subsystems.PhotonVision;
  * object with timestamped vision poses. The pose estimator then
  * merges these predicted poses with what the actual odometry on
  * the robot is doing and produces a smoothed "true" pose.
+ * 
+ * Also, this class updates the visionSim object with the robots
+ * pose so that the visionSim can accurately calculate targets
+ * in the simulator.
  */
 public class UpdateVisionPose extends Command {
     PhotonVision    cameraSubsystem;
@@ -43,6 +48,11 @@ public class UpdateVisionPose extends Command {
 
     @Override
     public void execute() {
+        if (Robot.isSimulation()) {
+            cameraSubsystem.updateSimulationPose(robotDrive.getPose());
+            return; // if simulator don't try updating pose estimator because the
+                    // odometry is already "perfect"
+        }
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
         // update pose estimator pose with current epoch timestamp and the pose from the camera

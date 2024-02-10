@@ -88,7 +88,7 @@ POV_?                   Auto rotate to the POV direction.
 ?                       Reset simulated distance traveled.
 ?                       Switch Shuffleboard tab.
 ?                       Switch Camera.
-B                       Toggle drive wheel brake mode.
+B                       Toggle Drive To Note command
 X                       
 A                       Toggle April Tag Tracking mode.
 
@@ -96,17 +96,24 @@ A                       Toggle April Tag Tracking mode.
 Utility GamePad - Left Joystick
 Button Name				Function
 -----------------------------------------------------------------------------------
+Y_AXIS                  Pivot shooter assembly
 
 
 Utility GamePad - Right Joystick
 Button Name				Function
 -----------------------------------------------------------------------------------
+Y_AXIS                  Move climber/elevator
 
 
 Utility GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
 B                       Toggles Intake Motors.
+Y                       Intake then immediately shoot
+LEFT_TRIGGER            Reverse shooter sushi-rollers (hold)
+RIGHT_TRIGGER           Feed shooter sushi-rollers (hold)
+LEFT_BUMPER             Intake note
+RIGHT_BUMPER            Shoot Note
 
 
 Dashboard Indicators/Controls
