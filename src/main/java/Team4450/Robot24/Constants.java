@@ -53,9 +53,10 @@ public final class Constants
     // public static final int     SHOOTER_MOTOR_PIVOT_2 = 15; // if we have to add one
     public static final double  SHOOTER_SPEED = 1;
     public static final double  SHOOTER_FEED_SPEED = 1;
-    // gear ratio of revolutions of shaft to revolutions of assembly
-    public static final double  SHOOTER_PIVOT_FACTOR = (765.0 / 13.0);
 
+    // multiplied by motor rotations to get degrees of shooter angle
+    public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+    
     // ELEVATOR
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
