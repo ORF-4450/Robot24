@@ -1,12 +1,14 @@
 package Team4450.Robot24.commands;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeNote extends Command {
     private final Shooter shooter;
+    private final Elevator elevator;
     private final Intake  intake;
 
     private static enum State {INTAKING, FEEDING, IN_SHOOTER};
@@ -15,10 +17,11 @@ public class IntakeNote extends Command {
     private double feedTime = 0;
     private double intakeTime = 0;
 
-    public IntakeNote(Intake intake, Shooter shooter) {
+    public IntakeNote(Intake intake, Shooter shooter, Elevator elevator) {
         this.shooter = shooter;
         this.intake = intake;
-        addRequirements(shooter, intake);
+        this.elevator = elevator;
+        addRequirements(shooter, intake, elevator);
     }
 
     @Override

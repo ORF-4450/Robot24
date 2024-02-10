@@ -47,4 +47,9 @@ public class ShootSpeaker extends Command {
         boolean timeHasElasped = Util.getElaspedTime(startTime) > 1.7;
         return timeHasElasped;// run for 1.7 sec //  || !shooter.hasNote(); // for 1.7 sec OR the note is gone.
     }
+
+    private double calculateAngle() {
+        // double wheelSpeed = 
+        return 0; //TODO
+    }
 }

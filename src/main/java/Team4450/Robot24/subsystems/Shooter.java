@@ -1,8 +1,8 @@
 package Team4450.Robot24.subsystems;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.Robot;
 
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_TOP;
 import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
@@ -18,9 +18,12 @@ import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-// import com.revrobotics.SparkRelativeEncoder;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
+
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -35,6 +38,8 @@ public class Shooter extends SubsystemBase {
     private final DigitalInput shooterNoteSensor = new DigitalInput(NOTE_SENSOR_SHOOTER);
 
     private RelativeEncoder pivotEncoder;
+    private RelativeEncoder topMotorEncoder;
+    private RelativeEncoder bottomMotorEncoder;
 
     private double shooterSpeed = SHOOTER_SPEED;
     private double feedSpeed = SHOOTER_FEED_SPEED;
@@ -52,6 +57,8 @@ public class Shooter extends SubsystemBase {
         motorFeeder.setInverted(true);
 
         pivotEncoder = motorPivot.getEncoder();
+        topMotorEncoder = motorTop.getEncoder();
+        bottomMotorEncoder = motorBottom.getEncoder();
 
         pivotPID = motorPivot.getPIDController();
 
@@ -102,6 +109,19 @@ public class Shooter extends SubsystemBase {
      */
     public double getAngle() {
         return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR;
+    }
+
+    /**
+     * Get the average wheel speed of top and bottom
+     * shooter rollers
+     * @return the average wheel speed in meters per second
+     */
+    public double getWheelSpeed() {
+        double wheelRadius = 1.5 * 0.0254; // in -> m
+        double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
+        double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
+        double averageWheelSpeed = 0.5 * (topWheelSpeed + bottomWheelSpeed);
+        return averageWheelSpeed;
     }
 
     public boolean isAtAngle(double angle) {

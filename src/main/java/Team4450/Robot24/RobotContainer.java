@@ -391,11 +391,11 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBButton())
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 		new Trigger(() -> utilityController.getLeftBumper())
-			.onTrue(new IntakeNote(intake, shooter));
+			.onTrue(new IntakeNote(intake, shooter, elevator));
 
 		// shoot then intake
 		new Trigger(() -> utilityController.getYButton())
-			.onTrue(new IntakeNote(intake, shooter).andThen(new ShootSpeaker(shooter, elevator)));
+			.onTrue(new IntakeNote(intake, shooter, elevator).andThen(new ShootSpeaker(shooter, elevator)));
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
@@ -460,7 +460,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
-		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter));
+		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
 		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator));
 
 		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera));
