@@ -40,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PhotonVision extends SubsystemBase
 {
     private PhotonCamera            camera;
-    private VisionSystemSim         visionSim;
     private PhotonPipelineResult    latestResult;
 
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
@@ -75,7 +74,6 @@ public class PhotonVision extends SubsystemBase
 	{
         camera = new PhotonCamera(cameraName);
         this.robotToCam = robotToCam;
-        selectPipeline(pipelineType);
         fieldLayout = fields.loadAprilTagLayoutField();
 
         // adds a simulated camera to the vision sim: "real" camera will
@@ -84,6 +82,8 @@ public class PhotonVision extends SubsystemBase
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera);
         cameraSim.enableDrawWireframe(true);
         visionSim.addCamera(cameraSim, robotToCam);
+
+        selectPipeline(pipelineType);
 
         setUpSimTargets();
 
