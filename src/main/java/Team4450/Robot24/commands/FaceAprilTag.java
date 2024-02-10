@@ -9,7 +9,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -35,7 +34,6 @@ public class FaceAprilTag extends Command {
         this.photonVision = cameraSubsystem;
 
         SendableRegistry.addLW(pidController, "AprilTag Rotate PID");
-        //SmartDashboard.putData("AprilTag Rotate PID", pidController);
     }
 
     @Override
