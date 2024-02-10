@@ -83,6 +83,8 @@ public final class Constants
 	//public static final int		COMPRESSOR = 0;
 
 	// Digital Input port assignments. Encoder takes 2 ports.
+    public static final int     NOTE_SENSOR_INTAKE = 0;
+    public static final int     NOTE_SENSOR_SHOOTER = 1;
 	  
 	// Analog Input port assignments.
 	
