@@ -52,6 +52,7 @@ public class Shooter extends SubsystemBase {
         motorFeeder.setInverted(true);
 
         pivotEncoder = motorPivot.getEncoder();
+
         pivotPID = motorPivot.getPIDController();
 
         pivotPID.setP(0.1);
@@ -89,11 +90,18 @@ public class Shooter extends SubsystemBase {
 
     /**
      * Sets the shooter assembly to a given angle
-     * @param angle the angle with 0deg straight down
+     * @param angle the angle in degrees
      */
-    public void pointPivot(double angle) {
-        // math...
-        pivotPID.setReference(angleToEncoderCounts(angle), ControlType.kPosition);
+    public void setAngle(double angle) {
+        pivotPID.setReference(angle / SHOOTER_PIVOT_FACTOR, ControlType.kPosition);
+    }
+
+    /**
+     * Get the angle of the shooter assembly
+     * @return the angle in degrees
+     */
+    public double getAngle() {
+        return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR;
     }
 
     public boolean isAtAngle(double angle) {
