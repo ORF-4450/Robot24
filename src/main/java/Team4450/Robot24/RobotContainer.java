@@ -21,6 +21,7 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
+import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
@@ -164,9 +165,9 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK);
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT);
+		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.APRILTAG_TRACKING, CAMERA_POSE_TRANSFORM);
+		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING);
+		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING);
 		intake = new Intake();
 
 		// Create any persistent commands.
@@ -174,9 +175,10 @@ public class RobotContainer
 		// Set any subsystem Default commands.
 
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
-	    // with AprilTags (if it sees them).
-
+	    // with AprilTags (if it sees them). (As well as vision simulator)
     	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
+		pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
+		pvBackCamera.setDefaultCommand(new UpdateVisionPose(pvBackCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -319,7 +321,7 @@ public class RobotContainer
 
 		// toggle Note tracking.
 	    new Trigger(() -> driverController.getBButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvPoseCamera));
+    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera));
 
 		// Advance DS tab display.
 		//new Trigger(() -> driverPad.getPOVAngle(90))
