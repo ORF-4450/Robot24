@@ -171,8 +171,8 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
-     * returns pitch value of the best target in latest camera results
-     * @return best target pitch value
+     * Returns pitch value of the best target in latest camera results.
+     * @return Best target pitch value.
      */
     public double getPitch()
     {
