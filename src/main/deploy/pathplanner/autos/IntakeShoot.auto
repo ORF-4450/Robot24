@@ -18,9 +18,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Drive Out"
+            "name": "DriveToNote"
           }
         },
         {

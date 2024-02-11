@@ -15,15 +15,17 @@ public class DriveToNote extends Command {
     PIDController translationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
     DriveBase robotDrive;
     PhotonVision photonVision;
+    private boolean alsoDrive;
 
     /**
      * Track to a note using getArea() and getYaw()
      * @param robotDrive the robot drive base
      * @param photonVision the photonvision subsystem
      */
-    public DriveToNote(DriveBase robotDrive, PhotonVision photonVision) {
+    public DriveToNote(DriveBase robotDrive, PhotonVision photonVision, boolean alsoDrive) {
         this.robotDrive = robotDrive;
         this.photonVision = photonVision;
+        this.alsoDrive = alsoDrive;
 
         SendableRegistry.addLW(translationController, "DriveToNote Translation PID");
         SendableRegistry.addLW(rotationController, "DriveToNote Rotation PID");
@@ -57,7 +59,7 @@ public class DriveToNote extends Command {
             robotDrive.driveRobotRelative(0, 0, rotation);
         }
         // otherwise drive to the target (only forwards backwards)
-        else if (!translationController.atSetpoint()) {
+        else if (!translationController.atSetpoint() && alsoDrive) {
             robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
         }
     }

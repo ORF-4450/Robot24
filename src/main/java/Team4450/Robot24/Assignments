@@ -79,7 +79,7 @@ Driver GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
 LEFT_TRIGGER            Slow mode (Hold down).
-RIGHT_TRIGGER           
+RIGHT_TRIGGER           face note/apriltag
 BACK                    Toggle field/robot orientation driving.
 START                   Reset Navx to reorient field direction.
 LEFT_BUMPER             Park Mode (hold down).

@@ -19,6 +19,7 @@ import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -61,6 +62,7 @@ public class RobotContainer
 	private final Intake       	intake;
 	private final Shooter       shooter;
 	private final Elevator      elevator;
+	private final Candle        candle;
 	
 	// Subsystem Default Commands.
 
@@ -179,6 +181,7 @@ public class RobotContainer
 		intake = new Intake();
 		shooter = new Shooter();
 		elevator = new Elevator();
+		candle = new Candle();
 
 		// Create any persistent commands.
 
@@ -343,10 +346,17 @@ public class RobotContainer
 		// toggle slow-mode
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
+		
+		// toggle face note/apriltag
+		new Trigger(() -> driverController.getRightTrigger() && !shooter.hasNote())
+    	    .whileTrue(new DriveToNote(driveBase, pvFrontCamera, false));
+		new Trigger(() -> driverController.getRightTrigger() && shooter.hasNote())
+    	    .whileTrue(new FaceAprilTag(driveBase, pvBackCamera));
+		
 
 		// toggle Note tracking.
 	    new Trigger(() -> driverController.getBButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera));
+    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
 
 		// Advance DS tab display.
 		//new Trigger(() -> driverPad.getPOVAngle(90))
@@ -467,7 +477,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
 		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator));
 
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera));
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
 		
 
