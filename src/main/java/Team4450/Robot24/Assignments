@@ -87,10 +87,10 @@ RIGHT_BUMPER       		Alternate Drive Mode (hold down).
 POV_?                   Auto rotate to the POV direction.
 ?                       Reset simulated yaw.
 ?                       Reset simulated distance traveled.
-?                       Switch Shuffleboard tab.
+Y                       Switch Shuffleboard tab.
 ?                       Switch Camera.
 B                       Toggle Drive To Note command
-X                       
+X                       Toggle brake mode
 A                       Toggle April Tag Tracking mode.
 
 

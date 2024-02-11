@@ -359,8 +359,8 @@ public class RobotContainer
     	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
 
 		// Advance DS tab display.
-		//new Trigger(() -> driverPad.getPOVAngle(90))
-		//	.onTrue(new InstantCommand(shuffleBoard::switchTab));
+		new Trigger(() -> driverController.getYButton())
+			.onTrue(new InstantCommand(shuffleBoard::switchTab));
         
 		// Change camera feed. 
 		//new Trigger(() -> driverPad.getRightBumper())
@@ -371,8 +371,8 @@ public class RobotContainer
     	//	.onTrue(new InstantCommand(driveBase::resetYaw));
 
 		// Toggle drive motors between brake and coast.
-		//new Trigger(() -> driverController.getBButton())
-    	//	.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
+		new Trigger(() -> driverController.getXButton())
+    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
 		// Reset drive wheel distance traveled.
 		//new Trigger(() -> driverPad.getPOVAngle(270))
