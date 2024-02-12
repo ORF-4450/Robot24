@@ -68,11 +68,11 @@ public final class Constants
         new Translation3d(0, 0, 0),
         new Rotation3d(0, 0, 0)
     );
-    public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_BACK_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1),
         new Rotation3d(0, Math.toRadians(-15), 0)
     );
-    public static Transform3d   CAMERA_BACK_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1.5),
         new Rotation3d(0, Math.toRadians(45), 0)
     );
