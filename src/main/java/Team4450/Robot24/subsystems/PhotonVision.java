@@ -91,7 +91,7 @@ public class PhotonVision extends SubsystemBase
 
         selectPipeline(pipelineType);
 
-        setUpSimTargets();
+        if (RobotBase.isSimulation()) setUpSimTargets();    // Must follow pipeline selection.
 
         // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
