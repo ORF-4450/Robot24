@@ -41,10 +41,15 @@ public class UpdateVisionPose extends Command {
         // require camera subsystem.
         addRequirements(cameraSubsystem);
     }
-
+    
     @Override
     public void initialize() {
         Util.consoleLog();
+    }
+
+    @Override
+    public boolean runsWhenDisabled() {
+        return true; // because we always want this running
     }
 
     @Override

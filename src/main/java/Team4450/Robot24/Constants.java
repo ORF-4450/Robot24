@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "RAC24c-02.10.24-1";
+	public static String		PROGRAM_NAME = "RAC24c-02.11.24-1";
 
 	public static Robot			robot;
 
@@ -77,7 +77,7 @@ public final class Constants
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
-    public static final double  DRIVE_DEADBAND = 0.05, ROTATION_DEADBAND = .05;
+    public static final double  DRIVE_DEADBAND = 0.1, ROTATION_DEADBAND = .1;
 
 	// Pneumatic valve controller port assignments.
 	//public static final int		COMPRESSOR = 0;

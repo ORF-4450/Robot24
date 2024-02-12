@@ -19,6 +19,7 @@ import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -35,6 +36,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -59,6 +62,7 @@ public class RobotContainer
 	private final Intake       	intake;
 	private final Shooter       shooter;
 	private final Elevator      elevator;
+	private final Candle        candle;
 	
 	// Subsystem Default Commands.
 
@@ -172,11 +176,12 @@ public class RobotContainer
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
 		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.APRILTAG_TRACKING, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING);
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING);
+		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, new Transform3d(0,0,1, new Rotation3d(0, Math.toRadians(-10), 0)));
+		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, new Transform3d(0,0,1.5, new Rotation3d(0, Math.toRadians(45), 0)));
 		intake = new Intake();
 		shooter = new Shooter();
 		elevator = new Elevator();
+		candle = new Candle();
 
 		// Create any persistent commands.
 
@@ -341,14 +346,21 @@ public class RobotContainer
 		// toggle slow-mode
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
+		
+		// toggle face note/apriltag
+		new Trigger(() -> driverController.getRightTrigger() && !shooter.hasNote())
+    	    .whileTrue(new DriveToNote(driveBase, pvFrontCamera, false));
+		new Trigger(() -> driverController.getRightTrigger() && shooter.hasNote())
+    	    .whileTrue(new FaceAprilTag(driveBase, pvBackCamera));
+		
 
 		// toggle Note tracking.
 	    new Trigger(() -> driverController.getBButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera));
+    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
 
 		// Advance DS tab display.
-		//new Trigger(() -> driverPad.getPOVAngle(90))
-		//	.onTrue(new InstantCommand(shuffleBoard::switchTab));
+		new Trigger(() -> driverController.getYButton())
+			.onTrue(new InstantCommand(shuffleBoard::switchTab));
         
 		// Change camera feed. 
 		//new Trigger(() -> driverPad.getRightBumper())
@@ -359,8 +371,8 @@ public class RobotContainer
     	//	.onTrue(new InstantCommand(driveBase::resetYaw));
 
 		// Toggle drive motors between brake and coast.
-		//new Trigger(() -> driverController.getBButton())
-    	//	.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
+		new Trigger(() -> driverController.getXButton())
+    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
 		// Reset drive wheel distance traveled.
 		//new Trigger(() -> driverPad.getPOVAngle(270))
@@ -465,7 +477,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
 		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator));
 
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera));
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
 		
 

@@ -54,10 +54,16 @@ public class FaceAprilTag extends Command {
         // first prioritize the center speaker tag if it is in view
         if (tags.contains(tagNames.SPEAKER_MAIN)) target = photonVision.getTarget(tagNames.SPEAKER_MAIN);
 
-        // next try finding the amp tag
+        // next try finding the amp tag, then L source, etc...
         else if (tags.contains(tagNames.AMP))target = photonVision.getTarget(tagNames.AMP);
+        else if (tags.contains(tagNames.SOURCE_LEFT)) target = photonVision.getTarget(tagNames.SOURCE_LEFT);
+        else if (tags.contains(tagNames.SOURCE_RIGHT)) target = photonVision.getTarget(tagNames.SOURCE_RIGHT);
+        else if (tags.contains(tagNames.SPEAKER_OFFSET)) target = photonVision.getTarget(tagNames.SPEAKER_OFFSET);
+        else if (tags.contains(tagNames.TRAP_BACK)) target = photonVision.getTarget(tagNames.TRAP_BACK);
+        else if (tags.contains(tagNames.TRAP_LEFT)) target = photonVision.getTarget(tagNames.TRAP_LEFT);
+        else if (tags.contains(tagNames.TRAP_RIGHT)) target = photonVision.getTarget(tagNames.TRAP_RIGHT);
 
-        // finally, default to the first tag that isn't the center speaker or amp
+        // finally, default to the first tag that is another alliance
         // could be offset speaker, trap source, etc, other alliance, etc.
         else if (tags.size() > 0) target = photonVision.getTarget(tags.get(0));
 

@@ -53,8 +53,9 @@ Port	Device blk-pos	Description
 Digital I/O Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       QMRN Beam Break note sensor for intake
-1       QMRN Beam Break note sensor for shooter
+0       QMRN Beam Break note sensor for intake.
+1       QMRN Beam Break note sensor for shooter.
+
 
 Analog I/O Ports
 Port	Device			Description
@@ -78,7 +79,7 @@ Driver GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
 LEFT_TRIGGER            Slow mode (Hold down).
-RIGHT_TRIGGER           
+RIGHT_TRIGGER           face note/apriltag
 BACK                    Toggle field/robot orientation driving.
 START                   Reset Navx to reorient field direction.
 LEFT_BUMPER             Park Mode (hold down).
@@ -86,10 +87,10 @@ RIGHT_BUMPER       		Alternate Drive Mode (hold down).
 POV_?                   Auto rotate to the POV direction.
 ?                       Reset simulated yaw.
 ?                       Reset simulated distance traveled.
-?                       Switch Shuffleboard tab.
+Y                       Switch Shuffleboard tab.
 ?                       Switch Camera.
 B                       Toggle Drive To Note command
-X                       
+X                       Toggle brake mode
 A                       Toggle April Tag Tracking mode.
 
 
