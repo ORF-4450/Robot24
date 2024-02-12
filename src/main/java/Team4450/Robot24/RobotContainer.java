@@ -168,8 +168,8 @@ public class RobotContainer
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
 		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.APRILTAG_TRACKING, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, new Transform3d(0,0,1, new Rotation3d(0, Math.toRadians(-10), 0)));
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, new Transform3d(0,0,1.5, new Rotation3d(0, Math.toRadians(45), 0)));
+		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
+		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
 		intake = new Intake();
 
 		// Create any persistent commands.
