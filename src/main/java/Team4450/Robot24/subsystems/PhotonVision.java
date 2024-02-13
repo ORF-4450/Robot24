@@ -18,7 +18,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;
-
+import Team4450.Robot24.Robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,6 +27,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -79,16 +80,18 @@ public class PhotonVision extends SubsystemBase
 
         // adds a simulated camera to the vision sim: "real" camera will
         // act just like normal on real robot and in sim!
-        visionSim = new VisionSystemSim(cameraName);
-        SimCameraProperties cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
-        PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
-        cameraSim.enableDrawWireframe(true);
-        visionSim.addCamera(cameraSim, robotToCam);
+        if (RobotBase.isSimulation()) {
+            visionSim = new VisionSystemSim(cameraName);
+            SimCameraProperties cameraProp = new SimCameraProperties();
+            cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
+            PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
+            cameraSim.enableDrawWireframe(true);
+            visionSim.addCamera(cameraSim, robotToCam);
+        }
 
         selectPipeline(pipelineType);
 
-        setUpSimTargets();
+        if (RobotBase.isSimulation()) setUpSimTargets();    // Must follow pipeline selection.
 
         // setup the AprilTag pose etimator.
         poseEstimator = new PhotonPoseEstimator(
@@ -288,8 +291,6 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
-     * Returns pitch value of the best target in latest camera results.
-     * @return Best target pitch value.
      * Returns the pitch angle of the best target in the latest camera results
      * list. Must call hasTargets() before calling this function.
      * @return Best target pitch value from straight ahead or zero. -pitch means
@@ -349,7 +350,8 @@ public class PhotonVision extends SubsystemBase
      */
     public void selectPipeline(PipelineType type) {
         this.pipelineType = type;
-        setUpSimTargets();
+        if (RobotBase.isSimulation())
+            setUpSimTargets();
         selectPipeline(type.ordinal());
     }
 
@@ -407,6 +409,7 @@ public class PhotonVision extends SubsystemBase
 
         builder.addBooleanProperty("has Targets", () -> hasTargets(), null);
         builder.addDoubleProperty("target yaw", () -> getYaw(), null);
+        builder.addDoubleProperty("target pitch", () -> getPitch(), null);
         builder.addDoubleProperty("target area", () -> getArea(), null);
 	}
     

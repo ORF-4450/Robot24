@@ -36,8 +36,8 @@ public class PointToYaw extends Command {
 
         SendableRegistry.addLW(pidController, "PointToYaw PID");
 
-        // if wait is set to true, then "require" the drive subsystem to ovverride other commands
-        if (wait) addRequirements(robotDrive);
+        // // if wait is set to true, then "require" the drive subsystem to ovverride other commands
+        // if (wait) addRequirements(robotDrive);
     }
 
     @Override

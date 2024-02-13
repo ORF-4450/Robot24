@@ -85,13 +85,15 @@ START                   Reset Navx to reorient field direction.
 LEFT_BUMPER             Park Mode (hold down).
 RIGHT_BUMPER       		Alternate Drive Mode (hold down).
 POV_?                   Auto rotate to the POV direction.
-?                       Reset simulated yaw.
-?                       Reset simulated distance traveled.
 Y                       Switch Shuffleboard tab.
-?                       Switch Camera.
 B                       Toggle Drive To Note command
 X                       Toggle brake mode
 A                       Toggle April Tag Tracking mode.
+
+?                       Reset simulated yaw.
+?                       Reset simulated distance traveled.
+?                       Switch Camera.
+
 
 
 Utility GamePad - Left Joystick
