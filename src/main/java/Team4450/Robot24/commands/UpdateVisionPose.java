@@ -58,6 +58,7 @@ public class UpdateVisionPose extends Command {
             return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
+
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
         // update pose estimator pose with current epoch timestamp and the pose from the camera
@@ -66,7 +67,8 @@ public class UpdateVisionPose extends Command {
 
         if (estimatedPoseOptional.isPresent()) {
             EstimatedRobotPose estimatedPoseContainer = estimatedPoseOptional.get();
-             // convert a pose3d to pose2d (we ignore the Z axis which is just height off ground)
+            
+            // convert a pose3d to pose2d (we ignore the Z axis which is just height off ground)
             Pose2d pose2d = new Pose2d(
                 estimatedPoseContainer.estimatedPose.getX(),
                 estimatedPoseContainer.estimatedPose.getY(),

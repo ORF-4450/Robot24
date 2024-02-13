@@ -18,13 +18,11 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;
-import Team4450.Robot24.Robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -156,7 +154,6 @@ public class PhotonVision extends SubsystemBase
         visionSim.addVisionTargets("note"+Integer.toString(id), target);
     }
 
-
     @Override
     public void simulationPeriodic() {
         if (pipelineType == PipelineType.OBJECT_TRACKING) {
@@ -230,6 +227,7 @@ public class PhotonVision extends SubsystemBase
      */
     public PhotonTrackedTarget getClosestTarget() {
         PhotonTrackedTarget closest;
+
         if (hasTargets()) {
             List<PhotonTrackedTarget> targets = latestResult.getTargets();
             closest = targets.get(0);
@@ -238,6 +236,7 @@ public class PhotonVision extends SubsystemBase
                 if (Math.abs(targets.get(i).getYaw()) < Math.abs(closest.getYaw()))
                     closest = targets.get(i);
             }
+
             return closest;
         }
         else
@@ -349,9 +348,8 @@ public class PhotonVision extends SubsystemBase
      * @param type The type of pipeline.
      */
     public void selectPipeline(PipelineType type) {
-        this.pipelineType = type;
-        if (RobotBase.isSimulation())
-            setUpSimTargets();
+        pipelineType = type;
+        if (RobotBase.isSimulation()) setUpSimTargets();
         selectPipeline(type.ordinal());
     }
 
