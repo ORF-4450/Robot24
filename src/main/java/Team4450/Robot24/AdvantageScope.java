@@ -92,7 +92,7 @@ public class AdvantageScope {
             double xdist = Math.abs(note.getX() - robotPose.getX());
             double ydist = Math.abs(note.getY() - robotPose.getY());
             double dist = Math.sqrt(Math.pow(xdist, 2) + Math.pow(ydist, 2));
-            if (dist < 0.3) {
+            if (dist < 0.5) {
                 pickupNote(i);
                 return true;
             }
