@@ -38,13 +38,14 @@ public class IntakeNote extends Command {
             case INTAKING:
                 // once the intake has the note, slow it down
                 if (intake.hasNote()) {
+                    shooter.note = true;
                     state = State.FEEDING;
                     intake.start(0.9); // slow it down a little
                 }
                 feedTime = Util.timeStamp();
                 break;
             case FEEDING:// feed for 3 sec
-                if (Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
+                if (intake.hasNote()){//Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
                     intake.stop();
                     shooter.stopFeeding();
                     state = State.IN_SHOOTER;

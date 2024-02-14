@@ -163,7 +163,8 @@ public final class Constants
 
         // Default starting field position in meters for pose tracking. 2024 field. 
         // TODO: This likely will need futher definition as to how we will manage starting points.
-        public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(.697, 7.153, Rotation2d.fromDegrees(0));
+        // public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(.697, 7.153, Rotation2d.fromDegrees(0));
+        public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     }
 
     public static final class ModuleConstants {

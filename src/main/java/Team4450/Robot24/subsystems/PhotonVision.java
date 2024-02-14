@@ -18,6 +18,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -165,8 +166,14 @@ public class PhotonVision extends SubsystemBase
             for (int noteID = 0; noteID < 11; noteID++) {
                 String name = "note" + Integer.toString(noteID);
                 Pose2d fieldPose = visionSim.getDebugField().getObject(name).getPose();
-                if (fieldPose.getX() == 0 && fieldPose.getY() == 0) continue;
-                visionSim.getVisionTargets(name).forEach((target)->target.setPose(new Pose3d(fieldPose)));
+                if (AdvantageScope.getInstance().isReserved(noteID)) {
+                    // visionSim.removeVisionTargets(name);
+                } else {
+                    if (fieldPose.getX() == 0 && fieldPose.getY() == 0) continue;
+                    Pose3d pose3d = new Pose3d(fieldPose);
+                    visionSim.getVisionTargets(name).forEach((target)->target.setPose(pose3d));
+                    AdvantageScope.getInstance().setNote(noteID, pose3d);
+                }
             }
         }
     }
