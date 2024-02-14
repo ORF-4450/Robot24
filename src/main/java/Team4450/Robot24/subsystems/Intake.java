@@ -9,7 +9,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.AdvantageScope;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,12 +24,15 @@ public class Intake extends SubsystemBase {
     private boolean isrunning = false;
 
     public Intake() {
-        motor2.follow(motor1);        
+        motor2.follow(motor1);
         Util.consoleLog("Intake created!");
     }
 
     public boolean hasNote() {
-        return intakeNoteSensor.get();
+        if (RobotBase.isReal())
+            return intakeNoteSensor.get();
+        else
+            return AdvantageScope.getInstance().attemptPickup();
     }
 
     /**

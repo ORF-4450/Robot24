@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.AdvantageScope;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
@@ -60,6 +61,8 @@ public class Elevator extends SubsystemBase {
         if (lowerLimitSwitch.isPressed())
             mainEncoder.setPosition(0);
         elevatorLigament.setLength(mainEncoder.getPosition());
+        AdvantageScope.getInstance().setElevatorHeight(0.01*mainEncoder.getPosition());
+        AdvantageScope.getInstance().setCarriageHeight(0.01*innerEncoder.getPosition());
     }
 
     // @Override
@@ -73,8 +76,14 @@ public class Elevator extends SubsystemBase {
      */
     public void move(double speed) {
         motorMain.set(speed);
-        // mainEncoder.setPosition(mainEncoder.getPosition() + speed);
+        if (0.01*(mainEncoder.getPosition()+speed) > 0 && 0.01*(mainEncoder.getPosition()+speed) < 0.5)
+            mainEncoder.setPosition(mainEncoder.getPosition() + speed);
         // Util.consoleLog("%f", mainEncoder.getPosition());
+    }
+
+    public void moveInner(double speed) {
+        if (0.01*(innerEncoder.getPosition()+speed) > 0 && 0.01*(innerEncoder.getPosition()+speed) < 0.5)
+            innerEncoder.setPosition(innerEncoder.getPosition() + speed);
     }
 
     /**

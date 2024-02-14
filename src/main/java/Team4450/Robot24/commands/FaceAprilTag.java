@@ -49,27 +49,42 @@ public class FaceAprilTag extends Command {
     public void execute() {
         // get an arralist of all the tags IDs that the camera currently sees
         ArrayList<Integer> tags = photonVision.getTrackedIDs();
-        PhotonTrackedTarget target;
+        PhotonTrackedTarget target = null;
 
-        // first prioritize the center speaker tag if it is in view
-        if (tags.contains(tagNames.SPEAKER_MAIN)) target = photonVision.getTarget(tagNames.SPEAKER_MAIN);
+        // prioritize tags in this order:
 
-        // next try finding the amp tag, then L source, etc...
-        else if (tags.contains(tagNames.AMP))target = photonVision.getTarget(tagNames.AMP);
-        else if (tags.contains(tagNames.SOURCE_LEFT)) target = photonVision.getTarget(tagNames.SOURCE_LEFT);
-        else if (tags.contains(tagNames.SOURCE_RIGHT)) target = photonVision.getTarget(tagNames.SOURCE_RIGHT);
-        else if (tags.contains(tagNames.SPEAKER_OFFSET)) target = photonVision.getTarget(tagNames.SPEAKER_OFFSET);
-        else if (tags.contains(tagNames.TRAP_BACK)) target = photonVision.getTarget(tagNames.TRAP_BACK);
-        else if (tags.contains(tagNames.TRAP_LEFT)) target = photonVision.getTarget(tagNames.TRAP_LEFT);
-        else if (tags.contains(tagNames.TRAP_RIGHT)) target = photonVision.getTarget(tagNames.TRAP_RIGHT);
+        int[] tagPriorities = {
+            tagNames.SPEAKER_MAIN,
+            tagNames.AMP,
+            tagNames.SOURCE_LEFT,
+            tagNames.SOURCE_RIGHT,
+            tagNames.SPEAKER_OFFSET,
+            tagNames.TRAP_BACK,
+            tagNames.TRAP_LEFT,
+            tagNames.TRAP_RIGHT,
 
-        // finally, default to the first tag that is another alliance
-        // could be offset speaker, trap source, etc, other alliance, etc.
-        else if (tags.size() > 0) target = photonVision.getTarget(tags.get(0));
+            tagNames.OPP_SPEAKER_MAIN,
+            tagNames.OPP_AMP,
+            tagNames.OPP_SOURCE_LEFT,
+            tagNames.OPP_SOURCE_RIGHT,
+            tagNames.OPP_SPEAKER_OFFSET,
+            tagNames.OPP_TRAP_BACK,
+            tagNames.OPP_TRAP_LEFT,
+            tagNames.OPP_TRAP_RIGHT,
+        };
 
-        // otherwise tell drivebase to set NaN as rotation to let driver override commanded
+        // loop through priorities and choose first one that it can see
+        for (int i=0;i<tagPriorities.length;i++) {
+            int tagToCheck = tagPriorities[i];
+            if (tags.contains(tagToCheck)) { // if tag at priority i is in view
+                target = photonVision.getTarget(tagToCheck); // set that as the target
+                break; // and skip the rest
+            }
+        }
+
+        // if no tags tell drivebase to set NaN as rotation to let driver override commanded
         // rotation to reorient the robot manually
-        else {
+        if (target == null) {
             robotDrive.setTrackingRotation(Double.NaN);
             SmartDashboard.putBoolean("Has AprilTag", false);
             return;

@@ -2,6 +2,7 @@ package Team4450.Robot24.subsystems;
 
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
 
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_TOP;
@@ -45,6 +46,8 @@ public class Shooter extends SubsystemBase {
     private double feedSpeed = SHOOTER_FEED_SPEED;
 
     private SparkPIDController pivotPID;
+    private double angle = 0;
+    public boolean note = false; //TODO only temp for no sensor
 
     // NOTE: I removed the shuffleboard speed setting because they were too
     // much of a hassle to handle with all of the different speed states the shooter could be in
@@ -71,7 +74,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean hasNote() {
-        return shooterNoteSensor.get();
+        return note;
+        // return shooterNoteSensor.get();
     }
 
     /**
@@ -101,6 +105,7 @@ public class Shooter extends SubsystemBase {
      */
     public void setAngle(double angle) {
         pivotPID.setReference(angle / SHOOTER_PIVOT_FACTOR, ControlType.kPosition);
+        pivotEncoder.setPosition(angle / SHOOTER_PIVOT_FACTOR);
     }
 
     /**
@@ -143,5 +148,11 @@ public class Shooter extends SubsystemBase {
      */
     public void movePivotRelative(double speed) {
         motorPivot.set(speed);
+        setAngle(getAngle() + speed);
+    }
+
+    @Override
+    public void periodic() {
+        AdvantageScope.getInstance().setShooterAngle(getAngle());
     }
 }

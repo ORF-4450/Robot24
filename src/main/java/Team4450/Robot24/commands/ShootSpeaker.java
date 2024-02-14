@@ -1,6 +1,7 @@
 package Team4450.Robot24.commands;
 
 import Team4450.Lib.Util;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,6 +41,8 @@ public class ShootSpeaker extends Command {
         Util.consoleLog("interrupted=%b", interrupted);
         shooter.stopFeeding();
         shooter.stopShooting();
+        AdvantageScope.getInstance().dropAllNotes();
+        shooter.note = false;
     }
 
     @Override

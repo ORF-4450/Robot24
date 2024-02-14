@@ -6,7 +6,6 @@ package Team4450.Robot24.subsystems;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -17,6 +16,7 @@ import Team4450.Robot24.Constants.AutoConstants;
 import Team4450.Robot24.Constants.DriveConstants;
 import Team4450.Robot24.Constants.ModuleConstants;
 import Team4450.Robot24.utility.SwerveUtils;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Constants;
 import Team4450.Robot24.RobotContainer;
 import Team4450.Lib.Util;
@@ -28,7 +28,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -188,6 +190,9 @@ public class DriveBase extends SubsystemBase {
             rearLeft.getPosition(),
             rearRight.getPosition()
         });
+
+    AdvantageScope.getInstance().setRobotPose(currentPose);
+    AdvantageScope.getInstance().update();
 
     SmartDashboard.putNumber("Gyro angle", getGyroYaw());
     //SmartDashboard.putNumber("Gyro turn rate", getTurnRate());
