@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "ORF24-02.12.24-1";
+	public static String		PROGRAM_NAME = "ORF24-02.20.24-1";
 
 	public static Robot			robot;
 
@@ -83,7 +83,7 @@ public final class Constants
     public static String        CAMERA_FRONT = "4450-LL";
     public static String        CAMERA_BACK = "back";
 
-    public static final int     REV_PDB = 0;
+    public static final int     REV_PDB = 20;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;

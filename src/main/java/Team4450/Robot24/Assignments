@@ -36,8 +36,8 @@ Port	Device			Description
 PDP Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       REV PDH         REV power distribution Hub.
-0       CTRE PDB        CTRE distribution board.
+20      REV PDH         REV power distribution Hub.
+20      CTRE PDB        CTRE distribution board.
 
 
 PCM 0 Ports
