@@ -453,7 +453,7 @@ public class RobotContainer
 		{
 			ppAutoCommand = (PathPlannerAuto) autoCommand;
 	
-			Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
+			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
 		}
 
 		return autoCommand;

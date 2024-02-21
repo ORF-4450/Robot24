@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.418950497871234,
-      "y": 5.553308403863832
+      "x": 1.36,
+      "y": 5.548837527176542
     },
     "rotation": 0
   },
@@ -14,25 +14,37 @@
         {
           "type": "named",
           "data": {
+            "name": "AutoStart"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "StartIntake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "crazy"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 10.0
+            "waitTime": 5.0
           }
         },
         {
           "type": "named",
           "data": {
             "name": "StopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoEnd"
           }
         }
       ]
