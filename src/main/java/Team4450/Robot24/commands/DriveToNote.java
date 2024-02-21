@@ -11,8 +11,8 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
 public class DriveToNote extends Command {
-    PIDController rotationController = new PIDController(0.05, 0.5, 0); // for rotating drivebase
-    PIDController translationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
+    PIDController rotationController = new PIDController(0.01, 0.005, 0); // for rotating drivebase
+    PIDController translationController = new PIDController(0.8, 0, 0); // for moving drivebase in X,Y plane
     DriveBase robotDrive;
     PhotonVision photonVision;
     private boolean alsoDrive;
@@ -36,9 +36,9 @@ public class DriveToNote extends Command {
         Util.consoleLog();
 
         rotationController.setSetpoint(0); // target should be at yaw=0 degrees
-        rotationController.setTolerance(0.5); // withing 0.5 degrees of 0
+        rotationController.setTolerance(1.5); // withing 0.5 degrees of 0
 
-        translationController.setSetpoint(-15); // target should be at -15 pitch
+        translationController.setSetpoint(0); // target should be at -15 pitch
         translationController.setTolerance(0.5);
     }
 
@@ -54,14 +54,14 @@ public class DriveToNote extends Command {
         double rotation = rotationController.calculate(target.getYaw());
         double movement = translationController.calculate(target.getPitch());
 
-        // make sure target centered before we move
-        if (!rotationController.atSetpoint()) {
-            robotDrive.driveRobotRelative(0, 0, rotation);
-        }
-        // otherwise drive to the target (only forwards backwards)
-        else if (!translationController.atSetpoint() && alsoDrive) {
-            robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
-        }
+        // // make sure target centered before we move
+        // if (!rotationController.atSetpoint()) {
+            robotDrive.driveRobotRelative(-movement, 0, rotation);
+        // }
+        // // otherwise drive to the target (only forwards backwards)
+        // if (!translationController.atSetpoint() && alsoDrive) {
+        //     robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
+        // }
     }
     
 

@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
@@ -39,7 +40,13 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         Util.consoleLog();
 
-        motorFollower.follow(motorMain);
+        motorFollower.follow(motorMain, true);
+        motorFollower.setInverted(true);
+
+        motorFollower.setIdleMode(IdleMode.kBrake);
+        motorMain.setIdleMode(IdleMode.kBrake);
+        motorInner.setIdleMode(IdleMode.kBrake);
+
         lowerLimitSwitch = motorFollower.getReverseLimitSwitch(Type.kNormallyOpen);
         upperLimitSwitch = motorFollower.getForwardLimitSwitch(Type.kNormallyOpen);
 
@@ -76,13 +83,14 @@ public class Elevator extends SubsystemBase {
      */
     public void move(double speed) {
         motorMain.set(speed);
-        if (0.01*(mainEncoder.getPosition()+speed) > 0 && 0.01*(mainEncoder.getPosition()+speed) < 0.5)
+        if (RobotBase.isSimulation() && 0.01*(mainEncoder.getPosition()+speed) > 0 && 0.01*(mainEncoder.getPosition()+speed) < 0.5)
             mainEncoder.setPosition(mainEncoder.getPosition() + speed);
         // Util.consoleLog("%f", mainEncoder.getPosition());
     }
 
     public void moveInner(double speed) {
-        if (0.01*(innerEncoder.getPosition()+speed) > 0 && 0.01*(innerEncoder.getPosition()+speed) < 0.5)
+        motorInner.set(speed);
+        if (RobotBase.isSimulation() && 0.01*(innerEncoder.getPosition()+speed) > 0 && 0.01*(innerEncoder.getPosition()+speed) < 0.5)
             innerEncoder.setPosition(innerEncoder.getPosition() + speed);
     }
 

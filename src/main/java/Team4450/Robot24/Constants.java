@@ -26,12 +26,12 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-02.12.24-1";
+	public static String		PROGRAM_NAME = "CW-02.20.24-1";
 
 	public static Robot			robot;
 
 	public static Properties	robotProperties;
-	  
+	
 	public static boolean		isClone = false, isComp = false, tracing = false;
 	    	
 	public static DriverStation.Alliance	 alliance;
@@ -43,7 +43,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 1;
+    public static final double  INTAKE_SPEED = 0.5;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
@@ -80,11 +80,11 @@ public final class Constants
     );
 
     // the names of the cameras in the PhotonVision software
-    public static String        CAMERA_POSE_ESTIMATOR = "";
-    public static String        CAMERA_FRONT = "4450-LL";
-    public static String        CAMERA_BACK = "back";
+    public static String        CAMERA_POSE_ESTIMATOR = "front";
+    public static String        CAMERA_FRONT = "front";
+    public static String        CAMERA_BACK = "front";
 
-    public static final int     REV_PDB = 0;
+    public static final int     REV_PDB = 20;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;

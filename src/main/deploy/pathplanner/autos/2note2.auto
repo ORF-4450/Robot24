@@ -14,31 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoStart"
+            "name": "StartIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New Path"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 10.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "DriveToNote"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeNote"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoEnd"
+            "name": "StopIntake"
           }
         }
       ]

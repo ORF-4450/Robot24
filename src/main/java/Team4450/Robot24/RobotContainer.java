@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -89,8 +90,8 @@ public class RobotContainer
 
 	//private AnalogInput			pressureSensor = new AnalogInput(PRESSURE_SENSOR);
 	  
-	private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kCTRE);
-	//private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
+	// private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kCTRE);
+	private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
 
 	// PneumaticsControlModule class controls the PCM. New for 2022.
 	//private PneumaticsControlModule	pcm = new PneumaticsControlModule(COMPRESSOR);
@@ -115,6 +116,8 @@ public class RobotContainer
 	public RobotContainer() throws Exception
 	{
 		Util.consoleLog();
+
+		SmartDashboard.putData("PDH", pdp);
 
 		// Get information about the match environment from the Field Control System.
       
@@ -173,7 +176,7 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.APRILTAG_TRACKING, CAMERA_POSE_TRANSFORM);
+		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_POSE_TRANSFORM);
 		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
 		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
 		intake = new Intake();
@@ -294,6 +297,7 @@ public class RobotContainer
         // CommandScheduler.getInstance().schedule(loadTrajectory);
 
 		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
+		Util.consoleLog("End robot container @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	}
 
 	/**
@@ -313,7 +317,7 @@ public class RobotContainer
 		// should be an aspect of the subsystem and what functions should be in Commands...
 
 		// Holding Left bumper brakes and sets X pattern to stop movement.
-		new Trigger(() -> driverController.getLeftBumper())
+		new Trigger(() -> driverController.getXButton())
 			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
 
 		// holding top right bumper enables the alternate rotation mode in
@@ -326,8 +330,8 @@ public class RobotContainer
 				), driveBase, false
 			));
 
-		// the "A" button (or cross on PS4 controller) toggles tracking mode.
-		new Trigger(() -> driverController.getAButton())
+		// the "B" button (or cross on PS4 controller) toggles tracking mode.
+		new Trigger(() -> driverController.getBButton())
 			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
 
 		// POV buttons do same as alternate driving mode but without any lateral
@@ -344,7 +348,7 @@ public class RobotContainer
 			.onTrue(new InstantCommand(driveBase::toggleFieldRelative));
 
 		// toggle slow-mode
-		new Trigger(() -> driverController.getLeftTrigger())
+		new Trigger(() -> driverController.getLeftBumper())
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 		
 		// toggle face note/apriltag
@@ -355,11 +359,11 @@ public class RobotContainer
 		
 
 		// toggle Note tracking.
-	    new Trigger(() -> driverController.getBButton())
+	    new Trigger(() -> driverController.getYButton())
     	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
 
 		// Advance DS tab display.
-		new Trigger(() -> driverController.getYButton())
+		new Trigger(() -> driverController.getLeftTrigger())
 			.onTrue(new InstantCommand(shuffleBoard::switchTab));
         
 		// Change camera feed. 
@@ -371,7 +375,7 @@ public class RobotContainer
     	//	.onTrue(new InstantCommand(driveBase::resetYaw));
 
 		// Toggle drive motors between brake and coast.
-		new Trigger(() -> driverController.getXButton())
+		new Trigger(() -> driverController.getAButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
 		// Reset drive wheel distance traveled.
@@ -409,11 +413,11 @@ public class RobotContainer
 
 		// shoot then intake
 		new Trigger(() -> utilityController.getYButton())
-			.onTrue(new IntakeNote(intake, shooter, elevator).andThen(new ShootSpeaker(shooter, elevator)));
+			.onTrue(new IntakeNote(intake, shooter, elevator).andThen(new ShootSpeaker(shooter, elevator, driveBase)));
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(shooter, elevator));
+			.toggleOnTrue(new ShootSpeaker(shooter, elevator, driveBase));
 			
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
@@ -453,6 +457,7 @@ public class RobotContainer
 		}
 
 		return autoCommand;
+		// return new WaitCommand(1);
 
 		//return autoChooser.getSelected();
   	}
@@ -475,10 +480,14 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator, driveBase));
 
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
+		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
+		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
+
+
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP

@@ -58,7 +58,7 @@ public class PhotonVision extends SubsystemBase
     private Transform3d             robotToCam;
     private PipelineType            pipelineType;
 
-    public static enum PipelineType {APRILTAG_TRACKING, OBJECT_TRACKING};
+    public static enum PipelineType {APRILTAG_TRACKING, OBJECT_TRACKING, POSE_ESTIMATION};
 
     /**
      * Create an instance of PhotonVision class for a camera.
@@ -94,13 +94,15 @@ public class PhotonVision extends SubsystemBase
 
         if (RobotBase.isSimulation()) setUpSimTargets();    // Must follow pipeline selection.
 
-        // setup the AprilTag pose etimator.
-        poseEstimator = new PhotonPoseEstimator(
-            fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            camera,
-            robotToCam
-        );
+        if (pipelineType == PipelineType.POSE_ESTIMATION) {
+            // setup the AprilTag pose etimator.
+            poseEstimator = new PhotonPoseEstimator(
+                fieldLayout,
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                camera,
+                robotToCam
+            );
+        }
 
         setLedMode(ledMode);
 
@@ -176,6 +178,18 @@ public class PhotonVision extends SubsystemBase
                 }
             }
         }
+    }
+
+    @Override
+    public void periodic() {
+        ArrayList<Integer> ids = getTrackedIDs();
+        ArrayList<Pose3d> targets = new ArrayList<Pose3d>();
+        for (int i=0;i<ids.size();i++) {
+            Optional<Pose3d> tagPose = fieldLayout.getTagPose(ids.get(i));
+            if (tagPose.isPresent())
+                targets.add(tagPose.get());
+        }
+        AdvantageScope.getInstance().setVisionTargets(targets);
     }
 
     /**
@@ -428,6 +442,9 @@ public class PhotonVision extends SubsystemBase
      * @return The Optional estimated pose (empty optional means no pose or uncertain/bad pose).
      */
     public Optional<EstimatedRobotPose> getEstimatedPose() {
+        if (pipelineType != PipelineType.POSE_ESTIMATION) {
+            return Optional.empty();
+        }
         Optional<EstimatedRobotPose> estimatedPoseOptional = poseEstimator.update();
 
         if (estimatedPoseOptional.isPresent()) {

@@ -25,6 +25,7 @@ public class AdvantageScope {
     private ArrayList<Integer> reservedNotes = new ArrayList<Integer>();
     // private double[] notes = new double[7 * 11];
     private Pose3d[] notes = new Pose3d[11];
+    private ArrayList<Pose3d> visionTargets = new ArrayList<Pose3d>();
 
     public AdvantageScope() {
     }
@@ -53,11 +54,16 @@ public class AdvantageScope {
 
         sendPoses("robot", new Pose3d(robotPose));
         sendPoses("notes", notes);
+        sendPoses("targets", visionTargets.toArray(new Pose3d[0]));
 
         for (int i=0;i<reservedNotes.size();i++) {
             int id = reservedNotes.get(i);
             setNote(id, new Pose3d(robotPose.getX(), robotPose.getY(), 0.5, new Rotation3d()));
         }
+    }
+
+    public void setVisionTargets(ArrayList<Pose3d> targets) {
+        visionTargets = targets;
     }
 
     private double[] poseToArray(Pose3d pose) {
