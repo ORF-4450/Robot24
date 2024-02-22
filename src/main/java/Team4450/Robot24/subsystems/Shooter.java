@@ -26,6 +26,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -154,5 +155,6 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         AdvantageScope.getInstance().setShooterAngle(getAngle());
+        SmartDashboard.putNumber("Shooter Angle", getAngle());
     }
 }

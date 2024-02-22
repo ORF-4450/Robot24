@@ -25,17 +25,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Elevator extends SubsystemBase {
     private CANSparkMax motorMain = new CANSparkMax(ELEVATOR_MOTOR_LEFT, MotorType.kBrushless);
     private CANSparkMax motorFollower = new CANSparkMax(ELEVATOR_MOTOR_RIGHT, MotorType.kBrushless);
-    private CANSparkMax motorInner = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
+    private CANSparkMax motorCenterstage = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
 
     private SparkLimitSwitch lowerLimitSwitch;
     private SparkLimitSwitch upperLimitSwitch;
   
     private RelativeEncoder mainEncoder;
-    private RelativeEncoder innerEncoder;
-
-    private Mechanism2d mechanism = new Mechanism2d(100,100);
-    private MechanismRoot2d mechRoot = mechanism.getRoot("root", 5, 0);
-    private MechanismLigament2d elevatorLigament = mechRoot.append(new MechanismLigament2d("elevator", 50, 90));
+    private RelativeEncoder followEncoder;
+    private RelativeEncoder centerstageEncoder;
 
     public Elevator() {
         Util.consoleLog();
@@ -45,7 +42,7 @@ public class Elevator extends SubsystemBase {
 
         motorFollower.setIdleMode(IdleMode.kBrake);
         motorMain.setIdleMode(IdleMode.kBrake);
-        motorInner.setIdleMode(IdleMode.kBrake);
+        motorCenterstage.setIdleMode(IdleMode.kBrake);
 
         lowerLimitSwitch = motorFollower.getReverseLimitSwitch(Type.kNormallyOpen);
         upperLimitSwitch = motorFollower.getForwardLimitSwitch(Type.kNormallyOpen);
@@ -54,22 +51,26 @@ public class Elevator extends SubsystemBase {
         upperLimitSwitch.enableLimitSwitch(true);
 
         mainEncoder = motorMain.getEncoder();
-        innerEncoder = motorInner.getEncoder();
+        followEncoder = motorFollower.getEncoder();
+        centerstageEncoder = motorCenterstage.getEncoder();
 
         if (RobotBase.isSimulation()) {
             REVPhysicsSim.getInstance().addSparkMax(motorMain, DCMotor.getNEO(1));
         }
-
-        SmartDashboard.putData("Elevator", mechanism);
     }
 
     @Override
     public void periodic() {
         if (lowerLimitSwitch.isPressed())
             mainEncoder.setPosition(0);
-        elevatorLigament.setLength(mainEncoder.getPosition());
+        
         AdvantageScope.getInstance().setElevatorHeight(0.01*mainEncoder.getPosition());
-        AdvantageScope.getInstance().setCarriageHeight(0.01*innerEncoder.getPosition());
+        AdvantageScope.getInstance().setCarriageHeight(0.01*centerstageEncoder.getPosition());
+
+        SmartDashboard.putNumber("Elevator1 Encoder", mainEncoder.getPosition());
+        SmartDashboard.putNumber("Elevator2 Encoder", followEncoder.getPosition());
+        SmartDashboard.putNumber("Centerstage Encoder", centerstageEncoder.getPosition());
+
     }
 
     // @Override
@@ -89,9 +90,9 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveInner(double speed) {
-        motorInner.set(speed);
-        if (RobotBase.isSimulation() && 0.01*(innerEncoder.getPosition()+speed) > 0 && 0.01*(innerEncoder.getPosition()+speed) < 0.5)
-            innerEncoder.setPosition(innerEncoder.getPosition() + speed);
+        motorCenterstage.set(speed);
+        if (RobotBase.isSimulation() && 0.01*(centerstageEncoder.getPosition()+speed) > 0 && 0.01*(centerstageEncoder.getPosition()+speed) < 0.5)
+            centerstageEncoder.setPosition(centerstageEncoder.getPosition() + speed);
     }
 
     /**
