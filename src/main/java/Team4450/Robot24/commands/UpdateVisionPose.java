@@ -43,7 +43,7 @@ public class UpdateVisionPose extends Command {
     
     @Override
     public void initialize() {
-        Util.consoleLog();
+        Util.consoleLog(cameraSubsystem.getName());
     }
 
     @Override
