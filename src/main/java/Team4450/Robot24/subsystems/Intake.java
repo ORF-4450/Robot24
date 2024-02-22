@@ -29,6 +29,9 @@ public class Intake extends SubsystemBase {
         motor2.setIdleMode(IdleMode.kBrake);
         
         motor2.follow(motor1);
+        
+        addChild("Intake Note Sensor", intakeNoteSensor);
+
         Util.consoleLog("Intake created!");
     }
 

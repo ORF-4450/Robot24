@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -118,6 +119,8 @@ public class RobotContainer
 		Util.consoleLog();
 
 		SmartDashboard.putData("PDH", pdp);
+		// Use below for production to reduce NT traffic.           
+	    //SendableRegistry.addLW(pdp, "PDH");
 
 		// Get information about the match environment from the Field Control System.
       
