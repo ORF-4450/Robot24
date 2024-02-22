@@ -26,12 +26,12 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-02.22.24-1";
+	public static String		PROGRAM_NAME = "RAC24c-02.22.24-1";
 
 	public static Robot			robot;
 
 	public static Properties	robotProperties;
-	
+	  
 	public static boolean		isClone = false, isComp = false, tracing = false;
 	    	
 	public static DriverStation.Alliance	 alliance;
