@@ -45,7 +45,7 @@ public class IntakeNote extends Command {
                 feedTime = Util.timeStamp();
                 break;
             case FEEDING:// feed for 3 sec
-                if (intake.hasNote()){//Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
+                if (shooter.hasNote()){//Util.getElaspedTime(feedTime) > 3){//shooter.hasNote()) {
                     intake.stop();
                     shooter.stopFeeding();
                     state = State.IN_SHOOTER;

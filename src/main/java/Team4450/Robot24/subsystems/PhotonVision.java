@@ -25,7 +25,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -58,7 +57,7 @@ public class PhotonVision extends SubsystemBase
     private Transform3d             robotToCam;
     private PipelineType            pipelineType;
 
-    public static enum PipelineType {APRILTAG_TRACKING, OBJECT_TRACKING};
+    public static enum PipelineType {APRILTAG_TRACKING, OBJECT_TRACKING, POSE_ESTIMATION};
 
     /**
      * Create an instance of PhotonVision class for a camera.
@@ -94,13 +93,15 @@ public class PhotonVision extends SubsystemBase
 
         if (RobotBase.isSimulation()) setUpSimTargets();    // Must follow pipeline selection.
 
-        // setup the AprilTag pose etimator.
-        poseEstimator = new PhotonPoseEstimator(
-            fieldLayout,
-            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-            camera,
-            robotToCam
-        );
+        if (pipelineType == PipelineType.POSE_ESTIMATION) {
+            // setup the AprilTag pose etimator.
+            poseEstimator = new PhotonPoseEstimator(
+                fieldLayout,
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                camera,
+                robotToCam
+            );
+        }
 
         setLedMode(ledMode);
 
@@ -157,7 +158,6 @@ public class PhotonVision extends SubsystemBase
         visionSim.addVisionTargets("note"+Integer.toString(id), target);
     }
 
-
     @Override
     public void simulationPeriodic() {
         if (pipelineType == PipelineType.OBJECT_TRACKING) {
@@ -176,6 +176,18 @@ public class PhotonVision extends SubsystemBase
                 }
             }
         }
+    }
+
+    @Override
+    public void periodic() {
+        ArrayList<Integer> ids = getTrackedIDs();
+        ArrayList<Pose3d> targets = new ArrayList<Pose3d>();
+        for (int i=0;i<ids.size();i++) {
+            Optional<Pose3d> tagPose = fieldLayout.getTagPose(ids.get(i));
+            if (tagPose.isPresent())
+                targets.add(tagPose.get());
+        }
+        AdvantageScope.getInstance().setVisionTargets(targets);
     }
 
     /**
@@ -237,6 +249,7 @@ public class PhotonVision extends SubsystemBase
      */
     public PhotonTrackedTarget getClosestTarget() {
         PhotonTrackedTarget closest;
+
         if (hasTargets()) {
             List<PhotonTrackedTarget> targets = latestResult.getTargets();
             closest = targets.get(0);
@@ -245,6 +258,7 @@ public class PhotonVision extends SubsystemBase
                 if (Math.abs(targets.get(i).getYaw()) < Math.abs(closest.getYaw()))
                     closest = targets.get(i);
             }
+
             return closest;
         }
         else
@@ -356,9 +370,8 @@ public class PhotonVision extends SubsystemBase
      * @param type The type of pipeline.
      */
     public void selectPipeline(PipelineType type) {
-        this.pipelineType = type;
-        if (RobotBase.isSimulation())
-            setUpSimTargets();
+        pipelineType = type;
+        if (RobotBase.isSimulation()) setUpSimTargets();
         selectPipeline(type.ordinal());
     }
 
@@ -428,6 +441,9 @@ public class PhotonVision extends SubsystemBase
      * @return The Optional estimated pose (empty optional means no pose or uncertain/bad pose).
      */
     public Optional<EstimatedRobotPose> getEstimatedPose() {
+        if (pipelineType != PipelineType.POSE_ESTIMATION) {
+            return Optional.empty();
+        }
         Optional<EstimatedRobotPose> estimatedPoseOptional = poseEstimator.update();
 
         if (estimatedPoseOptional.isPresent()) {

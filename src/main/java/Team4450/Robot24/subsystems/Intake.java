@@ -6,6 +6,7 @@ import static Team4450.Robot24.Constants.INTAKE_SPEED;
 import static Team4450.Robot24.Constants.NOTE_SENSOR_INTAKE;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
@@ -24,6 +25,9 @@ public class Intake extends SubsystemBase {
     private boolean isrunning = false;
 
     public Intake() {
+        motor1.setIdleMode(IdleMode.kBrake);
+        motor2.setIdleMode(IdleMode.kBrake);
+        
         motor2.follow(motor1);
         Util.consoleLog("Intake created!");
     }
@@ -46,6 +50,7 @@ public class Intake extends SubsystemBase {
         updateDS();
 
         motor1.set(Util.clampValue(speedfactor, 1) * motorSpeed);
+        // motor2.set(Util.clampValue(speedfactor, 1) * motorSpeed);
     }
 
     /**
@@ -63,6 +68,7 @@ public class Intake extends SubsystemBase {
         Util.consoleLog();
 
         motor1.stopMotor();
+        motor2.stopMotor();
 
         isrunning = false;
         updateDS();

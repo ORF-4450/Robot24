@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.418950497871234,
-      "y": 5.553308403863832
+      "x": 1.317995217835674,
+      "y": 5.570086209926884
     },
     "rotation": 0
   },
@@ -20,19 +20,25 @@
         {
           "type": "named",
           "data": {
-            "name": "DriveToNote"
+            "name": "StartIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "crazy"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeNote"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
+            "name": "StopIntake"
           }
         },
         {

@@ -16,8 +16,8 @@ Port	Device			Description
 6       SparkMax        RL steer motor.
 7       SparkMax        RR drive motor.
 8       SparkMax        RR steer motor.
-9       SparkMax        Intake motor 1.
-10      SparkMax        Intake motor 2.
+9       SparkMax        Intake motor 1. right
+10      SparkMax        Intake motor 2. left
 11      SparkMax        Shooter motor 1.
 12      SparkMax        Shooter motor 2.
 13      SparkMax        Shooter feeder motor.
@@ -36,8 +36,8 @@ Port	Device			Description
 PDP Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       REV PDH         REV power distribution Hub.
-0       CTRE PDB        CTRE distribution board.
+20      REV PDH         REV power distribution Hub.
+20      CTRE PDB        CTRE distribution board.
 
 
 PCM 0 Ports
@@ -78,21 +78,22 @@ X Axis                  Rotate.
 Driver GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
-LEFT_TRIGGER            Slow mode (Hold down).
 RIGHT_TRIGGER           face note/apriltag
 BACK                    Toggle field/robot orientation driving.
 START                   Reset Navx to reorient field direction.
-LEFT_BUMPER             Park Mode (hold down).
 RIGHT_BUMPER       		Alternate Drive Mode (hold down).
 POV_?                   Auto rotate to the POV direction.
-Y                       Switch Shuffleboard tab.
-B                       Toggle Drive To Note command
-X                       Toggle brake mode
-A                       Toggle April Tag Tracking mode.
+B                       Toggle April Tag Tracking mode.
 
 ?                       Reset simulated yaw.
 ?                       Reset simulated distance traveled.
 ?                       Switch Camera.
+LEFT_BUMPER             slow mode
+LEFT_TRIGGER            toggle shuffleboard tab
+X                       set x
+Y                       brake mode
+
+
 
 
 

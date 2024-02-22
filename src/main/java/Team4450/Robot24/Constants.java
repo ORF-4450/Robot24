@@ -43,7 +43,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 1;
+    public static final double  INTAKE_SPEED = 0.5;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
@@ -58,12 +58,12 @@ public final class Constants
     // multiplied by motor rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
     
-    // ELEVATOR
+    // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
     public static final int     ELEVATOR_MOTOR_INNER = 18;
 
-    // CAMERAS
+    // CAMERAS ======
     public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 0),
         new Rotation3d(0, 0, 0)
@@ -80,11 +80,11 @@ public final class Constants
     );
 
     // the names of the cameras in the PhotonVision software
-    public static String        CAMERA_POSE_ESTIMATOR = "";
-    public static String        CAMERA_FRONT = "4450-LL";
-    public static String        CAMERA_BACK = "back";
+    public static String        CAMERA_POSE_ESTIMATOR = "front";
+    public static String        CAMERA_FRONT = "front";
+    public static String        CAMERA_BACK = "front";
 
-    public static final int     REV_PDB = 0;
+    public static final int     REV_PDB = 20;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
