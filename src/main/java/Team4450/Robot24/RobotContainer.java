@@ -17,15 +17,18 @@ import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
+import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
+import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
+import Team4450.Robot24.subsystems.ElevatedShooter.PRESET_POSITIONS;
 import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
@@ -60,8 +63,7 @@ public class RobotContainer
 	public static PhotonVision	pvBackCamera;
 	public static PhotonVision	pvFrontCamera;
 	private final Intake       	intake;
-	private final Shooter       shooter;
-	private final Elevator      elevator;
+	private final ElevatedShooter elevShooter;
 	private final Candle        candle;
 	
 	// Subsystem Default Commands.
@@ -183,8 +185,7 @@ public class RobotContainer
 		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
 		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
 		intake = new Intake();
-		shooter = new Shooter();
-		elevator = new Elevator();
+		elevShooter = new ElevatedShooter();
 		candle = new Candle();
 
 		// Create any persistent commands.
@@ -222,19 +223,25 @@ public class RobotContainer
 									driverController.getRightXDS(),
 									driverController));
 
-		// up and down on left operator controller joystick pivots shooter assembly
-		shooter.setDefaultCommand(new RunCommand(
-			()->shooter.movePivotRelative(
-				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)
-			), shooter));
+		// // up and down on left operator controller joystick pivots shooter assembly
+		// elevShooter.setDefaultCommand(new RunCommand(
+		// 	()->elevShooter.shooter.movePivotRelative(
+		// 		-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)
+		// 	), elevShooter));
 		
-		// up and down on right operator controller joystick moves elevator assembly
-		elevator.setDefaultCommand(new RunCommand(
-			()->{
-				elevator.move(-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND));
-				elevator.moveInner(-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND));
-			}
-			, elevator));
+		// // up and down on right operator controller joystick moves elevator assembly
+		// elevShooter.setDefaultCommand(new RunCommand(
+		// 	()->{
+		// 		elevShooter.elevator.move(-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND));
+		// 		elevShooter.elevator.moveCenterStage(-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND));
+		// 	}
+		// 	, elevShooter));
+		elevShooter.setDefaultCommand(new RunCommand(
+			()->elevShooter.setUnsafeRelativePosition(
+				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
+				-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND), // centerstage
+				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
+		elevShooter));
 		
 		
 
@@ -355,9 +362,9 @@ public class RobotContainer
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 		
 		// toggle face note/apriltag
-		new Trigger(() -> driverController.getRightTrigger() && !shooter.hasNote())
+		new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
     	    .whileTrue(new DriveToNote(driveBase, pvFrontCamera, false));
-		new Trigger(() -> driverController.getRightTrigger() && shooter.hasNote())
+		new Trigger(() -> driverController.getRightTrigger() && elevShooter.hasNote())
     	    .whileTrue(new FaceAprilTag(driveBase, pvBackCamera));
 		
 
@@ -412,20 +419,57 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBButton())
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 		new Trigger(() -> utilityController.getLeftBumper())
-			.onTrue(new IntakeNote(intake, shooter, elevator));
+			.onTrue(new IntakeNote(intake, elevShooter));
 
 		// shoot then intake
 		new Trigger(() -> utilityController.getYButton())
-			.onTrue(new IntakeNote(intake, shooter, elevator).andThen(new ShootSpeaker(shooter, elevator, driveBase)));
+			.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
 		
+		new Trigger(() -> utilityController.getXButton())
+			.toggleOnTrue(new ShootAmp(elevShooter));
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(shooter, elevator, driveBase));
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase));
 			
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.3), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(1), shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
+
+		new Trigger(() -> utilityController.getStartButton())
+			.whileTrue(new InstantCommand(()->
+				elevShooter.resetEncoders()));
+		
+		new Trigger(()-> utilityController.getPOV() != -1)
+			.onTrue(new InstantCommand(()->{
+				ElevatedShooter.PRESET_POSITIONS position;
+				Util.consoleLog("preset position %d", utilityController.getPOV());
+				switch (utilityController.getPOV()) {
+					case 0:
+						position = PRESET_POSITIONS.INTAKE;
+						break;
+					case 45:
+						position = PRESET_POSITIONS.SHOOT_AMP_BACK;
+						break;
+					case 90:
+						position = PRESET_POSITIONS.SHOOT_AMP_FRONT;
+						break;
+					case 135:
+						position = PRESET_POSITIONS.SOURCE;
+						break;
+					case 180:
+						position = PRESET_POSITIONS.VERTICAL_BOTTOM;
+						break;
+					case 225:
+						position = PRESET_POSITIONS.VERTICAL_TOP;
+						break;
+					default:
+						position = PRESET_POSITIONS.INTAKE;
+				}
+				elevShooter.executeSetPosition(position);
+			}));
+
+		
 
 	}
 
@@ -482,8 +526,8 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
-		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator, driveBase));
+		// NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
+		// NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator, driveBase));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));

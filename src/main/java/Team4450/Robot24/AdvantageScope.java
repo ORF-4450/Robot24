@@ -10,9 +10,7 @@ import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AdvantageScope {
@@ -31,7 +29,7 @@ public class AdvantageScope {
     }
 
     public void setElevatorHeight(double h) {
-        elevHeight = Util.clampValue(h, 0, 0.5);
+        elevHeight = Util.clampValue(h, 0, 1);
     }
 
     public void setCarriageHeight(double h) {
@@ -47,9 +45,9 @@ public class AdvantageScope {
     }
 
     public void update() {
-        Pose3d elevatorPose = new Pose3d(0, 0, elevHeight, new Rotation3d());
-        Pose3d shooterPose = new Pose3d(0.09, 0, 0.259+elevHeight+cHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
-        Pose3d carriagePose = new Pose3d(0, 0, elevHeight+cHeight, new Rotation3d());
+        Pose3d elevatorPose = new Pose3d(0, 0, cHeight, new Rotation3d());
+        Pose3d shooterPose = new Pose3d(0.09, 0, 0.259+elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
+        Pose3d carriagePose = new Pose3d(0, 0, elevHeight, new Rotation3d());
         sendPoses("components", elevatorPose, shooterPose, carriagePose);
 
         sendPoses("robot", new Pose3d(robotPose));

@@ -5,24 +5,22 @@ import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
 
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_TOP;
-import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_BOTTOM;
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_FEEDER;
 import static Team4450.Robot24.Constants.SHOOTER_MOTOR_PIVOT;
 
 import static Team4450.Robot24.Constants.SHOOTER_SPEED;
-import static Team4450.Robot24.Constants.NOTE_SENSOR_SHOOTER;
+import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkLimitSwitch.Type;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,18 +32,17 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorBottom = new CANSparkMax(SHOOTER_MOTOR_BOTTOM, MotorType.kBrushless);
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
-    private final DigitalInput shooterNoteSensor = new DigitalInput(NOTE_SENSOR_SHOOTER);
 
     private RelativeEncoder pivotEncoder;
     private RelativeEncoder topMotorEncoder;
     private RelativeEncoder bottomMotorEncoder;
 
+    private SparkLimitSwitch noteSensor;
+
     private double shooterSpeed = SHOOTER_SPEED;
     private double feedSpeed = SHOOTER_FEED_SPEED;
 
     private SparkPIDController pivotPID;
-    private double angle = 0;
-    public  boolean note = false; //TODO only temp for no sensor
     private boolean shooterIsRunning = false, feederIsRunning = false;
 
     // NOTE: I removed the shuffleboard speed setting because they were too
@@ -62,6 +59,8 @@ public class Shooter extends SubsystemBase {
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
 
+        noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyClosed);
+
         pivotPID = motorPivot.getPIDController();
 
         pivotPID.setP(0.1);
@@ -71,14 +70,11 @@ public class Shooter extends SubsystemBase {
         pivotPID.setFF(0);
         pivotPID.setOutputRange(-1, 1);
 
-        addChild("Shooter Note Sensor", shooterNoteSensor);
-
         Util.consoleLog("Shooter created!");
     }
 
     public boolean hasNote() {
-        return note;
-        // return shooterNoteSensor.get();
+        return noteSensor.isPressed();
     }
 
     /**
@@ -89,6 +85,20 @@ public class Shooter extends SubsystemBase {
         motorFeeder.set(Util.clampValue(speedfactor, 1) * feedSpeed);
         feederIsRunning = true;
         updateDS();
+    }
+
+    public void resetEncoders() {
+        pivotEncoder.setPosition(0);
+        topMotorEncoder.setPosition(0);
+        bottomMotorEncoder.setPosition(0);
+    }
+    
+    /**
+     * set whether the note sensor triggers the feed rollers to stop or not
+     * @param enabled whether the motor should pay attention to sensor or not
+     */
+    public void enableClosedLoopFeedStop(boolean enabled) {
+        noteSensor.enableLimitSwitch(enabled);
     }
 
     /** stops the feed motor */
@@ -117,8 +127,8 @@ public class Shooter extends SubsystemBase {
      * @param angle the angle in degrees
      */
     public void setAngle(double angle) {
-        pivotPID.setReference(angle / SHOOTER_PIVOT_FACTOR, ControlType.kPosition);
-        pivotEncoder.setPosition(angle / SHOOTER_PIVOT_FACTOR);
+        pivotPID.setReference(angleToEncoderCounts(angle), ControlType.kPosition);
+        if (Robot.isSimulation()) pivotEncoder.setPosition(angleToEncoderCounts(angle));
     }
 
     /**
@@ -132,18 +142,23 @@ public class Shooter extends SubsystemBase {
     /**
      * Get the average wheel speed of top and bottom
      * shooter rollers
-     * @return the average wheel speed in meters per second
+     * @return the mean wheel speed in meters per second
      */
     public double getWheelSpeed() {
-        double wheelRadius = 1.5 * 0.0254; // in -> m
-        double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
-        double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius; // rpm -> m/s
-        double averageWheelSpeed = 0.5 * (topWheelSpeed + bottomWheelSpeed);
+        double wheelRadius = 1.5 * 0.0254; // 1.5 in -> meters
+        double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
+        double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
+        double averageWheelSpeed = 0.5 * (topWheelSpeed + bottomWheelSpeed); // mean of top and bottom
         return averageWheelSpeed;
     }
 
+    /**
+     * checks if shooter is at angle with 3 deg tolerance
+     * @param angle the angle to check against
+     * @return
+     */
     public boolean isAtAngle(double angle) {
-        return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) > 0.1;
+        return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < 3; // 3 deg tolerance
     }
 
     /**
@@ -152,7 +167,7 @@ public class Shooter extends SubsystemBase {
      * @return the raw encoder position
      */
     private double angleToEncoderCounts(double angle) {
-        return (angle / 360.0) / SHOOTER_PIVOT_FACTOR;
+        return angle / SHOOTER_PIVOT_FACTOR;
     }
 
     /**
@@ -161,7 +176,7 @@ public class Shooter extends SubsystemBase {
      */
     public void movePivotRelative(double speed) {
         motorPivot.set(speed);
-        setAngle(getAngle() + speed);
+        if (Robot.isSimulation()) setAngle(getAngle() + speed);
     }
 
     @Override

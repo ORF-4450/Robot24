@@ -3,7 +3,6 @@ package Team4450.Robot24.subsystems;
 import static Team4450.Robot24.Constants.INTAKE_MOTOR_1;
 import static Team4450.Robot24.Constants.INTAKE_MOTOR_2;
 import static Team4450.Robot24.Constants.INTAKE_SPEED;
-import static Team4450.Robot24.Constants.NOTE_SENSOR_INTAKE;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -19,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
     private CANSparkMax motor1 = new CANSparkMax(INTAKE_MOTOR_1, MotorType.kBrushless);
     private CANSparkMax motor2 = new CANSparkMax(INTAKE_MOTOR_2, MotorType.kBrushless);
-    private final DigitalInput intakeNoteSensor = new DigitalInput(NOTE_SENSOR_INTAKE);
 
     private double  motorSpeed = INTAKE_SPEED;
     private boolean isrunning = false;
@@ -30,16 +28,8 @@ public class Intake extends SubsystemBase {
         
         motor2.follow(motor1);
         
-        addChild("Intake Note Sensor", intakeNoteSensor);
 
         Util.consoleLog("Intake created!");
-    }
-
-    public boolean hasNote() {
-        if (RobotBase.isReal())
-            return intakeNoteSensor.get();
-        else
-            return AdvantageScope.getInstance().attemptPickup();
     }
 
     /**
