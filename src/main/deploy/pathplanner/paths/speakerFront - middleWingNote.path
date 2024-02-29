@@ -1,0 +1,84 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2284569939510253,
+        "y": 5.586822900497653
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.21989325836169,
+        "y": 5.586822900497653
+      },
+      "isLocked": false,
+      "linkedName": "speakerFront"
+    },
+    {
+      "anchor": {
+        "x": 2.8924666506740424,
+        "y": 5.586822900497653
+      },
+      "prevControl": {
+        "x": 2.4326653147088457,
+        "y": 5.586822900497653
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "middleWingNote"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Shoot Preload",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ShootSpeaker"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Begin to Intake",
+      "waypointRelativePos": 0.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 20.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

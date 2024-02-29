@@ -26,7 +26,7 @@ public class ShootAmp extends Command {
     @Override
     public void initialize() {
         state = State.MOVING;
-        //  elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT);
+         elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT);
         //  elevatedShooter.shooter.enableClosedLoopFeedStop(true);
     }
 
@@ -35,7 +35,7 @@ public class ShootAmp extends Command {
         SmartDashboard.putString("ShootAmp Status", state.name());
         switch (state) {
             case MOVING:
-                // if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT))
+                if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT))
                     state = State.SHOOTING;
                     feedTime = Util.timeStamp();
                 break;

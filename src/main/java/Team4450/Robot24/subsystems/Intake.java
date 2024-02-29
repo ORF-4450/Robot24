@@ -42,6 +42,8 @@ public class Intake extends SubsystemBase {
         isrunning = true;
         updateDS();
 
+        SmartDashboard.putNumber("intake_speedfactor", speedfactor);
+
         motor1.set(Util.clampValue(speedfactor, 1) * motorSpeed);
         // motor2.set(Util.clampValue(speedfactor, 1) * motorSpeed);
     }

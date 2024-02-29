@@ -424,17 +424,17 @@ public class RobotContainer
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 
 		new Trigger(() -> utilityController.getBackButton())
-			.toggleOnFalse(new ReverseIntake(intake));
+			.toggleOnFalse(new ReverseIntake(intake, driveBase));
 
 		
 		new Trigger(() -> utilityController.getLeftBumper())
-			.onTrue(new IntakeNote(intake, elevShooter));
+			.toggleOnTrue(new IntakeNote(intake, elevShooter));
 
 		// shoot then intake
-		new Trigger(() -> utilityController.getYButton())
-			.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
+		// new Trigger(() -> utilityController.getYButton())
+		// 	.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
 		
-		new Trigger(() -> utilityController.getXButton())
+		new Trigger(() -> utilityController.getYButton())
 			.toggleOnTrue(new ShootAmp(elevShooter));
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
@@ -544,7 +544,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
 		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
-		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake));
+		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, driveBase));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));

@@ -40,6 +40,12 @@ public class Elevator extends SubsystemBase {
 
     private final double MAIN_TOLERANCE = 0.7;
     private final double CENTERSTAGE_TOLERANCE = 1;
+
+    private final double MAIN_START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR;
+    private final double CENTERSTAGE_START_COUNTS = 0;
+
+    private double setpoint = MAIN_START_COUNTS;
+    private double centerstageSetpoint = CENTERSTAGE_START_COUNTS;
     
 
     public Elevator() {
@@ -72,7 +78,7 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(MAIN_TOLERANCE);
         // followerPID = new PIDController(0.01, 0, 0);
-        centerstagePID = new PIDController(0.01, 0, 0);
+        centerstagePID = new PIDController(0.03, 0, 0);
         centerstagePID.setTolerance(CENTERSTAGE_TOLERANCE);
     }
 
@@ -97,7 +103,25 @@ public class Elevator extends SubsystemBase {
 
         SmartDashboard.putNumber("winch_1_m", mainEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
         SmartDashboard.putNumber("windh_2_m", followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
-        SmartDashboard.putNumber("centerstage_m", centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR);        
+        SmartDashboard.putNumber("centerstage_m", centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR); 
+        
+        // elevator main winch PID loop
+        SmartDashboard.putNumber("winch_setpoint", setpoint);
+        mainPID.setSetpoint(setpoint);
+        double nonclamped = mainPID.calculate(mainEncoder.getPosition());
+            SmartDashboard.putNumber("winch_nonclamped", nonclamped);
+        double motorOutput = nonclamped;//Util.clampValue(nonclamped, 0.2);
+                SmartDashboard.putNumber("winch_output", motorOutput);
+        motorMain.set(motorOutput);
+        if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
+        if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
+
+        // centerstage PID loop
+        SmartDashboard.putNumber("centerstage_setpoint", centerstageSetpoint);
+        centerstagePID.setSetpoint(centerstageSetpoint);
+        motorOutput = centerstagePID.calculate(centerstageEncoder.getPosition());
+        motorCenterstage.set(motorOutput);
+        if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
     }
 
     /**
@@ -105,49 +129,32 @@ public class Elevator extends SubsystemBase {
      * @param speed (such as from a joystick value)
      */
     public void move(double speed) {
-        if (speed < 0)
-            speed *= 0.1;
-        speed *= -0.5;
-        motorMain.set(speed);
-        if (Robot.isSimulation()) {
-            if (speed > 0) speed *= 10;
-            mainEncoder.setPosition(mainEncoder.getPosition() + (1*speed));
-            followEncoder.setPosition(followEncoder.getPosition() + (1*speed));
-        }
+        setpoint += speed;
+        // if (speed < 0)
+        //     speed *= 0.1;
+        // speed *= -0.5;
+        // motorMain.set(speed);
+        // if (Robot.isSimulation()) {
+        //     if (speed > 0) speed *= 10;
+        //     mainEncoder.setPosition(mainEncoder.getPosition() + (1*speed));
+        //     followEncoder.setPosition(followEncoder.getPosition() + (1*speed));
+        // }
     }
 
     public void moveCenterStage(double speed) {
-        motorCenterstage.set(speed);
-        if (Robot.isSimulation()) {
-            centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*speed));
-        }
+        centerstageSetpoint += speed;
+        // motorCenterstage.set(speed);
+        // if (Robot.isSimulation()) {
+        //     centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*speed));
+        // }
     }
 
     public void setElevatorHeight(double height) {
-        double setpoint = height / ELEVATOR_WINCH_FACTOR; // meters -> enc. counts
-        SmartDashboard.putNumber("winch_setpoint", setpoint);
-
-        mainPID.setSetpoint(setpoint);
-        double nonclamped = mainPID.calculate(mainEncoder.getPosition());
-            SmartDashboard.putNumber("winch_nonclamped", nonclamped);
-        double motorOutput = nonclamped;//Util.clampValue(nonclamped, 0.2);
-                SmartDashboard.putNumber("winch_output", motorOutput);
-
-        motorMain.set(motorOutput);
-
-        if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
-        if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
+        setpoint = height / ELEVATOR_WINCH_FACTOR; // meters -> enc. counts
     }
 
     public void setCenterstageHeight(double height) {
-        double setpoint = height / ELEVATOR_CENTERSTAGE_FACTOR; // meters -> enc. counts
-        SmartDashboard.putNumber("centerstage_setpoint", setpoint);
-
-        centerstagePID.setSetpoint(setpoint);
-        double motorOutput = Util.clampValue(centerstagePID.calculate(centerstageEncoder.getPosition()), 0.2);
-        motorCenterstage.set(motorOutput);
-
-        if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
+        centerstageSetpoint = height / ELEVATOR_CENTERSTAGE_FACTOR; // meters -> enc. counts
     }
 
     public boolean elevatorIsAtHeight(double height) {
@@ -170,8 +177,8 @@ public class Elevator extends SubsystemBase {
     public double getCenterstageHeight() {return centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR;}
 
     public void resetEncoders() {
-        mainEncoder.setPosition(-10.14);
-        followEncoder.setPosition(-10.14);
+        mainEncoder.setPosition(MAIN_START_COUNTS);
+        followEncoder.setPosition(MAIN_START_COUNTS);
         centerstageEncoder.setPosition(0);
     }
 

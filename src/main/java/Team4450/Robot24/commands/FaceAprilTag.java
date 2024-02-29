@@ -47,7 +47,7 @@ public class FaceAprilTag extends Command {
     
     @Override
     public void execute() {
-        // get an arralist of all the tags IDs that the camera currently sees
+        // get an arraylist of all the tags IDs that the camera currently sees
         ArrayList<Integer> tags = photonVision.getTrackedIDs();
         PhotonTrackedTarget target = null;
 

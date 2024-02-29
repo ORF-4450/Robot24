@@ -45,7 +45,11 @@ public class Shooter extends SubsystemBase {
 
     private PIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
-    private final double PIVOT_TOLERANCE = 1.5;
+    private final double PIVOT_TOLERANCE = 1;
+
+    private final double PIVOT_START = -39;
+
+    private double setpoint = PIVOT_START;
 
     // NOTE: I removed the shuffleboard speed setting because they were too
     // much of a hassle to handle with all of the different speed states the shooter could be in
@@ -60,6 +64,8 @@ public class Shooter extends SubsystemBase {
         pivotEncoder = motorPivot.getEncoder();
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
+
+        resetEncoders();
 
         noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyOpen);
 
@@ -123,12 +129,7 @@ public class Shooter extends SubsystemBase {
      * @param angle the angle in degrees
      */
     public void setAngle(double angle) {
-        double setpoint = angleToEncoderCounts(angle);
-        SmartDashboard.putNumber("pivot_setpoint", setpoint);
-        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), setpoint);
-        SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
-        motorPivot.set(motorOutput);
-        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (1*motorOutput));
+        setpoint = angle;
     }
 
     /**
@@ -175,8 +176,9 @@ public class Shooter extends SubsystemBase {
      * @param speed the speed
      */
     public void movePivotRelative(double speed) {
-        motorPivot.set(0.4*speed);
-        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (0.5*speed));
+        setpoint += speed;
+        // motorPivot.set(0.4*speed);
+        // if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (0.5*speed));
     }
 
     @Override
@@ -185,6 +187,12 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter Angle", getAngle());
         // SmartDashboard.putNumber("pivot_measured", getAngle());
         SmartDashboard.putBoolean("Note Sensor", hasNote());
+
+        SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(setpoint));
+        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(setpoint));
+        SmartDashboard.putNumber("pivot_measured", SHOOTER_PIVOT_FACTOR * pivotEncoder.getPosition());
+        motorPivot.set(motorOutput);
+        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (1*motorOutput));
     }
 
     /**
