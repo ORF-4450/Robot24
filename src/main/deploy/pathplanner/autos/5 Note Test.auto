@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "AutoStart"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "speakerFront - middleWingNote"
@@ -33,6 +39,12 @@
           "type": "path",
           "data": {
             "pathName": "ampMiddleNote - stageNote"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoEnd"
           }
         }
       ]

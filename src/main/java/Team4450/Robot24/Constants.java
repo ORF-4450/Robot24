@@ -81,20 +81,20 @@ public final class Constants
         new Rotation3d(0, 0, 0)
     );
     
-    public static Transform3d   CAMERA_BACK_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_TAG_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1),
         new Rotation3d(0, Math.toRadians(-15), 0)
     );
     
-    public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1.5),
         new Rotation3d(0, Math.toRadians(45), 0)
     );
 
     // the names of the cameras in the PhotonVision software
     public static String        CAMERA_POSE_ESTIMATOR = "front";
-    public static String        CAMERA_FRONT = "front";
-    public static String        CAMERA_BACK = "front";
+    public static String        CAMERA_NOTE = "front";
+    public static String        CAMERA_TAG = "front";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;

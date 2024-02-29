@@ -62,8 +62,8 @@ public class RobotContainer
 	public static ShuffleBoard	shuffleBoard;
 	public static DriveBase 	driveBase;
 	public static PhotonVision	pvPoseCamera;
-	public static PhotonVision	pvBackCamera;
-	public static PhotonVision	pvFrontCamera;
+	public static PhotonVision	pvTagCamera;
+	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
 	private final ElevatedShooter elevShooter;
 	private final Candle        candle;
@@ -184,8 +184,8 @@ public class RobotContainer
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
 		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
+		pvTagCamera = new PhotonVision(CAMERA_TAG, PipelineType.APRILTAG_TRACKING, CAMERA_TAG_TRANSFORM);
+		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
 		candle = new Candle();
@@ -197,8 +197,8 @@ public class RobotContainer
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
     	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
-		pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
-		pvBackCamera.setDefaultCommand(new UpdateVisionPose(pvBackCamera, driveBase));
+		// pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		// pvTagCamera.setDefaultCommand(new UpdateVisionPose(pvTagCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -346,7 +346,7 @@ public class RobotContainer
 
 		// the "B" button (or cross on PS4 controller) toggles tracking mode.
 		new Trigger(() -> driverController.getBButton())
-			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
+			.toggleOnTrue(new FaceAprilTag(driveBase, pvTagCamera));
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
@@ -367,14 +367,14 @@ public class RobotContainer
 		
 		// toggle face note/apriltag
 		new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
-    	    .whileTrue(new DriveToNote(driveBase, pvFrontCamera, false));
+    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
 		new Trigger(() -> driverController.getRightTrigger() && elevShooter.hasNote())
-    	    .whileTrue(new FaceAprilTag(driveBase, pvBackCamera));
+    	    .whileTrue(new FaceAprilTag(driveBase, pvTagCamera));
 		
 
 		// toggle Note tracking.
 	    new Trigger(() -> driverController.getYButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
+    	    .toggleOnTrue(new DriveToNote(driveBase, pvNoteCamera, true));
 
 		// Advance DS tab display.
 		new Trigger(() -> driverController.getLeftTrigger())
@@ -550,8 +550,8 @@ public class RobotContainer
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
 
 
-		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
+		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvTagCamera));
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP

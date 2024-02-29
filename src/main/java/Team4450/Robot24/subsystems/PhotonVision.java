@@ -372,7 +372,7 @@ public class PhotonVision extends SubsystemBase
     public void selectPipeline(PipelineType type) {
         pipelineType = type;
         if (RobotBase.isSimulation()) setUpSimTargets();
-        selectPipeline(type.ordinal());
+        // selectPipeline(type.ordinal());
     }
 
     /**
