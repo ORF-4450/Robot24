@@ -68,9 +68,9 @@ public final class Constants
     // math explanation
     // ratio is (1.0 / (1014.0 / 55.0)) spool rots for every turn of shaft
     // *2pi for radians traveled/angular displacement * spool radius in meters to get linear displacement
-    // 1.5 inch radius is 0.0381 meters (source: looked it up)
+    // 1.25 inch radius is 0.03175 meters (source: looked it up)
     // idk why it has to be negative, probably the gears swap rotation, not a big deal tho
-    public static final double  ELEVATOR_WINCH_FACTOR = (-1.0 / (1014.0 / 55.0)) * (2*Math.PI) * 0.0381;
+    public static final double  ELEVATOR_WINCH_FACTOR = (-1.0 / (1014.0 / 55.0)) * (2*Math.PI) * 0.03175;
     
     // same deal as above but different gear ratio and pulley size (0.451 in = 0.0114554 m)
     public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
@@ -126,7 +126,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 4.8;
+        public static final double kMaxSpeedMetersPerSecond = 2.0;
         public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 

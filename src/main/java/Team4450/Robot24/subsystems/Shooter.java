@@ -21,6 +21,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -42,8 +43,9 @@ public class Shooter extends SubsystemBase {
     private double shooterSpeed = SHOOTER_SPEED;
     private double feedSpeed = SHOOTER_FEED_SPEED;
 
-    private SparkPIDController pivotPID;
+    private PIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
+    private final double PIVOT_TOLERANCE = 1.5;
 
     // NOTE: I removed the shuffleboard speed setting because they were too
     // much of a hassle to handle with all of the different speed states the shooter could be in
@@ -59,16 +61,10 @@ public class Shooter extends SubsystemBase {
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
 
-        noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyClosed);
+        noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyOpen);
 
-        pivotPID = motorPivot.getPIDController();
-
-        pivotPID.setP(0.1);
-        pivotPID.setI(0);
-        pivotPID.setD(0);
-        pivotPID.setIZone(0);
-        pivotPID.setFF(0);
-        pivotPID.setOutputRange(-1, 1);
+        pivotPID = new PIDController(0.05, 0, 0);
+        pivotPID.setTolerance(PIVOT_TOLERANCE);
 
         Util.consoleLog("Shooter created!");
     }
@@ -88,7 +84,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void resetEncoders() {
-        pivotEncoder.setPosition(0);
+        pivotEncoder.setPosition(angleToEncoderCounts(-39));
         topMotorEncoder.setPosition(0);
         bottomMotorEncoder.setPosition(0);
     }
@@ -127,8 +123,12 @@ public class Shooter extends SubsystemBase {
      * @param angle the angle in degrees
      */
     public void setAngle(double angle) {
-        pivotPID.setReference(angleToEncoderCounts(angle), ControlType.kPosition);
-        if (Robot.isSimulation()) pivotEncoder.setPosition(angleToEncoderCounts(angle));
+        double setpoint = angleToEncoderCounts(angle);
+        SmartDashboard.putNumber("pivot_setpoint", setpoint);
+        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), setpoint);
+        SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
+        motorPivot.set(motorOutput);
+        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (1*motorOutput));
     }
 
     /**
@@ -148,7 +148,7 @@ public class Shooter extends SubsystemBase {
         double wheelRadius = 1.5 * 0.0254; // 1.5 in -> meters
         double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
         double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
-        double averageWheelSpeed = 0.5 * (topWheelSpeed + bottomWheelSpeed); // mean of top and bottom
+        double averageWheelSpeed = 0.2 * (topWheelSpeed + bottomWheelSpeed); // mean of top and bottom
         return averageWheelSpeed;
     }
 
@@ -158,7 +158,7 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public boolean isAtAngle(double angle) {
-        return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < 3; // 3 deg tolerance
+        return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < PIVOT_TOLERANCE;
     }
 
     /**
@@ -175,14 +175,16 @@ public class Shooter extends SubsystemBase {
      * @param speed the speed
      */
     public void movePivotRelative(double speed) {
-        motorPivot.set(speed);
-        if (Robot.isSimulation()) setAngle(getAngle() + speed);
+        motorPivot.set(0.4*speed);
+        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (0.5*speed));
     }
 
     @Override
     public void periodic() {
         AdvantageScope.getInstance().setShooterAngle(getAngle());
         SmartDashboard.putNumber("Shooter Angle", getAngle());
+        // SmartDashboard.putNumber("pivot_measured", getAngle());
+        SmartDashboard.putBoolean("Note Sensor", hasNote());
     }
 
     /**

@@ -29,15 +29,15 @@ public class AdvantageScope {
     }
 
     public void setElevatorHeight(double h) {
-        elevHeight = Util.clampValue(h, 0, 1);
+        elevHeight = h;
     }
 
     public void setCarriageHeight(double h) {
-        cHeight = Util.clampValue(h, 0, 0.5);
+        cHeight = h;
     }
 
     public void setShooterAngle(double a) {
-        shooterAngle = a;
+        shooterAngle = -a;
     }
 
     public void setNote(int id, Pose3d pose) {
@@ -46,7 +46,7 @@ public class AdvantageScope {
 
     public void update() {
         Pose3d elevatorPose = new Pose3d(0, 0, cHeight, new Rotation3d());
-        Pose3d shooterPose = new Pose3d(0.09, 0, 0.259+elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
+        Pose3d shooterPose = new Pose3d(0.09, 0, 0.275+elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
         Pose3d carriagePose = new Pose3d(0, 0, elevHeight, new Rotation3d());
         sendPoses("components", elevatorPose, shooterPose, carriagePose);
 

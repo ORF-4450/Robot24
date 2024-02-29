@@ -5,7 +5,8 @@ import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.Shooter;
-import Team4450.Robot24.subsystems.ElevatedShooter.PRESET_POSITIONS;
+import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootAmp extends Command {
@@ -14,29 +15,33 @@ public class ShootAmp extends Command {
     private static enum State {MOVING, SHOOTING, DONE};
 
     private State state = State.MOVING;
+    private double feedTime = 0;
 
     public ShootAmp(ElevatedShooter elevatedShooter) {
         this.elevatedShooter = elevatedShooter;
         addRequirements(elevatedShooter);
+        SmartDashboard.putString("ShootAmp Status", state.name());
     }
 
     @Override
     public void initialize() {
-         state = State.MOVING;
-         elevatedShooter.executeSetPosition(PRESET_POSITIONS.SHOOT_AMP_FRONT);
+        state = State.MOVING;
+        //  elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT);
         //  elevatedShooter.shooter.enableClosedLoopFeedStop(true);
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putString("ShootAmp Status", state.name());
         switch (state) {
             case MOVING:
-                if (elevatedShooter.executeSetPosition(PRESET_POSITIONS.SHOOT_AMP_FRONT))
+                // if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT))
                     state = State.SHOOTING;
+                    feedTime = Util.timeStamp();
                 break;
             case SHOOTING:
                 elevatedShooter.shooter.startFeeding(-1);
-                if (!elevatedShooter.shooter.hasNote())
+                if (!elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 3)
                     state = State.DONE;
                 break;
             case DONE:

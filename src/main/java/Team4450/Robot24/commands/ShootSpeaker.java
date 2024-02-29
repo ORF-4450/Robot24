@@ -9,14 +9,18 @@ import Team4450.Robot24.subsystems.Shooter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootSpeaker extends Command {
     private final DriveBase robotDrive;
     private final ElevatedShooter elevatedShooter;
     private double startTime;
+    private  enum State {NONE, MOVING, BACKFEED, SHOOT, DONE};
+    private State state = State.NONE;
 
     public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive) {
+        SmartDashboard.putString("ShootSpeaker Status", state.name());
         this.elevatedShooter = elevatedShooter;
         this.robotDrive = robotDrive;
         addRequirements(elevatedShooter);
@@ -24,22 +28,41 @@ public class ShootSpeaker extends Command {
     @Override
     public void initialize() {
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
-        // start by feeding the note backwards a bit (0.2 seconds)
-        elevatedShooter.shooter.startFeeding(-0.3);
+        state = State.BACKFEED;
         startTime = Util.timeStamp();
     }
 
     @Override
     public void execute() {
-        if (Util.getElaspedTime(startTime) > 0.2) {
-            elevatedShooter.shooter.startShooting();
-            elevatedShooter.shooter.startFeeding(1);
-        }
-        // calculateAngle();
-        // commented because handled in end():
-        if (!elevatedShooter.shooter.hasNote()){//(Util.getElaspedTime(startTime) > 1.2) {
-            elevatedShooter.shooter.stopFeeding();
-            elevatedShooter.shooter.stopShooting();
+        SmartDashboard.putString("ShootSpeaker Status", state.name());
+        // elevatedShooter.shooter.setAngle(calculateAngle());
+        switch (state) {
+            case NONE:
+                break;
+            case MOVING:
+                break;
+            case BACKFEED:
+                if (Util.getElaspedTime(startTime) < 0.1) {
+                    elevatedShooter.shooter.startFeeding(-0.3); // start by feeding the note backwards a bit (30% speed for 0.2 seconds see down below)
+                    elevatedShooter.shooter.startShooting();
+                }
+                else if (Util.getElaspedTime(startTime) > 0.5) {
+                    state = State.SHOOT;
+                    startTime = Util.timeStamp();
+                } else {
+                    elevatedShooter.shooter.startFeeding(0); // start by feeding the note backwards a bit (30% speed for 0.2 seconds see down below)
+                    elevatedShooter.shooter.startShooting();
+                }
+                
+                break;
+            case SHOOT:
+                elevatedShooter.shooter.startFeeding(1);
+                elevatedShooter.shooter.startShooting();
+                if (Util.getElaspedTime(startTime) > 1) {
+                    state = State.DONE;
+                }
+            case DONE:
+                break;
         }
     }
 
@@ -53,21 +76,22 @@ public class ShootSpeaker extends Command {
 
     @Override
     public boolean isFinished() {
-        return !elevatedShooter.shooter.hasNote();
+        SmartDashboard.putString("ShootSpeaker Status", state.name());
+        return state == State.DONE;
     }
 
-    // private double calculateAngle() {
-    //     Transform2d transform = robotDrive.getPose().minus(new Pose2d(0, 0, new Rotation2d()));
+    private double calculateAngle() {
+        Transform2d transform = robotDrive.getPose().minus(new Pose2d(0, 0, new Rotation2d()));
 
-    //     // everything in meters:
-    //     double distance = Math.sqrt(Math.pow(transform.getY(),2) + Math.pow(transform.getX(), 2));
-    //     double SPEAKER_HEIGHT = 3 - elevator.getHeight();
+        // everything in meters:
+        double distance = Math.sqrt(Math.pow(transform.getY(),2) + Math.pow(transform.getX(), 2));
+        double SPEAKER_HEIGHT = 3;
 
-    //     double angle = Math.toDegrees(Math.atan2(SPEAKER_HEIGHT, distance));
+        double angle = Math.toDegrees(Math.atan2(SPEAKER_HEIGHT, distance));
 
-    //     Util.consoleLog("%f", angle);
-    //     shooter.setAngle(angle);
-    //     // double wheelSpeed = 
-    //     return 0; //TODO
-    // }
+        Util.consoleLog("angle %f", angle);
+        // shooter.setAngle(angle);
+        // double wheelSpeed = 
+        return angle;
+    }
 }

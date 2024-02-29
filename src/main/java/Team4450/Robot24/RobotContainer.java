@@ -17,6 +17,7 @@ import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
+import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.UpdateVisionPose;
@@ -28,7 +29,7 @@ import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
-import Team4450.Robot24.subsystems.ElevatedShooter.PRESET_POSITIONS;
+import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
 import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
@@ -42,6 +43,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -243,6 +245,8 @@ public class RobotContainer
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
 		elevShooter));
 		
+		// intake.setDefaultCommand(new ReverseIntake(intake));
+		
 		
 
 
@@ -418,6 +422,11 @@ public class RobotContainer
 		// run intake (manupulator controller)
 		new Trigger(() -> utilityController.getBButton())
 			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
+
+		new Trigger(() -> utilityController.getBackButton())
+			.toggleOnFalse(new ReverseIntake(intake));
+
+		
 		new Trigger(() -> utilityController.getLeftBumper())
 			.onTrue(new IntakeNote(intake, elevShooter));
 
@@ -440,34 +449,40 @@ public class RobotContainer
 			.whileTrue(new InstantCommand(()->
 				elevShooter.resetEncoders()));
 		
+		// new Trigger(()-> utilityController.getBackButton()).onTrue(new RepeatCommand(new InstantCommand(
+		// 	()->elevShooter.executeSetPosition(PresetPosition.INTAKE))
+		// ));
+
 		new Trigger(()-> utilityController.getPOV() != -1)
-			.onTrue(new InstantCommand(()->{
-				ElevatedShooter.PRESET_POSITIONS position;
-				Util.consoleLog("preset position %d", utilityController.getPOV());
+			.onTrue(new RepeatCommand(new InstantCommand(()->{
+				ElevatedShooter.PresetPosition position;
+				if (utilityController.getPOV() == -1) return;
 				switch (utilityController.getPOV()) {
 					case 0:
-						position = PRESET_POSITIONS.INTAKE;
+						position = PresetPosition.INTAKE;
 						break;
 					case 45:
-						position = PRESET_POSITIONS.SHOOT_AMP_BACK;
+						position = PresetPosition.SHOOT_AMP_BACK;
 						break;
 					case 90:
-						position = PRESET_POSITIONS.SHOOT_AMP_FRONT;
+						position = PresetPosition.SHOOT_AMP_FRONT;
 						break;
 					case 135:
-						position = PRESET_POSITIONS.SOURCE;
+						position = PresetPosition.SOURCE;
 						break;
 					case 180:
-						position = PRESET_POSITIONS.VERTICAL_BOTTOM;
+						position = PresetPosition.VERTICAL_BOTTOM;
 						break;
 					case 225:
-						position = PRESET_POSITIONS.VERTICAL_TOP;
+						position = PresetPosition.VERTICAL_TOP;
 						break;
 					default:
-						position = PRESET_POSITIONS.INTAKE;
+						position = PresetPosition.INTAKE;
 				}
 				elevShooter.executeSetPosition(position);
-			}));
+			})));
+
+
 
 		
 
@@ -526,8 +541,10 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
-		// NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
-		// NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator, driveBase));
+		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase));
+		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
+		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
