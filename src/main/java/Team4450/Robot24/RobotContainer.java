@@ -197,8 +197,8 @@ public class RobotContainer
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
     	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
-		// pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
-		// pvTagCamera.setDefaultCommand(new UpdateVisionPose(pvTagCamera, driveBase));
+		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		pvTagCamera.setDefaultCommand(new UpdateVisionPose(pvTagCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -462,7 +462,7 @@ public class RobotContainer
 						position = PresetPosition.INTAKE;
 						break;
 					case 45:
-						position = PresetPosition.SHOOT_AMP_BACK;
+						position = PresetPosition.CLIMB;
 						break;
 					case 90:
 						position = PresetPosition.SHOOT_AMP_FRONT;

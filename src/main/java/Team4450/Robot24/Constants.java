@@ -94,7 +94,7 @@ public final class Constants
     // the names of the cameras in the PhotonVision software
     public static String        CAMERA_POSE_ESTIMATOR = "Microsoft_LifeCam_HD-3000";
     public static String        CAMERA_NOTE = "Microsoft_LifeCam_Cinema(TM)";
-    public static String        CAMERA_TAG = "Microsoft_LifeCam_HD-3000";
+    public static String        CAMERA_TAG = "other";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;
@@ -233,7 +233,7 @@ public final class Constants
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxSpeedMetersPerSecond = 4.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;

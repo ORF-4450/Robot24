@@ -120,7 +120,9 @@ public class PhotonVision extends SubsystemBase
             case APRILTAG_TRACKING:
                 visionSim.addAprilTags(fieldLayout);
                 break;
-
+            case POSE_ESTIMATION:
+                visionSim.addAprilTags(fieldLayout);
+                break;
             case OBJECT_TRACKING:
                 // approximate coordinates on on-field notes
                 addNoteSimTarget(2.9, 7, 0);
@@ -180,14 +182,14 @@ public class PhotonVision extends SubsystemBase
 
     @Override
     public void periodic() {
-        ArrayList<Integer> ids = getTrackedIDs();
-        ArrayList<Pose3d> targets = new ArrayList<Pose3d>();
-        for (int i=0;i<ids.size();i++) {
-            Optional<Pose3d> tagPose = fieldLayout.getTagPose(ids.get(i));
-            if (tagPose.isPresent())
-                targets.add(tagPose.get());
-        }
-        AdvantageScope.getInstance().setVisionTargets(targets);
+        // ArrayList<Integer> ids = getTrackedIDs();
+        // ArrayList<Pose3d> targets = new ArrayList<Pose3d>();
+        // for (int i=0;i<ids.size();i++) {
+        //     Optional<Pose3d> tagPose = fieldLayout.getTagPose(ids.get(i));
+        //     if (tagPose.isPresent())
+        //         targets.add(tagPose.get());
+        // }
+        // AdvantageScope.getInstance().setVisionTargets(targets);
     }
 
     /**
@@ -458,14 +460,23 @@ public class PhotonVision extends SubsystemBase
 
             // logic for checking if pose is valid would go here:
             // for example:
+            ArrayList<Pose3d> usedTagPoses = new ArrayList<Pose3d>();
             for (int i = 0; i < estimatedPose.targetsUsed.size(); i++) {
+                int id = estimatedPose.targetsUsed.get(i).getFiducialId();
                 // if a target was used with ID > 16 then return no estimated pose
-                if (estimatedPose.targetsUsed.get(i).getFiducialId() > 16) {
+                if (id > 16) {
                     return Optional.empty();
                 }
+                Optional<Pose3d> tagPose = fieldLayout.getTagPose(id);
+                if (tagPose.isPresent())
+                    usedTagPoses.add(tagPose.get());
             }
+            AdvantageScope.getInstance().setVisionTargets(usedTagPoses);
+            Util.consoleLog("%d", usedTagPoses.size());
 
             return Optional.of(estimatedPose);
-        } else return Optional.empty();
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -55,7 +55,7 @@ public class UpdateVisionPose extends Command {
     public void execute() {
         if (Robot.isSimulation()) {
             cameraSubsystem.updateSimulationPose(robotDrive.getPose());
-            return; // if simulator don't try updating pose estimator because the
+            // return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
 

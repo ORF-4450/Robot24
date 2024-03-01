@@ -85,7 +85,7 @@ public class ShootSpeaker extends Command {
     @Override
     public boolean isFinished() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
-        // if (RobotBase.isSimulation()) return false;
+        if (RobotBase.isSimulation()) return false;
         return state == State.DONE;
     }
 
