@@ -20,8 +20,8 @@
         "y": 7.001872450545497
       },
       "prevControl": {
-        "x": 2.1350118769805997,
-        "y": 6.39710224918464
+        "x": 2.130180004308256,
+        "y": 6.357902643810296
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,55 +30,15 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.85,
-      "rotationDegrees": 31.670317148685967,
-      "rotateFast": true
-    },
-    {
-      "waypointRelativePos": 0.2,
-      "rotationDegrees": 0,
-      "rotateFast": true
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 29.158215038501908,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Shoot middleWingNote",
-      "waypointRelativePos": 0.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "ShootSpeaker"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Begin to Intake",
-      "waypointRelativePos": 0.85,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "IntakeNote"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.5,
+    "maxVelocity": 1.0,
     "maxAcceleration": 20.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0

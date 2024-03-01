@@ -5,6 +5,7 @@ import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -43,7 +44,7 @@ public class IntakeNote extends Command {
             case INTAKING:
                 intake.start();
                 elevatedShooter.shooter.startFeeding(1);
-                AdvantageScope.getInstance().attemptPickup();
+                if (RobotBase.isSimulation()) AdvantageScope.getInstance().attemptPickup();
                 if (elevatedShooter.shooter.hasNote()) {
                     state = State.FEEDING;
                     feedTime = Util.timeStamp();

@@ -84,6 +84,7 @@ public class Shooter extends SubsystemBase {
      * the rolling shooter wheels (which must be enabled seperately)
      */
     public void startFeeding(double speedfactor) {
+        SmartDashboard.putNumber("sushi", speedfactor);
         motorFeeder.set(Util.clampValue(speedfactor, 1) * feedSpeed);
         feederIsRunning = true;
         updateDS();

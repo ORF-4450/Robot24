@@ -44,7 +44,7 @@ public class Elevator extends SubsystemBase {
     private final double MAIN_START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR;
     private final double CENTERSTAGE_START_COUNTS = 0;
 
-    private double setpoint = MAIN_START_COUNTS;
+    private double setpoint = Double.NaN;
     private double centerstageSetpoint = CENTERSTAGE_START_COUNTS;
     
 
@@ -70,6 +70,8 @@ public class Elevator extends SubsystemBase {
         mainEncoder = motorMain.getEncoder();
         followEncoder = motorFollower.getEncoder();
         centerstageEncoder = motorCenterstage.getEncoder();
+
+        resetEncoders();
 
         // mainEncoder.setPositionConversionFactor(-1);
         // followEncoder.setPositionConversionFactor(-1);
@@ -105,6 +107,9 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("windh_2_m", followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
         SmartDashboard.putNumber("centerstage_m", centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR); 
         
+
+        if (Double.isNaN(setpoint))
+            return;
         // elevator main winch PID loop
         SmartDashboard.putNumber("winch_setpoint", setpoint);
         mainPID.setSetpoint(setpoint);
@@ -129,7 +134,7 @@ public class Elevator extends SubsystemBase {
      * @param speed (such as from a joystick value)
      */
     public void move(double speed) {
-        setpoint += speed;
+        setpoint -= speed;
         // if (speed < 0)
         //     speed *= 0.1;
         // speed *= -0.5;
@@ -179,6 +184,7 @@ public class Elevator extends SubsystemBase {
     public void resetEncoders() {
         mainEncoder.setPosition(MAIN_START_COUNTS);
         followEncoder.setPosition(MAIN_START_COUNTS);
+        setpoint = MAIN_START_COUNTS;
         centerstageEncoder.setPosition(0);
     }
 

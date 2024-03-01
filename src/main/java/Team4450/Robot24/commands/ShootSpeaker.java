@@ -31,7 +31,7 @@ public class ShootSpeaker extends Command {
     public void initialize() {
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
         elevatedShooter.executeSetPosition(PresetPosition.SHOOT);
-        state = State.BACKFEED;
+        state = State.MOVING;
     }
 
     @Override
@@ -43,8 +43,8 @@ public class ShootSpeaker extends Command {
             case MOVING:
                 if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT)) {
                     state = State.BACKFEED;
+                    startTime = Util.timeStamp();
                 }
-                startTime = Util.timeStamp();
                 break;
             case BACKFEED:
                 elevatedShooter.shooter.setAngle(calculateAngle());
@@ -52,7 +52,7 @@ public class ShootSpeaker extends Command {
                     elevatedShooter.shooter.startFeeding(-0.3); // start by feeding the note backwards a bit (30% speed for 0.2 seconds see down below)
                     elevatedShooter.shooter.startShooting();
                 }
-                else if (Util.getElaspedTime(startTime) > 0.5) {
+                else if (Util.getElaspedTime(startTime) > 1.5) {
                     state = State.SHOOT;
                     startTime = Util.timeStamp();
                 } else {
@@ -101,7 +101,7 @@ public class ShootSpeaker extends Command {
         );
         Util.consoleLog("distance %f", distance);
 
-        double angle = -Math.toDegrees(Math.atan(SPEAKER_HEIGHT / distance));
+        double angle = -Math.toDegrees(Math.atan(SPEAKER_HEIGHT / distance)) - 30;
         angle = Util.clampValue(angle, -80, 0);
 
         Util.consoleLog("angle %f", angle);

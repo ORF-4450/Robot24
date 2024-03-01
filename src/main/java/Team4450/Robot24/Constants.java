@@ -77,12 +77,12 @@ public final class Constants
 
     // CAMERAS ======
     public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 0),
+        new Translation3d(0, 0.2794, 0.6604),
         new Rotation3d(0, 0, 0)
     );
     
     public static Transform3d   CAMERA_TAG_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 1),
+        new Translation3d(0, 0.2794, 0.6604),
         new Rotation3d(0, Math.toRadians(-15), 0)
     );
     
@@ -92,9 +92,9 @@ public final class Constants
     );
 
     // the names of the cameras in the PhotonVision software
-    public static String        CAMERA_POSE_ESTIMATOR = "front";
-    public static String        CAMERA_NOTE = "front";
-    public static String        CAMERA_TAG = "front";
+    public static String        CAMERA_POSE_ESTIMATOR = "Microsoft_LifeCam_HD-3000";
+    public static String        CAMERA_NOTE = "Microsoft_LifeCam_Cinema(TM)";
+    public static String        CAMERA_TAG = "Microsoft_LifeCam_HD-3000";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;
@@ -126,7 +126,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 2.0;
+        public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 

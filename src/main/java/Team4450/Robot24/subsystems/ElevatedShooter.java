@@ -40,7 +40,7 @@ public class ElevatedShooter extends SubsystemBase {
                 break;
             case SHOOT:
                 pivotAngle = -39;
-                elevatorHeight = 0.17;
+                elevatorHeight = 0.15;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;
                 break;
