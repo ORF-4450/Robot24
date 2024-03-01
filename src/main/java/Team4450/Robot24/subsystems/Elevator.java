@@ -28,7 +28,6 @@ public class Elevator extends SubsystemBase {
     private CANSparkMax motorCenterstage = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
 
     private PIDController mainPID;
-    private PIDController followerPID;
     private PIDController centerstagePID;
 
     private SparkLimitSwitch lowerLimitSwitch;
@@ -127,6 +126,10 @@ public class Elevator extends SubsystemBase {
         motorOutput = centerstagePID.calculate(centerstageEncoder.getPosition());
         motorCenterstage.set(motorOutput);
         if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
+    }
+
+    public void stopMoving() {
+        setpoint = Double.NaN;
     }
 
     /**

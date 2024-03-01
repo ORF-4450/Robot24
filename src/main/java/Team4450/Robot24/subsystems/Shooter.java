@@ -160,6 +160,8 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public boolean isAtAngle(double angle) {
+        // if (Double.isNaN(setpoint))
+        //     return true;
         return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < PIVOT_TOLERANCE;
     }
 

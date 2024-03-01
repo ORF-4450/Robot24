@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-02.22.24-1";
+	public static String		PROGRAM_NAME = "CW-03.01.24-1";
 
 	public static Robot			robot;
 
@@ -57,6 +57,9 @@ public final class Constants
 
     // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+
+    public static final double  PODIUM_ANGLE = -25;
+    public static final double  SUBWOOFER_ANGLE = -30;
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
