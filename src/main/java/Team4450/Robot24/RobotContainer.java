@@ -369,9 +369,9 @@ public class RobotContainer
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 		
 		// toggle face note/apriltag
-		new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
-    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
-		new Trigger(() -> driverController.getRightTrigger() && elevShooter.hasNote())
+		// new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
+    	//     .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
     	    .whileTrue(new FaceAprilTag(driveBase, pvTagCamera));
 		
 
@@ -447,7 +447,7 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getYButton()) // PODIUM
 			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, PODIUM_ANGLE));
 		new Trigger(() -> utilityController.getXButton()) // manual
-			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, ()->-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)));
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, true));
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
 			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		

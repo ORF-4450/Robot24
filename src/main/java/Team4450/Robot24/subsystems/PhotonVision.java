@@ -201,6 +201,10 @@ public class PhotonVision extends SubsystemBase
         visionSim.update(pose);
     }
 
+    public boolean isPoseEstimation() {
+        return pipelineType == PipelineType.POSE_ESTIMATION;
+    }
+
     /**
      * Get the lastest target results object returned by the camera.
      * @return Results object.

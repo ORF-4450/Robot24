@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
      * @param speedfactor from -1 to 0 to 1
      */
     public void start(double speedfactor) {
-        Util.consoleLog();
+        // Util.consoleLog();
 
         isrunning = true;
         updateDS();

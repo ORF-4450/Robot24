@@ -24,7 +24,7 @@ public class ShootSpeaker extends Command {
     private State state = State.NONE;
 
     private double angle;
-    private DoubleSupplier angleSupplier;
+    private boolean justShoot = false;
     private boolean manualAngle;
 
     public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle) {
@@ -39,12 +39,12 @@ public class ShootSpeaker extends Command {
         this(elevatedShooter, robotDrive, Double.NaN);
     }
 
-    public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive, DoubleSupplier angleSupplier) {
+    public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive, boolean justShoot) {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
         this.elevatedShooter = elevatedShooter;
         this.robotDrive = robotDrive;
         this.manualAngle = true;
-        this.angleSupplier = angleSupplier;
+        this.justShoot = justShoot;
         this.angle = 0;
         addRequirements(elevatedShooter);
     }
@@ -58,7 +58,12 @@ public class ShootSpeaker extends Command {
     public void initialize() {
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
         
-        state = State.MOVING;
+        if (justShoot) {
+            state = State.BACKFEED;
+            startTime = Util.timeStamp();
+        }
+        else
+            state = State.MOVING;
     }
 
     @Override
@@ -69,15 +74,12 @@ public class ShootSpeaker extends Command {
                 break;
             case MOVING:
                 double angleSetpoint;
-                if (manualAngle) {
-                    angle += angleSupplier.getAsDouble();
-                }
                 if (Double.isNaN(angle)) {
                     angleSetpoint = calculateAngle();
                 } else {
                     angleSetpoint = angle;
                 }
-                if (elevatedShooter.executeSetPosition(angleSetpoint, 0, -39, false)) {
+                if (elevatedShooter.executeSetPosition(angleSetpoint, 0, 0.15, false)) {
                     state = State.BACKFEED;
                     startTime = Util.timeStamp();
                 }
@@ -118,7 +120,7 @@ public class ShootSpeaker extends Command {
     @Override
     public boolean isFinished() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
-        if (RobotBase.isSimulation()) return false;
+        // if (RobotBase.isSimulation()) return false;
         return state == State.DONE;
     }
 
