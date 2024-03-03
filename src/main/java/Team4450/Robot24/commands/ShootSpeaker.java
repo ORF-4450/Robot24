@@ -88,8 +88,9 @@ public class ShootSpeaker extends Command {
                 if (Util.getElaspedTime(startTime) < 0.1) {
                     elevatedShooter.shooter.startFeeding(-0.3); // start by feeding the note backwards a bit (30% speed for 0.2 seconds see down below)
                     elevatedShooter.shooter.startShooting();
+                    // elevatedShooter.shooter.backShoot();
                 }
-                else if (Util.getElaspedTime(startTime) > 1.5) {
+                else if (Util.getElaspedTime(startTime) > 1.0) {
                     state = State.SHOOT;
                     startTime = Util.timeStamp();
                 } else {

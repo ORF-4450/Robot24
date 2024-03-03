@@ -16,9 +16,9 @@ public class ElevatedShooter extends SubsystemBase {
     private PresetPosition position = PresetPosition.NONE;
 
     // in meters and degrees
-    private final double CENTERSTAGE_SAFE_TOP = 0.5;
+    private final double CENTERSTAGE_SAFE_TOP = 0;
     private final double CENTERSTAGE_SAFE_BOTTOM = 0;
-    private final double MAIN_SAFE_TOP = 0.62;
+    private final double MAIN_SAFE_TOP = 0.59;
     private final double MAIN_SAFE_BOTTOM = 0.2;
     private final double PIVOT_SAFE = -90; // angle okay to move up/down
     
@@ -39,8 +39,8 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = false;
                 break;
             case CLIMB:
-                pivotAngle = -140;
-                elevatorHeight = 0.50;
+                pivotAngle = -145;
+                elevatorHeight = 0.59;
                 centerstageHeight = CENTERSTAGE_SAFE_TOP;
                 atTop = true;
                 break;

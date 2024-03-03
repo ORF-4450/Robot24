@@ -44,6 +44,7 @@ public class IntakeNote extends Command {
             case INTAKING:
                 intake.start();
                 elevatedShooter.shooter.startFeeding(1);
+                elevatedShooter.shooter.backShoot();
                 if (RobotBase.isSimulation()) AdvantageScope.getInstance().attemptPickup();
                 if (elevatedShooter.shooter.hasNote()) {
                     state = State.FEEDING;
@@ -52,13 +53,15 @@ public class IntakeNote extends Command {
                 break;
             case FEEDING:// feed until shooter has note
                 intake.stop();
+                elevatedShooter.shooter.stopFeeding();
+                elevatedShooter.shooter.stopShooting();
                 // elevatedShooter.shooter.startFeeding(0.3);
                 // if (Util.getElaspedTime(feedTime) > 0.5)
                     state = State.IN_FINAL_PLACE;
                 break;
             case IN_FINAL_PLACE:
                 intake.stop();
-                elevatedShooter.shooter.stopFeeding();
+
                 break;
         }
     }
@@ -72,6 +75,7 @@ public class IntakeNote extends Command {
         Util.consoleLog("interrupted=%b", interrupted);
         intake.stop();
         elevatedShooter.shooter.stopFeeding();
+        elevatedShooter.shooter.stopShooting();
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
     }
 }

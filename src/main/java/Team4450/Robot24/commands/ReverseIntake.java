@@ -17,7 +17,8 @@ public class ReverseIntake extends Command {
 
     @Override
     public void execute() {
-        intake.start((driveBase.getChassisSpeeds().vxMetersPerSecond) / 8.0);
+        // intake.start((driveBase.getChassisSpeeds().vxMetersPerSecond) / 8.0);
+        intake.start(-1);
     }
 
     @Override

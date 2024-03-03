@@ -43,7 +43,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 1;
+    public static final double  INTAKE_SPEED = 0.70;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
@@ -58,8 +58,8 @@ public final class Constants
     // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
 
-    public static final double  PODIUM_ANGLE = -25;
-    public static final double  SUBWOOFER_ANGLE = -30;
+    public static final double  PODIUM_ANGLE = -40;
+    public static final double  SUBWOOFER_ANGLE = -52;
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
@@ -129,7 +129,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxSpeedMetersPerSecond = 4.0;
         public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 

@@ -118,6 +118,12 @@ public class Shooter extends SubsystemBase {
         updateDS();
     }
 
+    public void backShoot() {
+        motorTop.set(-0.15);
+        shooterIsRunning = true;
+        updateDS();
+    }
+
     /** stops the shooter wheels */
     public void stopShooting() {
         motorTop.set(0);

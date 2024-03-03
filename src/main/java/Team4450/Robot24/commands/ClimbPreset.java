@@ -31,7 +31,7 @@ public class ClimbPreset extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevatedShooter.elevator.stopMoving();
+        // elevatedShooter.elevator.stopMoving();
         Util.consoleLog("interrupted=%b", interrupted);
     }
 }

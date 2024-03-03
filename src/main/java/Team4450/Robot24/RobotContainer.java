@@ -248,6 +248,7 @@ public class RobotContainer
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
 		elevShooter));
 		
+		
 		// intake.setDefaultCommand(new ReverseIntake(intake));
 		
 		
@@ -395,6 +396,9 @@ public class RobotContainer
 		new Trigger(() -> driverController.getAButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
+		new Trigger(() -> utilityController.getRightStickButton())
+			.onTrue(new InstantCommand(()->elevShooter.elevator.moveUnsafe(utilityController.getRightY())));
+
 		// Reset drive wheel distance traveled.
 		//new Trigger(() -> driverPad.getPOVAngle(270))
     	//	.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
@@ -441,7 +445,7 @@ public class RobotContainer
 			.toggleOnTrue(new ClimbPreset(elevShooter));
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase));
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
 
 		
 		new Trigger(() -> utilityController.getYButton()) // PODIUM
@@ -554,7 +558,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("ShootSpeakerPodium", new ShootSpeaker(elevShooter, driveBase, PODIUM_ANGLE));
 		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("ClimbPreset", new ClimbPreset(elevShooter));
