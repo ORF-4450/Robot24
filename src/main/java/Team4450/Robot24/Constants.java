@@ -43,7 +43,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 0.70;
+    public static final double  INTAKE_SPEED = 0.90;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
