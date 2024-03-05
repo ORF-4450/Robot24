@@ -28,7 +28,6 @@ public class Elevator extends SubsystemBase {
     private CANSparkMax motorCenterstage = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
 
     private PIDController mainPID;
-    private PIDController followerPID;
     private PIDController centerstagePID;
 
     private SparkLimitSwitch lowerLimitSwitch;
@@ -115,7 +114,7 @@ public class Elevator extends SubsystemBase {
         mainPID.setSetpoint(setpoint);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
             SmartDashboard.putNumber("winch_nonclamped", nonclamped);
-        double motorOutput = nonclamped;//Util.clampValue(nonclamped, 0.2);
+        double motorOutput = Util.clampValue(nonclamped, 0.5);
                 SmartDashboard.putNumber("winch_output", motorOutput);
         motorMain.set(motorOutput);
         if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
@@ -129,12 +128,18 @@ public class Elevator extends SubsystemBase {
         if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
     }
 
+    public void stopMoving() {
+        setpoint = Double.NaN;
+    }
+
     /**
      * move elevator in direction based on speed
      * @param speed (such as from a joystick value)
      */
     public void move(double speed) {
         setpoint -= speed;
+        if (setpoint < -59)//-59)
+            setpoint = -59;//-59;
         // if (speed < 0)
         //     speed *= 0.1;
         // speed *= -0.5;
@@ -144,6 +149,10 @@ public class Elevator extends SubsystemBase {
         //     mainEncoder.setPosition(mainEncoder.getPosition() + (1*speed));
         //     followEncoder.setPosition(followEncoder.getPosition() + (1*speed));
         // }
+    }
+    public void moveUnsafe(double speed) {
+        // setpoint = Double.NaN;
+        // motorMain.set(speed);
     }
 
     public void moveCenterStage(double speed) {

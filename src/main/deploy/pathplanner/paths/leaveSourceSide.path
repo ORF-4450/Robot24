@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2284569939510253,
-        "y": 5.586822900497653
+        "x": 0.7257242416270547,
+        "y": 4.422897711122803
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.21989325836169,
-        "y": 5.586822900497653
+        "x": 1.7257242416270548,
+        "y": 3.922897711122803
       },
       "isLocked": false,
-      "linkedName": "speakerFront"
+      "linkedName": "startSourceSide"
     },
     {
       "anchor": {
-        "x": 2.889388188560604,
-        "y": 5.586822900497653
+        "x": 3.1406656275483606,
+        "y": 1.7728292008119109
       },
       "prevControl": {
-        "x": 3.6650857990869463,
-        "y": 5.632918853263302
-      },
-      "nextControl": {
-        "x": 2.113690578034265,
-        "y": 5.540726947732004
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.2284569939510253,
-        "y": 5.586822900497653
-      },
-      "prevControl": {
-        "x": 2.186835587398854,
-        "y": 5.653109909270414
+        "x": 2.255234687278586,
+        "y": 2.913446750687361
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +32,7 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
+    "maxVelocity": 1.5,
     "maxAcceleration": 20.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0

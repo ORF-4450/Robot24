@@ -45,7 +45,7 @@ public class Shooter extends SubsystemBase {
 
     private PIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
-    private final double PIVOT_TOLERANCE = 1;
+    private final double PIVOT_TOLERANCE = 1; //counts
 
     private final double PIVOT_START = -39;
 
@@ -118,6 +118,12 @@ public class Shooter extends SubsystemBase {
         updateDS();
     }
 
+    public void backShoot() {
+        motorTop.set(-0.15);
+        shooterIsRunning = true;
+        updateDS();
+    }
+
     /** stops the shooter wheels */
     public void stopShooting() {
         motorTop.set(0);
@@ -160,6 +166,8 @@ public class Shooter extends SubsystemBase {
      * @return
      */
     public boolean isAtAngle(double angle) {
+        // if (Double.isNaN(setpoint))
+        //     return true;
         return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < PIVOT_TOLERANCE;
     }
 
@@ -191,7 +199,7 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(setpoint));
         double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(setpoint));
-        SmartDashboard.putNumber("pivot_measured", SHOOTER_PIVOT_FACTOR * pivotEncoder.getPosition());
+        SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
         motorPivot.set(motorOutput);
         if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (1*motorOutput));
     }

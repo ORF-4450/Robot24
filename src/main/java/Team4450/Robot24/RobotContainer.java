@@ -3,6 +3,7 @@ package Team4450.Robot24;
 
 import static Team4450.Robot24.Constants.*;
 
+import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -12,10 +13,12 @@ import Team4450.Robot24.commands.autonomous.AutoStart;
 
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
+import Team4450.Robot24.commands.ClimbPreset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
+import Team4450.Robot24.commands.ParkWheels;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
@@ -197,8 +200,8 @@ public class RobotContainer
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
     	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
-		// pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
-		// pvTagCamera.setDefaultCommand(new UpdateVisionPose(pvTagCamera, driveBase));
+		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		pvTagCamera.setDefaultCommand(new UpdateVisionPose(pvTagCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -244,6 +247,7 @@ public class RobotContainer
 				-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND), // centerstage
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
 		elevShooter));
+		
 		
 		// intake.setDefaultCommand(new ReverseIntake(intake));
 		
@@ -366,9 +370,9 @@ public class RobotContainer
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 		
 		// toggle face note/apriltag
-		new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
-    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
-		new Trigger(() -> driverController.getRightTrigger() && elevShooter.hasNote())
+		// new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
+    	//     .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
     	    .whileTrue(new FaceAprilTag(driveBase, pvTagCamera));
 		
 
@@ -391,6 +395,9 @@ public class RobotContainer
 		// Toggle drive motors between brake and coast.
 		new Trigger(() -> driverController.getAButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
+
+		new Trigger(() -> utilityController.getRightStickButton())
+			.onTrue(new InstantCommand(()->elevShooter.elevator.moveUnsafe(utilityController.getRightY())));
 
 		// Reset drive wheel distance traveled.
 		//new Trigger(() -> driverPad.getPOVAngle(270))
@@ -434,12 +441,21 @@ public class RobotContainer
 		// new Trigger(() -> utilityController.getYButton())
 		// 	.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
 		
-		new Trigger(() -> utilityController.getYButton())
-			.toggleOnTrue(new ShootAmp(elevShooter));
+		new Trigger(()-> utilityController.getPOV() == 0) // up POV
+			.toggleOnTrue(new ClimbPreset(elevShooter));
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase));
-			
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
+
+		
+		new Trigger(() -> utilityController.getYButton()) // PODIUM
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, PODIUM_ANGLE));
+		new Trigger(() -> utilityController.getXButton()) // manual
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, true));
+		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
+			.toggleOnTrue(new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		
+
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.3), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
@@ -453,34 +469,34 @@ public class RobotContainer
 		// 	()->elevShooter.executeSetPosition(PresetPosition.INTAKE))
 		// ));
 
-		new Trigger(()-> utilityController.getPOV() != -1)
-			.onTrue(new RepeatCommand(new InstantCommand(()->{
-				ElevatedShooter.PresetPosition position;
-				if (utilityController.getPOV() == -1) return;
-				switch (utilityController.getPOV()) {
-					case 0:
-						position = PresetPosition.INTAKE;
-						break;
-					case 45:
-						position = PresetPosition.SHOOT_AMP_BACK;
-						break;
-					case 90:
-						position = PresetPosition.SHOOT_AMP_FRONT;
-						break;
-					case 135:
-						position = PresetPosition.SOURCE;
-						break;
-					case 180:
-						position = PresetPosition.VERTICAL_BOTTOM;
-						break;
-					case 225:
-						position = PresetPosition.VERTICAL_TOP;
-						break;
-					default:
-						position = PresetPosition.INTAKE;
-				}
-				elevShooter.executeSetPosition(position);
-			})));
+		// new Trigger(()-> utilityController.getPOV() != -1)
+		// 	.onTrue(new RepeatCommand(new InstantCommand(()->{
+		// 		ElevatedShooter.PresetPosition position;
+		// 		if (utilityController.getPOV() == -1) return;
+		// 		switch (utilityController.getPOV()) {
+		// 			case 0:
+		// 				position = PresetPosition.INTAKE;
+		// 				break;
+		// 			case 45:
+		// 				position = PresetPosition.CLIMB;
+		// 				break;
+		// 			case 90:
+		// 				position = PresetPosition.SHOOT_AMP_FRONT;
+		// 				break;
+		// 			case 135:
+		// 				position = PresetPosition.SOURCE;
+		// 				break;
+		// 			case 180:
+		// 				position = PresetPosition.VERTICAL_BOTTOM;
+		// 				break;
+		// 			case 225:
+		// 				position = PresetPosition.VERTICAL_TOP;
+		// 				break;
+		// 			default:
+		// 				position = PresetPosition.INTAKE;
+		// 		}
+		// 		elevShooter.executeSetPosition(position);
+		// 	})));
 
 
 
@@ -542,13 +558,19 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("ShootSpeakerPodium", new ShootSpeaker(elevShooter, driveBase, PODIUM_ANGLE));
+		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new ShootSpeaker(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("ClimbPreset", new ClimbPreset(elevShooter));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
 		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, driveBase));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
 
+		NamedCommands.registerCommand("ParkWheels", new ParkWheels(driveBase));
+		NamedCommands.registerCommand("ShuffleTab", new InstantCommand(shuffleBoard::switchTab));
+		NamedCommands.registerCommand("ResetGyro", new InstantCommand(driveBase::zeroGyro));
 
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvTagCamera));
 		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));

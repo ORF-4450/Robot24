@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "RACcw-03.01.24-1";
+	public static String		PROGRAM_NAME = "RACcw-03.04.24-1";
 	public static Robot			robot;
 
 	public static Properties	robotProperties;
@@ -42,7 +42,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 1;
+    public static final double  INTAKE_SPEED = 0.90;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
@@ -56,6 +56,9 @@ public final class Constants
 
     // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+
+    public static final double  PODIUM_ANGLE = -33;
+    public static final double  SUBWOOFER_ANGLE = -52;
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
@@ -93,7 +96,7 @@ public final class Constants
     // the names of the cameras in the PhotonVision software
     public static String        CAMERA_POSE_ESTIMATOR = "Microsoft_LifeCam_HD-3000";
     public static String        CAMERA_NOTE = "Microsoft_LifeCam_Cinema(TM)";
-    public static String        CAMERA_TAG = "Microsoft_LifeCam_HD-3000";
+    public static String        CAMERA_TAG = "other";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;
@@ -125,8 +128,8 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
+        public static final double kMaxSpeedMetersPerSecond = 4.0;
+        public static final double kMaxAngularSpeed = 0.75 * 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 
         public static final double kDirectionSlewRate = 1.2; // radians per second.
@@ -232,7 +235,7 @@ public final class Constants
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxSpeedMetersPerSecond = 4.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
