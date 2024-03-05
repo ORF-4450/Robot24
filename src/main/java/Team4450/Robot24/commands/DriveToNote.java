@@ -16,6 +16,7 @@ public class DriveToNote extends Command {
     DriveBase robotDrive;
     PhotonVision photonVision;
     private boolean alsoDrive;
+    private boolean initialFieldRel;
 
     /**
      * Track to a note using getArea() and getYaw()
@@ -34,6 +35,10 @@ public class DriveToNote extends Command {
     @Override
     public void initialize() {
         Util.consoleLog();
+
+        initialFieldRel = robotDrive.getFieldRelative();
+        if (initialFieldRel)
+            robotDrive.toggleFieldRelative();
 
         rotationController.setSetpoint(0); // target should be at yaw=0 degrees
         rotationController.setTolerance(1.5); // withing 0.5 degrees of 0
@@ -56,8 +61,9 @@ public class DriveToNote extends Command {
 
         // // make sure target centered before we move
         // if (!rotationController.atSetpoint()) {
+        if (alsoDrive) {
             robotDrive.driveRobotRelative(-movement, 0, rotation);
-        // }
+        }
         // // otherwise drive to the target (only forwards backwards)
         // if (!translationController.atSetpoint() && alsoDrive) {
         //     robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
@@ -68,5 +74,7 @@ public class DriveToNote extends Command {
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
+        if (initialFieldRel)
+            robotDrive.getFieldRelative(); // toggle back to beginning state
     }
 }

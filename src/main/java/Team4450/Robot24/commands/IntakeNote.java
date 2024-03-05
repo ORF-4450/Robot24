@@ -45,8 +45,9 @@ public class IntakeNote extends Command {
                 intake.start();
                 elevatedShooter.shooter.startFeeding(1);
                 elevatedShooter.shooter.backShoot();
-                if (RobotBase.isSimulation()) AdvantageScope.getInstance().attemptPickup();
-                if (elevatedShooter.shooter.hasNote()) {
+                boolean simPickup = false;
+                if (RobotBase.isSimulation()) simPickup = AdvantageScope.getInstance().attemptPickup();
+                if (elevatedShooter.shooter.hasNote() || simPickup) {
                     state = State.FEEDING;
                     feedTime = Util.timeStamp();
                 }

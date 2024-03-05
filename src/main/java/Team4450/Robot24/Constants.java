@@ -79,14 +79,15 @@ public final class Constants
     public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
 
     // CAMERAS ======
-    public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
         new Translation3d(0, 0.2794, 0.6604),
-        new Rotation3d(0, 0, 0)
+        new Rotation3d(0, 0, Math.toRadians(180))
     );
+
     
-    public static Transform3d   CAMERA_TAG_TRANSFORM = new Transform3d(
+    public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
         new Translation3d(0, 0.2794, 0.6604),
-        new Rotation3d(0, Math.toRadians(-15), 0)
+        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180))
     );
     
     public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(
@@ -95,9 +96,9 @@ public final class Constants
     );
 
     // the names of the cameras in the PhotonVision software
-    public static String        CAMERA_POSE_ESTIMATOR = "Microsoft_LifeCam_HD-3000";
-    public static String        CAMERA_NOTE = "Microsoft_LifeCam_Cinema(TM)";
-    public static String        CAMERA_TAG = "other";
+    public static String        CAMERA_FRONT_ESTIMATOR = "Microsoft_LifeCam_Cinema(TM)";
+    public static String        CAMERA_NOTE = "qMicrosoft_LifeCam_Cinema(TM)";
+    public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;

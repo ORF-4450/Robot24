@@ -201,7 +201,7 @@ public class Shooter extends SubsystemBase {
         double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(setpoint));
         SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
         motorPivot.set(motorOutput);
-        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (1*motorOutput));
+        if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (2*motorOutput));
     }
 
     /**
