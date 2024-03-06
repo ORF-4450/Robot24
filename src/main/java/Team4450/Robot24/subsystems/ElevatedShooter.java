@@ -34,7 +34,7 @@ public class ElevatedShooter extends SubsystemBase {
             // set target position/rotation values for each position
             case INTAKE:
                 pivotAngle = -39;
-                elevatorHeight = 0.13;
+                elevatorHeight = 0.113;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;
                 break;
@@ -52,7 +52,7 @@ public class ElevatedShooter extends SubsystemBase {
                 break;
             case SHOOT_VISION_START:
                 pivotAngle = -27;
-                elevatorHeight = 0.15;
+                elevatorHeight = 0.17;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;
                 break;

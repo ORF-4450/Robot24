@@ -34,7 +34,8 @@ public class AimSpeaker extends Command {
     private final DoubleSupplier joystick;
     private final AprilTagNames tagNames = new AprilTagNames(alliance);
 
-    private final PIDController rotationController = new PIDController(0.01, 0, 0);
+    private final PIDController rotationController = new PIDController(0.06, 0, 0);
+    private final PIDController pivotController = new PIDController(0.06, 0, 0);
 
     private boolean initialMoveDone = false;
 
@@ -45,8 +46,12 @@ public class AimSpeaker extends Command {
         this.frontCamera = shooterCamera;//frontCamera;
         this.joystick = joystick;
 
+        addRequirements(elevatedShooter);
+
         rotationController.setTolerance(0.3);
         SendableRegistry.addLW(rotationController, "AimSpeaker Rotation PID");
+        SendableRegistry.addLW(pivotController, "Pivot Rotation PID");
+
     }
 
     @Override
@@ -57,39 +62,40 @@ public class AimSpeaker extends Command {
 
     @Override
     public void execute() {
-        System.out.println(shooterCamera.getPitch());
+        // System.out.println(shooterCamera.getPitch());
         double currentAngle = elevatedShooter.shooter.getAngle();
-        if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
+        // if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
         if (!initialMoveDone) {
             initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
         }
 
-        // rotation of robot ==============================
-        PhotonTrackedTarget target = frontCamera.getTarget(tagNames.SPEAKER_MAIN);
-        System.out.println(target);
-        if (target == null) target = frontCamera.getTarget(tagNames.SPEAKER_OFFSET);
-        double joystickValue = joystick.getAsDouble();
-        if (joystickValue < -DRIVE_DEADBAND || joystickValue > DRIVE_DEADBAND) {
-            robotDrive.setTrackingRotation(Double.NaN);
-        } else {
-            if (target == null) {
-                robotDrive.setTrackingRotation(Double.NaN);
-            } else {
-                double output = rotationController.calculate(target.getYaw(), 0);
-                robotDrive.setTrackingRotation(output);
-            }
-        }
+        // // rotation of robot ==============================
+        // PhotonTrackedTarget target = frontCamera.getTarget(tagNames.SPEAKER_MAIN);
+        // System.out.println(target);
+        // if (target == null) target = frontCamera.getTarget(tagNames.SPEAKER_OFFSET);
+        // double joystickValue = joystick.getAsDouble();
+        // if (joystickValue < -DRIVE_DEADBAND || joystickValue > DRIVE_DEADBAND) {
+            // robotDrive.setTrackingRotation(Double.NaN);
+        // } else {
+        //     if (target == null) {
+        //         robotDrive.setTrackingRotation(Double.NaN);
+        //     } else {
+        //         double output = rotationController.calculate(target.getYaw(), 0);
+        //         // robotDrive.setTrackingRotation(output);
+        //     }
+        // }
 
         // shooter pivot ==================================
-        target = shooterCamera.getTarget(tagNames.SPEAKER_MAIN);
-        System.out.println(target);
-        if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
+        PhotonTrackedTarget target = shooterCamera.getTarget(tagNames.SPEAKER_MAIN);
+        // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
-            // Util.consoleLog("%f %f", currentAngle, target.getPitch());
-            double newAngle = currentAngle - target.getPitch();
+            Util.consoleLog("%f %f", currentAngle, target.getPitch());
+            // double power = pivotController.calculate(target.getPitch(), -29);
+            double newAngle = currentAngle - (target.getPitch() + 29);
             newAngle = Util.clampValue(newAngle, -60, 0);
             elevatedShooter.shooter.setAngle(newAngle);
+            // elevatedShooter.shooter.movePivotRelative(power);
         } else {
             // initialMoveDone = false;
         }

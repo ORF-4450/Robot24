@@ -23,6 +23,7 @@ import Team4450.Robot24.commands.ParkWheels;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
+import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.PointShootFull;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.Candle;
@@ -352,7 +353,7 @@ public class RobotContainer
 
 		// the "B" button (or cross on PS4 controller) toggles tracking mode.
 		new Trigger(() -> driverController.getBButton())
-			.toggleOnTrue(new FaceAprilTag(driveBase, pvShooterCamera));
+			.toggleOnTrue(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
@@ -398,8 +399,8 @@ public class RobotContainer
 		new Trigger(() -> driverController.getAButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 
-		new Trigger(() -> utilityController.getRightStickButton())
-			.onTrue(new InstantCommand(()->elevShooter.elevator.moveUnsafe(utilityController.getRightY())));
+		// new Trigger(() -> utilityController.getRightStickButton())
+		// 	.onTrue(new InstantCommand(()->elevShooter.elevator.moveUnsafe(utilityController.getRightY())));
 
 		// Reset drive wheel distance traveled.
 		//new Trigger(() -> driverPad.getPOVAngle(270))
@@ -446,13 +447,15 @@ public class RobotContainer
 		
 		new Trigger(()-> utilityController.getPOV() == 0) // up POV
 			.toggleOnTrue(new ClimbPreset(elevShooter));
+		new Trigger(()-> utilityController.getPOV() == 90) // right POV
+			.toggleOnTrue(new ShootAmp(elevShooter));
 		// new Trigger(()-> utilityController.getPOV() == 180) // up POV
-		// 	.toggleOnTrue(new ClimbPreset(elevShooter));
+			// .toggleOnTrue(new ClimbPreset(elevShooter));
 
 		
 		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new PointShootFull(elevShooter, driveBase));
+			.toggleOnTrue(new ShootSpeaker(elevShooter));
 
 		
 		new Trigger(() -> utilityController.getYButton()) // PODIUM
