@@ -64,36 +64,33 @@ public class AimSpeaker extends Command {
     public void execute() {
         // System.out.println(shooterCamera.getPitch());
         double currentAngle = elevatedShooter.shooter.getAngle();
-        // if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
+        if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
         if (!initialMoveDone) {
             initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
         }
 
-        // // rotation of robot ==============================
-        // PhotonTrackedTarget target = frontCamera.getTarget(tagNames.SPEAKER_MAIN);
-        // System.out.println(target);
-        // if (target == null) target = frontCamera.getTarget(tagNames.SPEAKER_OFFSET);
-        // double joystickValue = joystick.getAsDouble();
-        // if (joystickValue < -DRIVE_DEADBAND || joystickValue > DRIVE_DEADBAND) {
-            // robotDrive.setTrackingRotation(Double.NaN);
-        // } else {
-        //     if (target == null) {
-        //         robotDrive.setTrackingRotation(Double.NaN);
-        //     } else {
-        //         double output = rotationController.calculate(target.getYaw(), 0);
-        //         // robotDrive.setTrackingRotation(output);
-        //     }
-        // }
+        // rotation of robot ==============================
+        PhotonTrackedTarget target = frontCamera.getTarget(tagNames.SPEAKER_MAIN);
+        double joystickValue = joystick.getAsDouble();
+        if (joystickValue < -0.01 || joystickValue > 0.01) {
+            robotDrive.setTrackingRotation(Double.NaN);
+        } else {
+            if (target == null) {
+                robotDrive.setTrackingRotation(Double.NaN);
+            } else {
+                double output = rotationController.calculate(target.getYaw(), 0);
+                robotDrive.setTrackingRotation(output);
+            }
+        }
 
         // shooter pivot ==================================
-        PhotonTrackedTarget target = shooterCamera.getTarget(tagNames.SPEAKER_MAIN);
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
             Util.consoleLog("%f %f", currentAngle, target.getPitch());
             // double power = pivotController.calculate(target.getPitch(), -29);
             double newAngle = currentAngle - (target.getPitch() + 29);
-            newAngle = Util.clampValue(newAngle, -60, 0);
+            newAngle = Util.clampValue(newAngle, -90, 0);
             elevatedShooter.shooter.setAngle(newAngle);
             // elevatedShooter.shooter.movePivotRelative(power);
         } else {
