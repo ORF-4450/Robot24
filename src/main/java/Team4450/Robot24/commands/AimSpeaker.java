@@ -62,12 +62,12 @@ public class AimSpeaker extends Command {
 
     @Override
     public void execute() {
-        // System.out.println(shooterCamera.getPitch());
         double currentAngle = elevatedShooter.shooter.getAngle();
         if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
         if (!initialMoveDone) {
             initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
+            return;
         }
 
         // rotation of robot ==============================
@@ -87,10 +87,10 @@ public class AimSpeaker extends Command {
         // shooter pivot ==================================
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
-            Util.consoleLog("%f %f", currentAngle, target.getPitch());
             // double power = pivotController.calculate(target.getPitch(), -29);
             double newAngle = currentAngle - (target.getPitch() + 29);
             newAngle = Util.clampValue(newAngle, -90, 0);
+                Util.consoleLog("angle=%f pitch=%f newangle=%f yaw=%f", currentAngle, target.getPitch(), newAngle, target.getYaw());
             elevatedShooter.shooter.setAngle(newAngle);
             // elevatedShooter.shooter.movePivotRelative(power);
         } else {
