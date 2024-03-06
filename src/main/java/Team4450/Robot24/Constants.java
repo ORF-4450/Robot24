@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "RACcw-03.04.24-1";
+	public static String		PROGRAM_NAME = "RACcw-03.05.24-1";
 	public static Robot			robot;
 
 	public static Properties	robotProperties;
@@ -103,6 +103,7 @@ public final class Constants
     
 
     public static final int     REV_PDB = 20;
+    public static final int     CTRE_CANDLE = 21;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
