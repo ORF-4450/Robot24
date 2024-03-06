@@ -194,7 +194,7 @@ public class RobotContainer
 		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
-		candle = new Candle();
+		candle = new Candle(CTRE_CANDLE);
 
 		// Create any persistent commands.
 

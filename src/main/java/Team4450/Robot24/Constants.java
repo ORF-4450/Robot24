@@ -105,6 +105,7 @@ public final class Constants
     
 
     public static final int     REV_PDB = 20;
+    public static final int     CTRE_CANDLE = 21;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
