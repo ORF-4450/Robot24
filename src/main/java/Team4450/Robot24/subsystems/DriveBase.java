@@ -4,6 +4,8 @@
 
 package Team4450.Robot24.subsystems;
 
+import static Team4450.Robot24.Constants.alliance;
+
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -39,6 +41,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -292,9 +295,13 @@ public class DriveBase extends SubsystemBase {
 
       lastPose = pose;
 
-      setStartingGyroRotation(pose.getRotation().getDegrees());
-
       navx.reset();
+  }
+
+  public void resetOdometryPathPlanner(Pose2d pose) {
+    // double redOffset = alliance==Alliance.Red ? -180 : 0;
+    setStartingGyroRotation(pose.getRotation().getDegrees());
+    resetOdometry(pose);
   }
 
   /**
@@ -776,7 +783,7 @@ public class DriveBase extends SubsystemBase {
 
     AutoBuilder.configureHolonomic(
       this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::resetOdometryPathPlanner, // Method to reset odometry (will be called if your auto has a starting pose)
       this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       this::driveChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class

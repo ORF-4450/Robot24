@@ -25,6 +25,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -47,6 +48,7 @@ public class PhotonVision extends SubsystemBase
     private VisionLEDMode           ledMode = VisionLEDMode.kOff;
 
     private VisionSystemSim         visionSim;
+    private PhotonCameraSim         cameraSim;
 
     private Field2d                 field = new Field2d();
 
@@ -84,7 +86,7 @@ public class PhotonVision extends SubsystemBase
             visionSim = new VisionSystemSim(cameraName);
             SimCameraProperties cameraProp = new SimCameraProperties();
             cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
-            PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
+            this.cameraSim = new PhotonCameraSim(camera, cameraProp);
             cameraSim.enableDrawWireframe(true);
             visionSim.addCamera(cameraSim, robotToCam);
         }
@@ -108,6 +110,11 @@ public class PhotonVision extends SubsystemBase
 		Util.consoleLog("PhotonVision (%s) created!", cameraName);
         SmartDashboard.putData(field);
 	}
+
+    public void adjustSimCameraAngle(double roll, double pitch, double yaw) {
+        visionSim.adjustCamera(cameraSim, new Transform3d(
+        robotToCam.getX(), robotToCam.getY(), robotToCam.getZ(), new Rotation3d(roll, pitch, yaw)));
+    }
 
     /**
      * sets up simulation targets for simulated vision system

@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ShootSpeaker extends Command {
+public class PointShootFull extends Command {
     private final DriveBase robotDrive;
     private final ElevatedShooter elevatedShooter;
     private double startTime;
@@ -27,7 +27,7 @@ public class ShootSpeaker extends Command {
     private boolean justShoot = false;
     private boolean manualAngle;
 
-    public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle) {
+    public PointShootFull(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle) {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
         this.elevatedShooter = elevatedShooter;
         this.robotDrive = robotDrive;
@@ -35,11 +35,11 @@ public class ShootSpeaker extends Command {
         this.angle = angle;
         addRequirements(elevatedShooter);
     }
-    public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive) {
+    public PointShootFull(ElevatedShooter elevatedShooter, DriveBase robotDrive) {
         this(elevatedShooter, robotDrive, Double.NaN);
     }
 
-    public ShootSpeaker(ElevatedShooter elevatedShooter, DriveBase robotDrive, boolean justShoot) {
+    public PointShootFull(ElevatedShooter elevatedShooter, DriveBase robotDrive, boolean justShoot) {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
         this.elevatedShooter = elevatedShooter;
         this.robotDrive = robotDrive;
