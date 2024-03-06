@@ -3,7 +3,6 @@ package Team4450.Robot24;
 
 import static Team4450.Robot24.Constants.*;
 
-import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -14,7 +13,7 @@ import Team4450.Robot24.commands.autonomous.AutoStart;
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
 import Team4450.Robot24.commands.AimSpeaker;
-import Team4450.Robot24.commands.ClimbPreset;
+import Team4450.Robot24.commands.Preset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
 import Team4450.Robot24.commands.FaceAprilTag;
@@ -29,9 +28,7 @@ import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
-import Team4450.Robot24.subsystems.Elevator;
 import Team4450.Robot24.subsystems.PhotonVision;
-import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
@@ -45,14 +42,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -446,11 +439,11 @@ public class RobotContainer
 		// 	.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
 		
 		new Trigger(()-> utilityController.getPOV() == 0) // up POV
-			.toggleOnTrue(new ClimbPreset(elevShooter));
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB));
 		new Trigger(()-> utilityController.getPOV() == 90) // right POV
 			.toggleOnTrue(new ShootAmp(elevShooter));
-		// new Trigger(()-> utilityController.getPOV() == 180) // up POV
-			// .toggleOnTrue(new ClimbPreset(elevShooter));
+		new Trigger(()-> utilityController.getPOV() == 180) // up POV
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 
 		
 		// shooter commands
@@ -568,10 +561,13 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("ShootSpeaker", new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("PointShootSpeaker", new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter));
+		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
 		NamedCommands.registerCommand("ShootSpeakerPodium", new PointShootFull(elevShooter, driveBase, PODIUM_ANGLE));
 		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		NamedCommands.registerCommand("ClimbPreset", new ClimbPreset(elevShooter));
+		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
+		NamedCommands.registerCommand("ClimbDown", new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
 		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, driveBase));
 
@@ -628,6 +624,10 @@ public class RobotContainer
 		
 		if (monitorPDPThread != null) monitorPDPThread.reset();
     }
+
+	public void fixPathPlannerGyro() {
+		driveBase.fixPathPlannerGyro();
+	}
          
 	/**
      * Loads a PathPlanner path file into a path planner trajectory.

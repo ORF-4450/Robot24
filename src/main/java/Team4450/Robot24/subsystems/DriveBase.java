@@ -84,6 +84,7 @@ public class DriveBase extends SubsystemBase {
 
   private Pose2d        lastPose;
   private double        distanceTraveled, yawAngle, lastYawAngle, startingGyroRotation;
+  private boolean       ppGyroReversed = false;
   private boolean       fieldRelative = true, currentBrakeMode = false;
   private boolean       alternateRotation = false, istracking = false;
   private double        trackingRotation = 0;
@@ -295,13 +296,19 @@ public class DriveBase extends SubsystemBase {
 
       lastPose = pose;
 
+      setStartingGyroRotation(pose.getRotation().getDegrees());
+
       navx.reset();
   }
 
   public void resetOdometryPathPlanner(Pose2d pose) {
-    // double redOffset = alliance==Alliance.Red ? -180 : 0;
-    setStartingGyroRotation(pose.getRotation().getDegrees());
+    ppGyroReversed = alliance == Alliance.Red;
     resetOdometry(pose);
+  }
+
+  public void fixPathPlannerGyro() {
+    if (ppGyroReversed)
+      startingGyroRotation -= 180;
   }
 
   /**

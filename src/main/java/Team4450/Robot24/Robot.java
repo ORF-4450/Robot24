@@ -271,6 +271,7 @@ public class Robot extends TimedRobot
     SmartDashboard.putBoolean("Teleop Mode", true);
 
     robotContainer.resetFaults();
+    robotContainer.fixPathPlannerGyro();
 
     // Driving handled by DriveCommand which is default command for the DriveBase.
     // Other commands scheduled by joystick buttons.

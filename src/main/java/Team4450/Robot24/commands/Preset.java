@@ -2,26 +2,24 @@ package Team4450.Robot24.commands;
 
 import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.ElevatedShooter;
-import Team4450.Robot24.subsystems.Elevator;
-import Team4450.Robot24.subsystems.Intake;
-import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class ClimbPreset extends Command {
+public class Preset extends Command {
     private final ElevatedShooter elevatedShooter;
+    private PresetPosition preset;
 
     private boolean done = false;
 
-    public ClimbPreset(ElevatedShooter elevatedShooter) {
+    public Preset(ElevatedShooter elevatedShooter, PresetPosition preset) {
         this.elevatedShooter = elevatedShooter;
+        this.preset = preset;
         addRequirements(elevatedShooter);
     }
 
     @Override
     public void execute() {
-        done = elevatedShooter.executeSetPosition(PresetPosition.CLIMB);
+        done = elevatedShooter.executeSetPosition(preset);
     }
 
     @Override
