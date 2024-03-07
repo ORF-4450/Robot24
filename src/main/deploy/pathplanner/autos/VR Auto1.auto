@@ -41,21 +41,28 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "IntakeNote"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AimSpeaker"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "path",
                 "data": {
                   "pathName": "Source Side - CLN1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AimSpeaker"
                 }
               }
             ]
@@ -72,9 +79,22 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "IntakeNote"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AimSpeaker"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -82,11 +102,43 @@
                 "data": {
                   "pathName": "CLN1 - CLN2"
                 }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakeNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AimSpeaker"
+                      }
+                    }
+                  ]
+                }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AimSpeaker"
+                  "pathName": "CLN2-CLN3"
                 }
               }
             ]
@@ -101,7 +153,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootSpeaker"
+            "name": "AutoEnd"
           }
         }
       ]
