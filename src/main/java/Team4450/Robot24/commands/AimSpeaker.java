@@ -58,12 +58,14 @@ public class AimSpeaker extends Command {
     @Override
     public void initialize() {
         Util.consoleLog();
+        SmartDashboard.putBoolean("Target Locked", false);
         robotDrive.enableTracking();
         initialMoveDone = false;
     }
 
     @Override
     public void execute() {
+        elevatedShooter.shooter.startShooting();
         double currentAngle = elevatedShooter.shooter.getAngle();
         if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
@@ -71,6 +73,9 @@ public class AimSpeaker extends Command {
             initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
             return;
         }
+
+        boolean yawOkay = false;
+        boolean pitchOkay = false;
 
         // rotation of robot ==============================
         PhotonTrackedTarget target = frontCamera.getTarget(tagNames.SPEAKER_MAIN);
@@ -82,6 +87,7 @@ public class AimSpeaker extends Command {
                 robotDrive.setTrackingRotation(Double.NaN);
             } else {
                 double output = rotationController.calculate(target.getYaw(), 7);
+                if (Math.abs(output) < 0.01) yawOkay = true;
                 robotDrive.setTrackingRotation(output);
             }
         }
@@ -90,7 +96,9 @@ public class AimSpeaker extends Command {
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
             // double power = pivotController.calculate(target.getPitch(), -29);
-            double newAngle = currentAngle - (target.getPitch() - PV_TARGET_PITCH);
+            double offset = target.getPitch() - PV_TARGET_PITCH;
+            double newAngle = currentAngle - offset;
+            if (Math.abs(offset) < 1) pitchOkay = true;
             newAngle = Util.clampValue(newAngle, -90, 0);
                 Util.consoleLog("angle=%f pitch=%f newangle=%f yaw=%f", currentAngle, target.getPitch(), newAngle, target.getYaw());
             elevatedShooter.shooter.setAngle(newAngle);
@@ -98,10 +106,13 @@ public class AimSpeaker extends Command {
         } else {
             // initialMoveDone = false;
         }
+
+        SmartDashboard.putBoolean("Target Locked", yawOkay && pitchOkay);
     }
 
     @Override
     public void end(boolean interrupted) {
+        SmartDashboard.putBoolean("Target Locked", false);
         Util.consoleLog("interrupted=%b", interrupted);
         robotDrive.disableTracking();
     }

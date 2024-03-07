@@ -23,7 +23,7 @@ import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
-import Team4450.Robot24.commands.PointShootFull;
+import Team4450.Robot24.commands.SpinUpShooter;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
@@ -330,9 +330,10 @@ public class RobotContainer
 		// the target subsystem from an InstantCommand. It can be tricky deciding what functions
 		// should be an aspect of the subsystem and what functions should be in Commands...
 
-		// Holding Left bumper brakes and sets X pattern to stop movement.
-		new Trigger(() -> driverController.getXButton())
-			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
+		// POV buttons do same as alternate driving mode but without any lateral
+		// movement and increments of 45deg.
+		new Trigger(()-> driverController.getPOV() != -1)
+			.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
 
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
@@ -343,15 +344,12 @@ public class RobotContainer
 					-MathUtil.applyDeadband(driverController.getRightY(), Constants.DRIVE_DEADBAND)
 				), driveBase, false
 			));
-
-		// the "B" button (or cross on PS4 controller) toggles tracking mode.
-		new Trigger(() -> driverController.getBButton())
-			.toggleOnTrue(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
-
-		// POV buttons do same as alternate driving mode but without any lateral
-		// movement and increments of 45deg.
-		new Trigger(()-> driverController.getPOV() != -1)
-			.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+		// toggle slow-mode
+		new Trigger(() -> driverController.getLeftBumper())
+			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
+		// Advance DS tab display.
+		new Trigger(() -> driverController.getLeftTrigger())
+			.onTrue(new InstantCommand(shuffleBoard::switchTab));
 
 		// reset field orientation
 		new Trigger(() -> driverController.getStartButton())
@@ -361,83 +359,27 @@ public class RobotContainer
 		new Trigger(() -> driverController.getBackButton())
 			.onTrue(new InstantCommand(driveBase::toggleFieldRelative));
 
-		// toggle slow-mode
-		new Trigger(() -> driverController.getLeftBumper())
-			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
+		// the "B" button (or cross on PS4 controller) toggles tracking mode.
+		// new Trigger(() -> driverController.getBButton())
+		// 	.toggleOnTrue(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
+
+		// Holding Left bumper brakes and sets X pattern to stop movement.
+		new Trigger(() -> driverController.getXButton())
+			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
+
+		// toggle Note tracking.
+	    // new Trigger(() -> driverController.getYButton())
+    	//     .toggleOnTrue(new DriveToNote(driveBase, pvNoteCamera, true));
+		new Trigger(() -> driverController.getAButton())
+    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 		
 		// toggle face note/apriltag
 		// new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
     	//     .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
-		new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
-    	    .whileTrue(new FaceAprilTag(driveBase, pvShooterCamera));
-		
-
-		// toggle Note tracking.
-	    new Trigger(() -> driverController.getYButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvNoteCamera, true));
-
-		// Advance DS tab display.
-		new Trigger(() -> driverController.getLeftTrigger())
-			.onTrue(new InstantCommand(shuffleBoard::switchTab));
-        
-		// Change camera feed. 
-		//new Trigger(() -> driverPad.getRightBumper())
-    	//	.onTrue(new InstantCommand(cameraFeed::ChangeCamera));
-
-		// Reset yaw angle to zero.
-		//new Trigger(() -> driverPad.getPOVAngle(180))
-    	//	.onTrue(new InstantCommand(driveBase::resetYaw));
-
-		// Toggle drive motors between brake and coast.
-		new Trigger(() -> driverController.getAButton())
-    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
-
-		// new Trigger(() -> utilityController.getRightStickButton())
-		// 	.onTrue(new InstantCommand(()->elevShooter.elevator.moveUnsafe(utilityController.getRightY())));
-
-		// Reset drive wheel distance traveled.
-		//new Trigger(() -> driverPad.getPOVAngle(270))
-    	//	.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
+		// new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
+    	//     .whileTrue(new FaceAprilTag(driveBase, pvShooterCamera));
 		
 		// -------- Utility pad buttons ----------
-		// What follows is an example from 2022 robot:
-		// Toggle extend Pickup.
-		// So we show 3 ways to control the pickup. A regular command that toggles pickup state,
-		// an instant command that calls a method on Pickup class that toggles state and finally
-		// our special notifier variant that runs the Pickup class toggle method in a separate
-		// thread. So we show all 3 methods as illustration but the reason we tried 3 methods is
-		// that the pickup retraction action takes almost 1 second (due apparently to some big
-		// overhead in disabling the electric eye interrupt) and triggers the global and drivebase
-		// watchdogs (20ms). Threading does not as the toggle method is not run on the scheduler thread.
-		// Also, any action that operates air valves, there is a 50ms delay in the ValveDA and SA
-		// classes to apply power long enough so that the valve slides move far enough to open/close.
-		// So any function that operates valves will trigger the watchdogs. Again, the watchdog 
-		// notifications are only a warning (though too much delay on main thread can effect robot
-		// operation) they can fill the Riolog to the point it is not useful.
-		// Note: the threaded command can only execute a runable (function on a class) not a Command.
-		
-		// Toggle pickup deployment
-		//new Trigger(() -> utilityPad.getLeftBumper())
-        	//.onTrue(new PickupDeploy(pickup));		
-			//.onTrue(new InstantCommand(pickup::toggleDeploy, pickup));
-		//	.onTrue(new NotifierCommand(pickup::toggleDeploy, 0.0, "DeployPickup", pickup));
-
-		// run intake (manupulator controller)
-		new Trigger(() -> utilityController.getBButton())
-			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
-
-		new Trigger(() -> utilityController.getBackButton())
-			.toggleOnFalse(new ReverseIntake(intake, driveBase));
-
-		
-		new Trigger(() -> utilityController.getLeftBumper())
-			.toggleOnTrue(new IntakeNote(intake, elevShooter));
-				// .andThen(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())));
-
-		// shoot then intake
-		// new Trigger(() -> utilityController.getYButton())
-		// 	.onTrue(new IntakeNote(intake, elevShooter).andThen(new ShootSpeaker(elevShooter, driveBase)));
-		
 		new Trigger(()-> utilityController.getPOV() == 0) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB));
 		new Trigger(()-> utilityController.getPOV() == 90) // right POV
@@ -445,66 +387,40 @@ public class RobotContainer
 		new Trigger(()-> utilityController.getPOV() == 180) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 
-		
-		// shooter commands
 		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(elevShooter));
-
-		
-		new Trigger(() -> utilityController.getYButton()) // PODIUM
-			.toggleOnTrue(new PointShootFull(elevShooter, driveBase, PODIUM_ANGLE));
-		new Trigger(() -> utilityController.getXButton()) // manual
-			.toggleOnTrue(new PointShootFull(elevShooter, driveBase, true));
-		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
-			.toggleOnTrue(new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		
+			.toggleOnTrue(
+				new ShootSpeaker(elevShooter).andThen(
+				new IntakeNote(intake, elevShooter).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+			)));
+		new Trigger(() -> utilityController.getLeftBumper())
+			.toggleOnTrue(
+				new IntakeNote(intake, elevShooter).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+			));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.3), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
 
+		new Trigger(() -> utilityController.getBackButton())
+			.toggleOnFalse(new ReverseIntake(intake, driveBase));
 		new Trigger(() -> utilityController.getStartButton())
-			.whileTrue(new InstantCommand(()->
-				elevShooter.resetEncoders()));
+			.whileTrue(new InstantCommand(()->elevShooter.resetEncoders()));
 		
-		// new Trigger(()-> utilityController.getBackButton()).onTrue(new RepeatCommand(new InstantCommand(
-		// 	()->elevShooter.executeSetPosition(PresetPosition.INTAKE))
-		// ));
-
-		// new Trigger(()-> utilityController.getPOV() != -1)
-		// 	.onTrue(new RepeatCommand(new InstantCommand(()->{
-		// 		ElevatedShooter.PresetPosition position;
-		// 		if (utilityController.getPOV() == -1) return;
-		// 		switch (utilityController.getPOV()) {
-		// 			case 0:
-		// 				position = PresetPosition.INTAKE;
-		// 				break;
-		// 			case 45:
-		// 				position = PresetPosition.CLIMB;
-		// 				break;
-		// 			case 90:
-		// 				position = PresetPosition.SHOOT_AMP_FRONT;
-		// 				break;
-		// 			case 135:
-		// 				position = PresetPosition.SOURCE;
-		// 				break;
-		// 			case 180:
-		// 				position = PresetPosition.VERTICAL_BOTTOM;
-		// 				break;
-		// 			case 225:
-		// 				position = PresetPosition.VERTICAL_TOP;
-		// 				break;
-		// 			default:
-		// 				position = PresetPosition.INTAKE;
-		// 		}
-		// 		elevShooter.executeSetPosition(position);
-		// 	})));
-
-
-
-		
-
+		new Trigger(() -> utilityController.getYButton()) // PODIUM
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
+		new Trigger(() -> utilityController.getXButton()) // manual
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, true));
+		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		new Trigger(() -> utilityController.getBButton())
+			.toggleOnTrue(
+				new SpinUpShooter(elevShooter, driveBase, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+			));
+			// .toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 	}
 
 	/**
@@ -561,11 +477,22 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("PointShootSpeaker", new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
+
+		NamedCommands.registerCommand("Shoot", new SpinUpShooter(elevShooter, driveBase, true).andThen(
+			new ShootSpeaker(elevShooter)
+		));
+
+		NamedCommands.registerCommand("ShootThenIntake", new SpinUpShooter(elevShooter, driveBase, true).andThen(
+			new ShootSpeaker(elevShooter)
+			.andThen(new IntakeNote(intake, elevShooter))
+		));
+
+
+		NamedCommands.registerCommand("PointShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter));
 		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
-		NamedCommands.registerCommand("ShootSpeakerPodium", new PointShootFull(elevShooter, driveBase, PODIUM_ANGLE));
-		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new PointShootFull(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("ShootSpeakerPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
+		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
 		NamedCommands.registerCommand("ClimbDown", new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
