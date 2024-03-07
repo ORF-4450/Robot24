@@ -59,6 +59,7 @@ public class AimSpeaker extends Command {
     public void initialize() {
         Util.consoleLog();
         robotDrive.enableTracking();
+        initialMoveDone = false;
     }
 
     @Override
@@ -80,7 +81,7 @@ public class AimSpeaker extends Command {
             if (target == null) {
                 robotDrive.setTrackingRotation(Double.NaN);
             } else {
-                double output = rotationController.calculate(target.getYaw(), 0);
+                double output = rotationController.calculate(target.getYaw(), 7);
                 robotDrive.setTrackingRotation(output);
             }
         }
@@ -89,7 +90,7 @@ public class AimSpeaker extends Command {
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
             // double power = pivotController.calculate(target.getPitch(), -29);
-            double newAngle = currentAngle - target.getPitch();// + PV_TARGET_PITCH;
+            double newAngle = currentAngle - (target.getPitch() - PV_TARGET_PITCH);
             newAngle = Util.clampValue(newAngle, -90, 0);
                 Util.consoleLog("angle=%f pitch=%f newangle=%f yaw=%f", currentAngle, target.getPitch(), newAngle, target.getYaw());
             elevatedShooter.shooter.setAngle(newAngle);

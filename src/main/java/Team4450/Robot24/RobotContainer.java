@@ -431,8 +431,8 @@ public class RobotContainer
 
 		
 		new Trigger(() -> utilityController.getLeftBumper())
-			.toggleOnTrue(new IntakeNote(intake, elevShooter)
-				.andThen(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())));
+			.toggleOnTrue(new IntakeNote(intake, elevShooter));
+				// .andThen(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())));
 
 		// shoot then intake
 		// new Trigger(() -> utilityController.getYButton())

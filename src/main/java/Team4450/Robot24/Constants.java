@@ -79,7 +79,7 @@ public final class Constants
     public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
 
     // CAMERAS ======
-    public static final double    PV_TARGET_PITCH = -29.0;
+    public static final double    PV_TARGET_PITCH = -15;
 
     public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
         new Translation3d(0, 0.2794, 0.6604),
@@ -133,8 +133,8 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 4.0;
-        public static final double kMaxAngularSpeed = 0.75 * 2 * Math.PI; // radians per second.
+        public static final double kMaxSpeedMetersPerSecond = 4.5;
+        public static final double kMaxAngularSpeed = 1 * 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 
         public static final double kDirectionSlewRate = 1.2; // radians per second.
