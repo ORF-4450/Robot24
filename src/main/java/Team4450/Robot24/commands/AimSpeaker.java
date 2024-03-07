@@ -1,6 +1,7 @@
 package Team4450.Robot24.commands;
 
 import static Team4450.Robot24.Constants.DRIVE_DEADBAND;
+import static Team4450.Robot24.Constants.PV_TARGET_PITCH;
 import static Team4450.Robot24.Constants.alliance;
 
 import java.util.function.DoubleSupplier;
@@ -34,7 +35,7 @@ public class AimSpeaker extends Command {
     private final DoubleSupplier joystick;
     private final AprilTagNames tagNames = new AprilTagNames(alliance);
 
-    private final PIDController rotationController = new PIDController(0.06, 0, 0);
+    private final PIDController rotationController = new PIDController(0.02, 0, 0);
     private final PIDController pivotController = new PIDController(0.06, 0, 0);
 
     private boolean initialMoveDone = false;
@@ -88,7 +89,7 @@ public class AimSpeaker extends Command {
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
             // double power = pivotController.calculate(target.getPitch(), -29);
-            double newAngle = currentAngle - (target.getPitch() + 29);
+            double newAngle = currentAngle - target.getPitch();// + PV_TARGET_PITCH;
             newAngle = Util.clampValue(newAngle, -90, 0);
                 Util.consoleLog("angle=%f pitch=%f newangle=%f yaw=%f", currentAngle, target.getPitch(), newAngle, target.getYaw());
             elevatedShooter.shooter.setAngle(newAngle);

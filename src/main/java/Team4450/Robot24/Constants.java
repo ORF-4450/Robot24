@@ -79,6 +79,8 @@ public final class Constants
     public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
 
     // CAMERAS ======
+    public static final double    PV_TARGET_PITCH = -29.0;
+
     public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
         new Translation3d(0, 0.2794, 0.6604),
         new Rotation3d(0, 0, Math.toRadians(180))
