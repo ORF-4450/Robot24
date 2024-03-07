@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5,
-      "y": 4.08
+      "x": 0.73,
+      "y": 4.42
     },
-    "rotation": 0.0
+    "rotation": -60.186783428264306
   },
   "command": {
     "type": "sequential",
@@ -18,27 +18,22 @@
           }
         },
         {
-          "type": "wait",
+          "type": "sequential",
           "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "startSourceSide"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimSpeaker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootSpeaker"
+                }
+              }
+            ]
           }
         },
         {
@@ -54,7 +49,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Source Side to CLN1"
+                  "pathName": "Source Side - CLN1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimSpeaker"
                 }
               }
             ]
@@ -64,12 +65,6 @@
           "type": "named",
           "data": {
             "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
           }
         },
         {
@@ -85,7 +80,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Source Side - CLN2"
+                  "pathName": "CLN1 - CLN2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimSpeaker"
                 }
               }
             ]
@@ -98,15 +99,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "AutoEnd"
+            "name": "ShootSpeaker"
           }
         }
       ]
