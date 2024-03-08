@@ -75,7 +75,7 @@ public class Elevator extends SubsystemBase {
         // mainEncoder.setPositionConversionFactor(-1);
         // followEncoder.setPositionConversionFactor(-1);
 
-        mainPID = new PIDController(0.06, 0, 0);
+        mainPID = new PIDController(0.12, 0, 0);
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(MAIN_TOLERANCE);
         // followerPID = new PIDController(0.01, 0, 0);

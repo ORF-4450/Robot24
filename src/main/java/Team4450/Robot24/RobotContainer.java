@@ -389,18 +389,17 @@ public class RobotContainer
 
 		new Trigger(() -> utilityController.getRightBumper())
 			.toggleOnTrue(
-				new ShootSpeaker(elevShooter).andThen(
-				new IntakeNote(intake, elevShooter).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
-			)));
+				new ShootSpeaker(elevShooter));
 		new Trigger(() -> utilityController.getLeftBumper())
 			.toggleOnTrue(
-				new IntakeNote(intake, elevShooter).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
-			));
+				new IntakeNote(intake, elevShooter));
+				//.andThen(
+			// 	new SpinUpShooter(elevShooter, driveBase, true).andThen(
+			// 	new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+			// )));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.3), elevShooter.shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-1), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
 
