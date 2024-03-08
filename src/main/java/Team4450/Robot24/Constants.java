@@ -58,8 +58,10 @@ public final class Constants
     // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
 
+    public static final double  OUTER_ANGLE = -15;
     public static final double  PODIUM_ANGLE = -33;
     public static final double  SUBWOOFER_ANGLE = -52;
+
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
@@ -133,7 +135,7 @@ public final class Constants
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, rather the allowed maximum speeds
-        public static final double kMaxSpeedMetersPerSecond = 4.5;
+        public static final double kMaxSpeedMetersPerSecond = 4;
         public static final double kMaxAngularSpeed = 1 * 2 * Math.PI; // radians per second.
         public static final double kSlowModeFactor = .15; // 15% of normal.
 

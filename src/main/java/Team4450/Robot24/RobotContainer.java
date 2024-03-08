@@ -46,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -414,11 +415,14 @@ public class RobotContainer
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, true));
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		new Trigger(() -> utilityController.getBButton())
-			.toggleOnTrue(
-				new SpinUpShooter(elevShooter, driveBase, true).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
-			));
+		new Trigger(() -> utilityController.getBButton()) // OUTER RING
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
+		
+		// new Trigger(() -> utilityController.getBButton())
+		// 	.toggleOnTrue(
+		// 		new SpinUpShooter(elevShooter, driveBase, true).andThen(
+		// 		new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+		// 	));
 			// .toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
 	}
 
@@ -476,6 +480,10 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
+		NamedCommands.registerCommand("ShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
+		NamedCommands.registerCommand("ShootPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
+		NamedCommands.registerCommand("ShootFar", new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
+
 
 		NamedCommands.registerCommand("Shoot", new SpinUpShooter(elevShooter, driveBase, true).andThen(
 			new ShootSpeaker(elevShooter)
@@ -488,7 +496,6 @@ public class RobotContainer
 
 
 		NamedCommands.registerCommand("PointShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(elevShooter));
 		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
 		NamedCommands.registerCommand("ShootSpeakerPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
 		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));

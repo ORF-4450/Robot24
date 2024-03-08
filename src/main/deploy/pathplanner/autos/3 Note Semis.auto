@@ -34,9 +34,22 @@
                 }
               },
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "speakerFront - middleWingNote"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "speakerFront - middleWingNote"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -59,9 +72,22 @@
                 }
               },
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "middleWingNote - rightWingNote"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "middleWingNote - rightWingNote"
+                      }
+                    }
+                  ]
                 }
               }
             ]
