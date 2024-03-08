@@ -156,9 +156,16 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "4Note - D"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "4Note - D"
+                }
+              }
+            ]
           }
         },
         {
