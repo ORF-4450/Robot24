@@ -31,7 +31,7 @@ public class ShootSpeaker extends Command {
 
     @Override
     public boolean isFinished() {
-        return (Util.getElaspedTime(startTime) > 0.9);
+        return (Util.getElaspedTime(startTime) > 0.5);
     }
 
     @Override

@@ -1,0 +1,89 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.6918068373173782,
+        "y": 4.264035879923612
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.4114796470333684,
+        "y": 4.80027681351659
+      },
+      "isLocked": false,
+      "linkedName": "4Note-C-End"
+    },
+    {
+      "anchor": {
+        "x": 4.580586364876433,
+        "y": 6.608887430737825
+      },
+      "prevControl": {
+        "x": 3.452577792121714,
+        "y": 5.755894664184761
+      },
+      "nextControl": {
+        "x": 6.256116590936885,
+        "y": 7.8759125203435625
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.260339349382402,
+        "y": 7.444841320238196
+      },
+      "prevControl": {
+        "x": 7.706223718002991,
+        "y": 7.479046721982332
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.05,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.95,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 20.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

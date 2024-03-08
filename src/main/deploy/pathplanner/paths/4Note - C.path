@@ -3,35 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5182371041825418,
-        "y": 7.054224974335366
+        "x": 2.93770250114905,
+        "y": 6.999933560052305
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.111229189534272,
-        "y": 7.386463993538106
+        "x": 1.7448041609046185,
+        "y": 6.331027925944741
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "4Note-B-End"
     },
     {
       "anchor": {
-        "x": 0.6960760449298679,
-        "y": 6.693569553805774
+        "x": 2.6918068373173782,
+        "y": 4.264035879923612
       },
       "prevControl": {
-        "x": 1.3830046146575428,
-        "y": 7.146618391451067
+        "x": 1.1471003960526436,
+        "y": 4.301032347435066
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ampSideEnd"
+      "linkedName": "4Note-C-End"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": 58.69,
+      "rotationDegrees": -33.25,
       "rotateFast": false
     }
   ],
@@ -44,8 +44,8 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 61.30030395455043,
+    "velocity": 0.0,
+    "rotation": -33.25019387496841,
     "rotateFast": false
   },
   "reversed": false,
