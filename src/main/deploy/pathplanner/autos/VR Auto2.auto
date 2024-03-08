@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.73,
-      "y": 4.42
+      "x": 1.23,
+      "y": 5.59
     },
-    "rotation": -60.186783428264306
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -18,23 +18,11 @@
           }
         },
         {
-          "type": "deadline",
-          "data": {
-            "commands": []
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "Source Side - CLN1"
-                }
-              },
-              {
-                "type": "deadline",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -45,8 +33,20 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "speakerFront - rightWingNote"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
@@ -54,13 +54,7 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "CLN1 - CLN2"
-                }
-              },
-              {
-                "type": "deadline",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -71,8 +65,20 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "rightWingNote - middleWingNote"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
@@ -80,13 +86,7 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "CLN2-CLN3"
-                }
-              },
-              {
-                "type": "deadline",
+                "type": "sequential",
                 "data": {
                   "commands": [
                     {
@@ -97,8 +97,20 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "middleWingNote - ampWingNote"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
