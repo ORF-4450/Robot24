@@ -413,6 +413,11 @@ public class DriveBase extends SubsystemBase {
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
   }
+
+  public void driveChassisSpeedsPP(ChassisSpeeds speeds) {
+    // if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
+    driveChassisSpeeds(speeds);
+  }
   
   /**
    * Method to drive the robot using robot-relative speeds all the time.
@@ -792,7 +797,7 @@ public class DriveBase extends SubsystemBase {
       this::getPose, // Robot pose supplier
       this::resetOdometryPathPlanner, // Method to reset odometry (will be called if your auto has a starting pose)
       this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::driveChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      this::driveChassisSpeedsPP, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Translation PID constants
               new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Rotation PID constants
