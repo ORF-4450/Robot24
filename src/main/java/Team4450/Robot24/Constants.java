@@ -137,7 +137,7 @@ public final class Constants
         // the robot, rather the allowed maximum speeds
         public static final double kMaxSpeedMetersPerSecond = 4;
         public static final double kMaxAngularSpeed = 1 * 2 * Math.PI; // radians per second.
-        public static final double kSlowModeFactor = .15; // 15% of normal.
+        public static final double kSlowModeFactor = .40; // 15% of normal.
 
         public static final double kDirectionSlewRate = 1.2; // radians per second.
         public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%).

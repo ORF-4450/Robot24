@@ -34,6 +34,9 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
 
+    public boolean hasShot = false;
+
+
     private RelativeEncoder pivotEncoder;
     private RelativeEncoder topMotorEncoder;
     private RelativeEncoder bottomMotorEncoder;

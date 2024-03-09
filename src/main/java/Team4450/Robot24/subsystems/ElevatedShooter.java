@@ -7,6 +7,7 @@ public class ElevatedShooter extends SubsystemBase {
     public final Shooter       shooter;
 	public final Elevator      elevator;
 
+
     public static enum PresetPosition {INTAKE, SHOOT, SHOOT_VISION_START, SHOOT_AMP_FRONT, SHOOT_AMP_BACK, VERTICAL_BOTTOM, VERTICAL_TOP, SOURCE, CLIMB, NONE};
 
     private double elevatorHeight;
@@ -18,7 +19,7 @@ public class ElevatedShooter extends SubsystemBase {
     // in meters and degrees
     private final double CENTERSTAGE_SAFE_TOP = 0.4;
     private final double CENTERSTAGE_SAFE_BOTTOM = 0;
-    private final double MAIN_SAFE_TOP = 0.59;
+    private final double MAIN_SAFE_TOP = 0.62;
     private final double MAIN_SAFE_BOTTOM = 0.2;
     private final double PIVOT_SAFE = -90; // angle okay to move up/down
     
@@ -183,7 +184,8 @@ public class ElevatedShooter extends SubsystemBase {
     }
 
     private boolean centerstageIsAtHeight(double height) {
-        return elevator.centerstageIsAtHeight(height);
+        return true;
+        // return elevator.centerstageIsAtHeight(height);
     }
     private boolean elevatorIsAtHeight(double height) {
         return elevator.elevatorIsAtHeight(height);

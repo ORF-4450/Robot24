@@ -37,7 +37,7 @@ public class Elevator extends SubsystemBase {
     private RelativeEncoder followEncoder;
     private RelativeEncoder centerstageEncoder;
 
-    private final double MAIN_TOLERANCE = 0.7;
+    private final double MAIN_TOLERANCE = 1.5;
     private final double CENTERSTAGE_TOLERANCE = 1;
 
     private final double MAIN_START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR;

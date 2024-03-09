@@ -36,6 +36,7 @@ public class SpinUpShooter extends Command {
 
     @Override
     public void initialize() {
+        elevatedShooter.shooter.hasShot = false;
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
         
         if (justShoot) {
@@ -74,6 +75,7 @@ public class SpinUpShooter extends Command {
                 }
                 break;
             case DONE:
+                elevatedShooter.shooter.stopFeeding();
                 break;
         }
     }
@@ -82,12 +84,14 @@ public class SpinUpShooter extends Command {
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
         elevatedShooter.shooter.stopFeeding();
+        elevatedShooter.shooter.stopShooting();
         SmartDashboard.putBoolean("Spun Up", true);
     }
 
     @Override
     public boolean isFinished() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
-        return state == State.DONE;
+        // return state == State.DONE;
+        return elevatedShooter.shooter.hasShot;
     }
 }

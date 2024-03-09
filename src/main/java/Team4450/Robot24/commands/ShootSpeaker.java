@@ -39,6 +39,7 @@ public class ShootSpeaker extends Command {
         if (RobotBase.isSimulation()) AdvantageScope.getInstance().dropAllNotes();
         elevatedShooter.shooter.stopFeeding();
         elevatedShooter.shooter.stopShooting();
+        elevatedShooter.shooter.hasShot = true;
         SmartDashboard.putBoolean("Spun Up", false);
     }
 }
