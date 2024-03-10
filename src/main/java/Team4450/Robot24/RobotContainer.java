@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -400,9 +401,9 @@ public class RobotContainer
 			// )));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-1), elevShooter.shooter::stopFeeding));
-		new Trigger(() -> utilityController.getRightTrigger())
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
+		new Trigger(() -> utilityController.getRightTrigger())
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.8), elevShooter.shooter::stopFeeding));
 
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnFalse(new ReverseIntake(intake, driveBase));
@@ -480,9 +481,27 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("ShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
-		NamedCommands.registerCommand("ShootPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
-		NamedCommands.registerCommand("ShootFar", new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE).andThen(new WaitCommand(0.6).andThen(new ShootSpeaker(elevShooter))));
+		NamedCommands.registerCommand("ShootSpeaker",
+			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true).andThen(
+			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+		));
+		NamedCommands.registerCommand("ShootPodium",
+			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true).andThen(
+			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+		));
+		NamedCommands.registerCommand("ShootFar",
+			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true).andThen(
+			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+		));
+
+		// NamedCommands.registerCommand("ShootPodium", new ParallelCommandGroup(
+		// 	new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE),
+		// 	new WaitCommand(1.6).andThen(new ShootSpeaker(elevShooter)
+		// )));
+		// NamedCommands.registerCommand("ShootFar", new ParallelCommandGroup(
+		// 	new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE),
+		// 	new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter)
+		// )));
 
 
 		NamedCommands.registerCommand("Shoot", new SpinUpShooter(elevShooter, driveBase, true).andThen(

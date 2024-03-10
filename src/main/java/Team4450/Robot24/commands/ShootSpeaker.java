@@ -31,11 +31,12 @@ public class ShootSpeaker extends Command {
 
     @Override
     public boolean isFinished() {
-        return (Util.getElaspedTime(startTime) > 0.5);
+        return (Util.getElaspedTime(startTime) > 0.75);
     }
 
     @Override
     public void end(boolean interrupted) {
+        Util.consoleLog("interrupted=%b", interrupted);
         if (RobotBase.isSimulation()) AdvantageScope.getInstance().dropAllNotes();
         elevatedShooter.shooter.stopFeeding();
         elevatedShooter.shooter.stopShooting();

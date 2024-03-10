@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-03.06.24-1";
+	public static String		PROGRAM_NAME = "CW-03.09.24-1";
 
 	public static Robot			robot;
 
@@ -59,7 +59,7 @@ public final class Constants
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
 
     public static final double  OUTER_ANGLE = -15;
-    public static final double  PODIUM_ANGLE = -33;
+    public static final double  PODIUM_ANGLE = -26;
     public static final double  SUBWOOFER_ANGLE = -52;
 
     
@@ -137,7 +137,7 @@ public final class Constants
         // the robot, rather the allowed maximum speeds
         public static final double kMaxSpeedMetersPerSecond = 4;
         public static final double kMaxAngularSpeed = 1 * 2 * Math.PI; // radians per second.
-        public static final double kSlowModeFactor = .40; // 15% of normal.
+        public static final double kSlowModeFactor = .25; // 15% of normal.
 
         public static final double kDirectionSlewRate = 1.2; // radians per second.
         public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%).

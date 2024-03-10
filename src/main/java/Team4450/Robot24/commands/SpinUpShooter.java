@@ -15,11 +15,17 @@ public class SpinUpShooter extends Command {
 
     private double angle;
     private boolean justShoot = false;
+    private boolean delay = false;
 
     public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle) {
+        this(elevatedShooter, robotDrive, angle, false);
+    }
+
+    public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle, boolean delay) {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
         this.elevatedShooter = elevatedShooter;
         this.angle = angle;
+        this.delay = delay;
         addRequirements(elevatedShooter);
     }
     public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive) {
@@ -84,14 +90,17 @@ public class SpinUpShooter extends Command {
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
         elevatedShooter.shooter.stopFeeding();
-        elevatedShooter.shooter.stopShooting();
+        if (!delay)
+            elevatedShooter.shooter.stopShooting();
         SmartDashboard.putBoolean("Spun Up", true);
     }
 
     @Override
     public boolean isFinished() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
-        // return state == State.DONE;
-        return elevatedShooter.shooter.hasShot;
+        if (delay)
+            return state == State.DONE;
+        else
+            return elevatedShooter.shooter.hasShot;
     }
 }
