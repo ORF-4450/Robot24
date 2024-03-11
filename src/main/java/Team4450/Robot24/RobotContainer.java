@@ -406,7 +406,7 @@ public class RobotContainer
 			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.8), elevShooter.shooter::stopFeeding));
 
 		new Trigger(() -> utilityController.getBackButton())
-			.toggleOnFalse(new ReverseIntake(intake, driveBase));
+			.toggleOnFalse(new ReverseIntake(intake, elevShooter, driveBase));
 		new Trigger(() -> utilityController.getStartButton())
 			.whileTrue(new InstantCommand(()->elevShooter.resetEncoders()));
 		
@@ -483,15 +483,15 @@ public class RobotContainer
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true).andThen(
-			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+			new WaitCommand(0.8 ).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("ShootPodium",
 			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true).andThen(
-			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("ShootFar",
 			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true).andThen(
-			new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter))
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
 
 		// NamedCommands.registerCommand("ShootPodium", new ParallelCommandGroup(
@@ -521,7 +521,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
 		NamedCommands.registerCommand("ClimbDown", new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
-		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, driveBase));
+		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, elevShooter, driveBase));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
