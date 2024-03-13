@@ -100,6 +100,8 @@ public class DriveBase extends SubsystemBase {
   private double currentTranslationMag = 0.0;
 
   private double speedLimiter = 1;
+  private double rotSpeedLimiter = 1;
+  
 
   private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
   private SlewRateLimiter rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
@@ -380,7 +382,7 @@ public class DriveBase extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeedCommanded * speedLimiter * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeedCommanded * speedLimiter * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = currentRotation * speedLimiter * DriveConstants.kMaxAngularSpeed;
+    double rotDelivered = currentRotation * rotSpeedLimiter * DriveConstants.kMaxAngularSpeed;
 
     chassisSpeeds =
         fieldRelative
@@ -599,6 +601,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putBoolean("Alternate Drive", alternateRotation);
       SmartDashboard.putBoolean("Tracking", istracking);
       SmartDashboard.putNumber("Speed Factor", speedLimiter);
+      SmartDashboard.putNumber("Rot Speed Factor", rotSpeedLimiter);
   }
 
   /**
@@ -743,8 +746,9 @@ public class DriveBase extends SubsystemBase {
   public void enableSlowMode()
   {
     speedLimiter = DriveConstants.kSlowModeFactor;
+    rotSpeedLimiter = DriveConstants.kRotSlowModeFactor;
 
-    Util.consoleLog("%.2f", speedLimiter);
+    Util.consoleLog("%.2f %.2f", speedLimiter, rotSpeedLimiter);
 
     updateDS();
   }
@@ -754,6 +758,7 @@ public class DriveBase extends SubsystemBase {
     Util.consoleLog();
 
     speedLimiter = 1;
+    rotSpeedLimiter = 1;
 
     updateDS();
   }
