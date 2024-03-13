@@ -79,6 +79,10 @@ public class DriveCommand extends Command
         double strafe = deadband(strafeSupplier.getAsDouble(), DRIVE_DEADBAND);
         double rotation = deadband(rotationSupplier.getAsDouble(), ROTATION_DEADBAND);
 
+        // throttle = Util.squareInput(throttle);
+        // strafe = Util.squareInput(strafe);
+        // rotation = Util.squareInput(rotation);
+
         // Have to invert for sim...not sure why.
         if (RobotBase.isSimulation()) rotation *= -1;
         
