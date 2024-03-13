@@ -82,6 +82,7 @@ public class DriveCommand extends Command
         // throttle = Util.squareInput(throttle);
         // strafe = Util.squareInput(strafe);
         // rotation = Util.squareInput(rotation);
+        // rotation = Math.pow(rotation, 5);
 
         // Have to invert for sim...not sure why.
         if (RobotBase.isSimulation()) rotation *= -1;
