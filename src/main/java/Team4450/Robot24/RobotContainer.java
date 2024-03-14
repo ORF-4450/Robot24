@@ -493,7 +493,12 @@ public class RobotContainer
 			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
+		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true));
+		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true));
+		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
+
+		
 		// NamedCommands.registerCommand("ShootPodium", new ParallelCommandGroup(
 		// 	new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE),
 		// 	new WaitCommand(1.6).andThen(new ShootSpeaker(elevShooter)
@@ -502,11 +507,6 @@ public class RobotContainer
 		// 	new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE),
 		// 	new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter)
 		// )));
-
-
-		NamedCommands.registerCommand("Shoot", new SpinUpShooter(elevShooter, driveBase, true).andThen(
-			new ShootSpeaker(elevShooter)
-		));
 
 		NamedCommands.registerCommand("ShootThenIntake", new SpinUpShooter(elevShooter, driveBase, true).andThen(
 			new ShootSpeaker(elevShooter)

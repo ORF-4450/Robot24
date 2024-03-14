@@ -140,6 +140,8 @@ public class Elevator extends SubsystemBase {
         setpoint -= speed;
         if (setpoint < -59)//-59)
             setpoint = -59;//-59;
+        // if (setpoint > -16)
+        //     setpoint = -16;
         // if (speed < 0)
         //     speed *= 0.1;
         // speed *= -0.5;

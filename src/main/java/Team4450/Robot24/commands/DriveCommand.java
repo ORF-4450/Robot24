@@ -88,7 +88,7 @@ public class DriveCommand extends Command
         if (RobotBase.isSimulation()) rotation *= -1;
         
         // driveBase.drive(throttle, strafe, rotation, false);
-        driveBase.drive(throttle, strafe, rotation, true);
+        driveBase.drive(throttle, strafe, rotation, false);
     }
 
     @Override

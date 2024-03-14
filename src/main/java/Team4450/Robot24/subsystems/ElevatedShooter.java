@@ -35,7 +35,7 @@ public class ElevatedShooter extends SubsystemBase {
             // set target position/rotation values for each position
             case INTAKE:
                 pivotAngle = -39;
-                elevatorHeight = 0.113;
+                elevatorHeight = 0.115;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;
                 break;

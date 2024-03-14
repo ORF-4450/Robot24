@@ -146,9 +146,9 @@ public final class Constants
         public static final double kRotSlowModeFactor = .20; // 15% of normal.
 
         // these were 1.2, 1.8, 2.0 in REV base code
-        public static final double kDirectionSlewRate = 0.7; // radians per second.
-        public static final double kMagnitudeSlewRate = 0.7; // percent per second (1 = 100%).
-        public static final double kRotationalSlewRate = 0.7; // percent per second (1 = 100%).
+        public static final double kDirectionSlewRate = 1.2; // radians per second.
+        public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%).
+        public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%).
 
         // Chassis configuration
 
