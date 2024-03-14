@@ -329,11 +329,12 @@ public class DriveBase extends SubsystemBase {
     // override joystick value if tracking AND trackingRotation is real
     if (istracking && !Double.isNaN(trackingRotation)) rot = trackingRotation;
 
-    if (rateLimit)
+    double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+
+    if (rateLimit && inputTranslationMag > 0.3)
     {
       // Convert XY to polar for rate limiting
       double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
-      double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
 
       // Calculate the direction slew rate based on an estimate of the lateral acceleration
       double directionSlewRate;
