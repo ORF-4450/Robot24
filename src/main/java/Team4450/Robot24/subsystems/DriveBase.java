@@ -103,7 +103,9 @@ public class DriveBase extends SubsystemBase {
   private double rotSpeedLimiter = 1;
   
 
-  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+  // we limit magnitude changes in the positive direction (acceleration), but allow crazy high rates in negative direction
+  // (deceleration). this has effect that deceleration is instant but acceleration is limited
+  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate,Double.NEGATIVE_INFINITY,0);
   private SlewRateLimiter rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double prevTime = WPIUtilJNI.now() * 1e-6;
 
@@ -329,14 +331,17 @@ public class DriveBase extends SubsystemBase {
     // override joystick value if tracking AND trackingRotation is real
     if (istracking && !Double.isNaN(trackingRotation)) rot = trackingRotation;
 
-    double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
 
-    if (rateLimit && inputTranslationMag > 0.3)
+    if (rateLimit)
     {
       // Convert XY to polar for rate limiting
+      double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
       double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
 
       // Calculate the direction slew rate based on an estimate of the lateral acceleration
+      // cole note: basically this stuff (from Rev's starter code) limits how fast you can change path
+      // direction. it has effect of rounding out sharp turns but can be quite disorienting for drivers
+      // so we put the slew rate to infinity so it doesn't affect anything -2024
       double directionSlewRate;
 
       if (currentTranslationMag != 0.0) {
@@ -374,7 +379,8 @@ public class DriveBase extends SubsystemBase {
       ySpeedCommanded = currentTranslationMag * Math.sin(currentTranslationDir);
 
       currentRotation = rotLimiter.calculate(rot);
-    } else {
+    }
+    else {
       xSpeedCommanded = xSpeed;
       ySpeedCommanded = ySpeed;
       currentRotation = rot;
