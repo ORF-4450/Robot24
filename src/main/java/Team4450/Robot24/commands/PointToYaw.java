@@ -18,7 +18,7 @@ public class PointToYaw extends Command {
     private DoubleSupplier  yawSupplier;
     private boolean         wait;
     private DriveBase       robotDrive;
-    private PIDController   pidController = new PIDController(0.03, 0.0, 0.1);
+    private PIDController   pidController = new PIDController(0.01, 0.0, 0.1);
 
     private static final double NO_VALUE = Double.NaN;
 
@@ -94,7 +94,8 @@ public class PointToYaw extends Command {
 
         pidController.reset();
         pidController.setTolerance(.05);      // in radians.
-        pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
+        // pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
+        pidController.enableContinuousInput(-Math.PI, Math.PI);
         robotDrive.enableTracking();
     }
 
