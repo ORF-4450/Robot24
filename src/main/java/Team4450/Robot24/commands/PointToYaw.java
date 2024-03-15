@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.subsystems.DriveBase;
 
@@ -35,6 +36,7 @@ public class PointToYaw extends Command {
         this.wait = wait;
 
         SendableRegistry.addLW(pidController, "PointToYaw PID");
+        SmartDashboard.putData("PointToYaw PID", pidController);
 
         // // if wait is set to true, then "require" the drive subsystem to ovverride other commands
         // if (wait) addRequirements(robotDrive);
