@@ -18,7 +18,7 @@ public class PointToYaw extends Command {
     private DoubleSupplier  yawSupplier;
     private boolean         wait;
     private DriveBase       robotDrive;
-    private PIDController   pidController = new PIDController(0.01, 0.0, 0.1);
+    private PIDController   pidController = new PIDController(0.8, 0.0, 0);
 
     private static final double NO_VALUE = Double.NaN;
 
@@ -149,10 +149,13 @@ public class PointToYaw extends Command {
     */
     public static double yawFromAxes(double xAxis, double yAxis) {
         double theta = Math.atan2(xAxis, yAxis) + Math.PI;
-        Util.consoleLog("%f", theta);
         double magnitude = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+        if (theta > Math.PI) {
+            theta = -(Math.PI - (theta - Math.PI));
+        }
 
         if (magnitude > 0.2) {
+            Util.consoleLog("%f", theta);
             return theta;
         } else {
             // this means the driver hasn't moved enough to trigger rotation

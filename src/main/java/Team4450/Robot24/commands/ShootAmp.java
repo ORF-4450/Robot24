@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ShootAmp extends Command {
     private final ElevatedShooter elevatedShooter;
 
-    private static enum State {MOVING, SHOOTING, MOVING2, DONE};
+    private static enum State {MOVING, SHOOTING, MOVING2,MOVING3, DONE};
 
     private State state = State.MOVING;
     private double feedTime = 0;
@@ -40,12 +40,17 @@ public class ShootAmp extends Command {
                     feedTime = Util.timeStamp();
                 break;
             case SHOOTING:
-                elevatedShooter.shooter.startFeeding(-0.8);
-                if (!elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 0.5)
+                elevatedShooter.shooter.startFeeding(-0.3);
+                if (!elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 0.2)
                     state = State.MOVING2;
                 break;
             case MOVING2:
                 if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT_TWO))
+                    state = State.MOVING3;
+                    feedTime = Util.timeStamp();
+                break;
+            case MOVING3:
+                if (elevatedShooter.executeSetPosition(PresetPosition.INTAKE))
                     state = State.DONE;
                     feedTime = Util.timeStamp();
                 break;

@@ -74,14 +74,16 @@ public class SpinUpShooter extends Command {
             case BACKFEED:
                 if (Util.getElaspedTime(startTime) < 0.05) {
                     elevatedShooter.shooter.startFeeding(-0.3); // start by feeding the note backwards a bit (30% speed for 0.2 seconds see down below)
-                    elevatedShooter.shooter.startShooting();
+                    // elevatedShooter.shooter.startShooting();
                 }
                 else {
+                    elevatedShooter.shooter.startShooting();
                     state = State.DONE;
                 }
                 break;
             case DONE:
                 elevatedShooter.shooter.stopFeeding();
+                elevatedShooter.shooter.startShooting();
                 break;
         }
     }

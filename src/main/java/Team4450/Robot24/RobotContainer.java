@@ -388,6 +388,10 @@ public class RobotContainer
 			.toggleOnTrue(new ShootAmp(elevShooter));
 		new Trigger(()-> utilityController.getPOV() == 180) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
+		new Trigger(()-> utilityController.getPOV() == 270) // up POV
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, true)
+		);
+		
 
 		new Trigger(() -> utilityController.getRightBumper())
 			.toggleOnTrue(
@@ -416,8 +420,13 @@ public class RobotContainer
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, true));
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		// new Trigger(() -> utilityController.getBButton()) // OUTER RING
+		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
 		new Trigger(() -> utilityController.getBButton()) // OUTER RING
-			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
+			.toggleOnTrue(
+				new SpinUpShooter(elevShooter, driveBase, -10, true).andThen(
+					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())));
+		
 		
 		// new Trigger(() -> utilityController.getBButton())
 		// 	.toggleOnTrue(

@@ -311,8 +311,10 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void fixPathPlannerGyro() {
-    if (ppGyroReversed)
+    if (ppGyroReversed) {
       startingGyroRotation -= 180;
+      ppGyroReversed = false;
+    }
   }
 
   /**
@@ -817,7 +819,7 @@ public class DriveBase extends SubsystemBase {
               DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
 
               // below tells PP "don't do any random moving without explicit instructions": will probably change in future
-              new ReplanningConfig(true, true)
+              new ReplanningConfig(false, false)
       ),
       () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
