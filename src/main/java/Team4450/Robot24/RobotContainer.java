@@ -62,9 +62,9 @@ public class RobotContainer
 
 	public static ShuffleBoard	shuffleBoard;
 	public static DriveBase 	driveBase;
-	public static PhotonVision	pvFrontCamera;
+	// public static PhotonVision	pvFrontCamera;
 	public static PhotonVision	pvShooterCamera;
-	public static PhotonVision	pvNoteCamera;
+	// public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
 	private final ElevatedShooter elevShooter;
 	private final Candle        candle;
@@ -184,9 +184,9 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_FRONT_TRANSFORM);
+		// pvFrontCamera = new PhotonVision(CAMERA_FRONT_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_FRONT_TRANSFORM);
 		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.APRILTAG_TRACKING, CAMERA_SHOOTER_TRANSFORM);
-		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
+		// pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
 		candle = new Candle(CTRE_CANDLE);
@@ -197,8 +197,8 @@ public class RobotContainer
 
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
-    	pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
-		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+    	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
+		// pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
 		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run
@@ -425,7 +425,7 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBButton()) // OUTER RING
 			.toggleOnTrue(
 				new SpinUpShooter(elevShooter, driveBase, -10, true).andThen(
-					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())));
+					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())));
 		
 		
 		// new Trigger(() -> utilityController.getBButton())
@@ -524,7 +524,7 @@ public class RobotContainer
 
 
 		NamedCommands.registerCommand("PointShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS()));
+		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS()));
 		NamedCommands.registerCommand("ShootSpeakerPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
 		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
@@ -540,7 +540,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("ResetGyro", new InstantCommand(driveBase::zeroGyro));
 
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvShooterCamera));
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
+		// NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP

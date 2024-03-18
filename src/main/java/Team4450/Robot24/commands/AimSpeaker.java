@@ -22,6 +22,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,9 +39,11 @@ public class AimSpeaker extends Command {
     private final PIDController rotationController = new PIDController(0.02, 0, 0);
     private final PIDController pivotController = new PIDController(0.06, 0, 0);
 
+    private final InterpolatingDoubleTreeMap pitchOffsets = new InterpolatingDoubleTreeMap();
+
     private boolean initialMoveDone = false;
 
-    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, PhotonVision frontCamera, DoubleSupplier joystick) {
+    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, DoubleSupplier joystick) {
         this.robotDrive = robotDrive;
         this.elevatedShooter = elevatedShooter;
         this.shooterCamera = shooterCamera;
@@ -52,6 +55,10 @@ public class AimSpeaker extends Command {
         rotationController.setTolerance(0.3);
         SendableRegistry.addLW(rotationController, "AimSpeaker Rotation PID");
         SendableRegistry.addLW(pivotController, "Pivot Rotation PID");
+
+        pitchOffsets.put(0.1, -20.0);
+        pitchOffsets.put(0.5, -19.5);
+        pitchOffsets.put(0.9, -19.0);
 
     }
 
@@ -96,7 +103,8 @@ public class AimSpeaker extends Command {
         // if (target == null) target = shooterCamera.getTarget(tagNames.SPEAKER_OFFSET);
         if (target != null) {
             // double power = pivotController.calculate(target.getPitch(), -29);
-            double offset = target.getPitch() - PV_TARGET_PITCH;
+            double offset = target.getPitch() - pitchOffsets.get(target.getArea());
+            Util.consoleLog("area=%f pitch_offset=%f", target.getArea(), pitchOffsets.get(target.getArea()));
             double newAngle = currentAngle - offset;
             if (Math.abs(offset) < 1) pitchOkay = true;
             newAngle = Util.clampValue(newAngle, -90, 0);
