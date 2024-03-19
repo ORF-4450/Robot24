@@ -64,7 +64,7 @@ public class RobotContainer
 	public static DriveBase 	driveBase;
 	// public static PhotonVision	pvFrontCamera;
 	public static PhotonVision	pvShooterCamera;
-	// public static PhotonVision	pvNoteCamera;
+	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
 	private final ElevatedShooter elevShooter;
 	private final Candle        candle;
@@ -186,7 +186,7 @@ public class RobotContainer
 		driveBase = new DriveBase();
 		// pvFrontCamera = new PhotonVision(CAMERA_FRONT_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_FRONT_TRANSFORM);
 		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.APRILTAG_TRACKING, CAMERA_SHOOTER_TRANSFORM);
-		// pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
+		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
 		candle = new Candle(CTRE_CANDLE);
@@ -490,6 +490,8 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
+		NamedCommands.registerCommand("IntakeNoteShooting", new IntakeNote(intake, elevShooter, true));
+
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true).andThen(
 			new WaitCommand(0.8 ).andThen(new ShootSpeaker(elevShooter))
@@ -503,7 +505,11 @@ public class RobotContainer
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true));
+		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, true));
+		
 		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true));
+		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true));
+
 		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
 

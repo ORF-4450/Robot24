@@ -93,6 +93,7 @@ public class AdvantageScope {
     public boolean attemptPickup() {
         for (int i=0;i<notes.length;i++) {
             Pose3d note = notes[i];
+            if (note == null) return true;
             double xdist = Math.abs(note.getX() - robotPose.getX());
             double ydist = Math.abs(note.getY() - robotPose.getY());
             double dist = Math.sqrt(Math.pow(xdist, 2) + Math.pow(ydist, 2));

@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4956904249746,
-      "y": 4.080418942087884
+      "x": 1.3544706441264736,
+      "y": 5.537771404246512
     },
     "rotation": 0
   },
@@ -12,45 +12,45 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "AutoStart"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
+            "pathName": "6.1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "startSourceSide"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeaker"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
+            "pathName": "6.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "leaveSourceSide"
+            "pathName": "6.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6.4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6.5"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AutoEnd"
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6.6"
           }
         }
       ]

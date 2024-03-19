@@ -104,8 +104,8 @@ public final class Constants
 
     // the names of the cameras in the PhotonVision software
     // public static String        CAMERA_FRONT_ESTIMATOR = "1";
-    // public static String        CAMERA_NOTE = "2";
-    public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera";
+    public static String        CAMERA_NOTE = "2";
+    public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera (1)";
 
     public static int           CAMERA_FRONT_SERVO = 0;
     public static int           CAMERA_BACK_SERVO = 1;

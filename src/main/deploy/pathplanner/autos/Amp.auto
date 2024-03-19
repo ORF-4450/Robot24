@@ -14,19 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SpinUpSpeaker"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "name": "ShootSpeaker"
           }
         },
         {
@@ -52,13 +40,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "amp1"
+                        "pathName": "Amp1"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "amp2"
+                        "pathName": "Amp2"
                       }
                     }
                   ]
@@ -96,13 +84,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "amp3"
+                        "pathName": "Amp3"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "amp4"
+                        "pathName": "Amp4"
                       }
                     }
                   ]

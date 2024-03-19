@@ -13,17 +13,23 @@ public class IntakeNote extends Command {
     private final ElevatedShooter elevatedShooter;
     private final Intake  intake;
 
+    private boolean shooting;
+
     private static enum State {MOVING, INTAKING, FEEDING, IN_FINAL_PLACE};
 
     private State state = State.INTAKING;
     private double feedTime = 0;
 
-    public IntakeNote(Intake intake, ElevatedShooter elevatedShooter) {
+    public IntakeNote(Intake intake, ElevatedShooter elevatedShooter, boolean shooting) {
         this.elevatedShooter = elevatedShooter;
         this.intake = intake;
+        this.shooting = shooting;
         addRequirements(intake, elevatedShooter);
         SmartDashboard.putString("IntakeNote Status", state.name());
+    }
 
+    public IntakeNote(Intake intake, ElevatedShooter elevatedShooter) {
+        this(intake, elevatedShooter, false);
     }
 
     @Override
@@ -44,8 +50,11 @@ public class IntakeNote extends Command {
             case INTAKING:
                 intake.start();
                 elevatedShooter.shooter.startFeeding(1);
-                elevatedShooter.shooter.backShoot();
-                // elevatedShooter.shooter.startShooting();
+                if (shooting) {
+                    elevatedShooter.shooter.startShooting();
+                } else {
+                    elevatedShooter.shooter.backShoot();
+                }
                 boolean simPickup = false;
                 if (RobotBase.isSimulation()) simPickup = AdvantageScope.getInstance().attemptPickup();
                 if (elevatedShooter.shooter.hasNote() || simPickup) {
@@ -56,7 +65,8 @@ public class IntakeNote extends Command {
             case FEEDING:// feed until shooter has note
                 intake.stop();
                 elevatedShooter.shooter.stopFeeding();
-                elevatedShooter.shooter.stopShooting();
+                if (!shooting)
+                    elevatedShooter.shooter.stopShooting();
                 // elevatedShooter.shooter.startFeeding(0.3);
                 // if (Util.getElaspedTime(feedTime) > 0.5)
                     state = State.IN_FINAL_PLACE;

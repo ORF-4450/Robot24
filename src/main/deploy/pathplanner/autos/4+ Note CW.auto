@@ -52,7 +52,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "4Note - A"
+                        "pathName": "4+Note - A"
                       }
                     }
                   ]
@@ -109,7 +109,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "4Note - B"
+                        "pathName": "4+Note - B"
                       }
                     }
                   ]
@@ -166,7 +166,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "4Note - C"
+                        "pathName": "4+Note - C"
                       }
                     }
                   ]
@@ -213,7 +213,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "4Note - D"
+                  "pathName": "4+Note - D"
                 }
               }
             ]

@@ -56,9 +56,9 @@ public class AimSpeaker extends Command {
         SendableRegistry.addLW(rotationController, "AimSpeaker Rotation PID");
         SendableRegistry.addLW(pivotController, "Pivot Rotation PID");
 
-        pitchOffsets.put(0.1, -20.0);
-        pitchOffsets.put(0.5, -19.5);
-        pitchOffsets.put(0.9, -19.0);
+        pitchOffsets.put(0.13, 5.5);
+        // pitchOffsets.put(0.5, -19.5);
+        pitchOffsets.put(0.85, 6.5);
 
     }
 
