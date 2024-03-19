@@ -85,7 +85,7 @@ public class PhotonVision extends SubsystemBase
         if (RobotBase.isSimulation()) {
             visionSim = new VisionSystemSim(cameraName);
             SimCameraProperties cameraProp = new SimCameraProperties();
-            cameraProp.setCalibration(1200, 2400, Rotation2d.fromDegrees(100));
+            cameraProp.setCalibration(680, 680, Rotation2d.fromDegrees(100));
             this.cameraSim = new PhotonCameraSim(camera, cameraProp);
             cameraSim.enableDrawWireframe(true);
             visionSim.addCamera(cameraSim, robotToCam);

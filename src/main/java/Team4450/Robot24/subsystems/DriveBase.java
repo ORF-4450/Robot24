@@ -182,6 +182,7 @@ public class DriveBase extends SubsystemBase {
     resetOdometry(DriveConstants.DEFAULT_STARTING_POSE); 
 
     configureAutoBuilder();
+    updateDS();
   }
 
   // Called on every Scheduler loop.

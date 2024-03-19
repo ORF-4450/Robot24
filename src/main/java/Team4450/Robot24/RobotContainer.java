@@ -198,7 +198,7 @@ public class RobotContainer
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
     	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
-		// pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
 		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
 
 		// Set the default drive command. This command will be scheduled automatically to run

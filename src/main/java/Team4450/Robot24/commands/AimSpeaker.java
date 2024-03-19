@@ -59,6 +59,7 @@ public class AimSpeaker extends Command {
         pitchOffsets.put(0.13, 5.5);
         // pitchOffsets.put(0.5, -19.5);
         pitchOffsets.put(0.85, 6.5);
+        SmartDashboard.putBoolean("Target Locked", false);
 
     }
 
@@ -126,5 +127,7 @@ public class AimSpeaker extends Command {
     }
 
     @Override
-    public boolean isFinished() {return false;}
+    public boolean isFinished() {
+        return elevatedShooter.shooter.hasShot;
+    }
 }

@@ -84,6 +84,7 @@ public class SpinUpShooter extends Command {
             case DONE:
                 elevatedShooter.shooter.stopFeeding();
                 elevatedShooter.shooter.startShooting();
+                SmartDashboard.putBoolean("Spun Up", true);
                 break;
         }
     }
@@ -94,7 +95,6 @@ public class SpinUpShooter extends Command {
         elevatedShooter.shooter.stopFeeding();
         if (!delay)
             elevatedShooter.shooter.stopShooting();
-        SmartDashboard.putBoolean("Spun Up", true);
     }
 
     @Override
