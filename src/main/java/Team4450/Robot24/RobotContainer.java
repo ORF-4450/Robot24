@@ -376,8 +376,8 @@ public class RobotContainer
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
 		
 		// toggle face note/apriltag
-		// new Trigger(() -> driverController.getRightTrigger() && !elevShooter.hasNote())
-    	//     .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		new Trigger(() -> driverController.getRightTrigger())// && !elevShooter.hasNote())
+    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
 		// new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
     	//     .whileTrue(new FaceAprilTag(driveBase, pvShooterCamera));
 		
@@ -389,9 +389,9 @@ public class RobotContainer
 				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
-		new Trigger(()-> utilityController.getPOV() == 180) // up POV
-			.toggleOnTrue(new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
-		new Trigger(()-> utilityController.getPOV() == 270) // up POV
+		new Trigger(()-> utilityController.getPOV() == 180) // down POV
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.INTAKE));
+		new Trigger(()-> utilityController.getPOV() == 270) // left POV
 			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, true)
 		);
 		
@@ -411,9 +411,13 @@ public class RobotContainer
 			// )));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(
+				utilityController.getLeftTriggerAxis()
+			), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-0.8), elevShooter.shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(
+				-utilityController.getRightTriggerAxis()
+			), elevShooter.shooter::stopFeeding));
 
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnFalse(new ReverseIntake(intake, elevShooter, driveBase));
