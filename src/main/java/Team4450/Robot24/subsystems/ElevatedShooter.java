@@ -10,6 +10,8 @@ public class ElevatedShooter extends SubsystemBase {
 
     public static enum PresetPosition {INTAKE, SHOOT, SHOOT_VISION_START, SHOOT_AMP_FRONT, SHOOT_AMP_BACK,SHOOT_AMP_FRONT_TWO, VERTICAL_BOTTOM, VERTICAL_TOP, SOURCE, CLIMB, NONE};
 
+    public boolean shootDoesTheSpeakerInsteadOfTheAmp = true;
+
     private double elevatorHeight;
     private double pivotAngle;
     private double centerstageHeight;

@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ShootAmp extends Command {
     private final ElevatedShooter elevatedShooter;
 
-    private static enum State {MOVING, SHOOTING, MOVING2,MOVING3, DONE};
+    private static enum State {NONE, SHOOTING, MOVING2,MOVING3, DONE};
 
-    private State state = State.MOVING;
+    private State state = State.NONE;
     private double feedTime = 0;
 
     public ShootAmp(ElevatedShooter elevatedShooter) {
@@ -25,8 +25,8 @@ public class ShootAmp extends Command {
 
     @Override
     public void initialize() {
-        state = State.MOVING;
-         elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT);
+        state = State.SHOOTING;
+        feedTime = Util.timeStamp();
         //  elevatedShooter.shooter.enableClosedLoopFeedStop(true);
     }
 
@@ -34,10 +34,7 @@ public class ShootAmp extends Command {
     public void execute() {
         SmartDashboard.putString("ShootAmp Status", state.name());
         switch (state) {
-            case MOVING:
-                if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT))
-                    state = State.SHOOTING;
-                    feedTime = Util.timeStamp();
+            case NONE:
                 break;
             case SHOOTING:
                 elevatedShooter.shooter.startFeeding(-0.3);
@@ -69,5 +66,6 @@ public class ShootAmp extends Command {
         Util.consoleLog("interrupted=%b", interrupted);
         elevatedShooter.shooter.stopFeeding();
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
+        elevatedShooter.shootDoesTheSpeakerInsteadOfTheAmp = true;
     }
 }

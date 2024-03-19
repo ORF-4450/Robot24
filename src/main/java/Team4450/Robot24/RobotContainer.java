@@ -385,7 +385,10 @@ public class RobotContainer
 		new Trigger(()-> utilityController.getPOV() == 0) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB));
 		new Trigger(()-> utilityController.getPOV() == 90) // right POV
-			.toggleOnTrue(new ShootAmp(elevShooter));
+			.toggleOnTrue(new ParallelCommandGroup(
+				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
+				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
+			));
 		new Trigger(()-> utilityController.getPOV() == 180) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 		new Trigger(()-> utilityController.getPOV() == 270) // up POV
@@ -393,9 +396,12 @@ public class RobotContainer
 		);
 		
 
-		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(
-				new ShootSpeaker(elevShooter));
+		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
+			.toggleOnTrue(new ShootSpeaker(elevShooter));
+		
+		new Trigger(() -> utilityController.getRightBumper() && !elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
+			.toggleOnTrue(new ShootAmp(elevShooter));
+
 		new Trigger(() -> utilityController.getLeftBumper())
 			.toggleOnTrue(
 				new IntakeNote(intake, elevShooter));
@@ -535,7 +541,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("ShootSpeakerSubwoofer", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
 		NamedCommands.registerCommand("ClimbDown", new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
-		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
+		NamedCommands.registerCommand("ShootAmp", new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT).andThen(new ShootAmp(elevShooter)));
 		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, elevShooter, driveBase));
 
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));

@@ -51,6 +51,8 @@ public class SpinUpShooter extends Command {
         }
         else
             state = State.MOVING;
+        
+        elevatedShooter.shootDoesTheSpeakerInsteadOfTheAmp = true;
     }
 
     @Override
