@@ -556,7 +556,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("ResetGyro", new InstantCommand(driveBase::zeroGyro));
 
 		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvShooterCamera));
-		// NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
+		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP

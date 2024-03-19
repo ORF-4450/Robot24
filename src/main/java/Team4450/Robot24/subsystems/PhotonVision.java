@@ -257,7 +257,7 @@ public class PhotonVision extends SubsystemBase
     }
 
     /**
-     * returns the closes target to center of camera crosshair (yaw-wise)
+     * returns the closes target to center of camera crosshair (area-wise)
      * @return the raw PhotonTrackedTarget
      */
     public PhotonTrackedTarget getClosestTarget() {
@@ -268,7 +268,7 @@ public class PhotonVision extends SubsystemBase
             closest = targets.get(0);
 
             for (int i = 0; i < targets.size(); i++) {
-                if (Math.abs(targets.get(i).getYaw()) < Math.abs(closest.getYaw()))
+                if (getTargetMagnitudeDistance(targets.get(i)) < getTargetMagnitudeDistance(closest))
                     closest = targets.get(i);
             }
 
@@ -276,6 +276,10 @@ public class PhotonVision extends SubsystemBase
         }
         else
             return null;
+    }
+    
+    private double getTargetMagnitudeDistance(PhotonTrackedTarget target) {
+        return Math.sqrt(Math.pow(target.getPitch(),2) + Math.pow(target.getYaw(),2));
     }
     
     /**

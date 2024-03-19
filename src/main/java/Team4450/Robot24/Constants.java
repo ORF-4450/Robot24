@@ -99,7 +99,7 @@ public final class Constants
     
     public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1.5),
-        new Rotation3d(0, Math.toRadians(45), 0)
+        new Rotation3d(0, Math.toRadians(70), 0)
     );
 
     // the names of the cameras in the PhotonVision software
