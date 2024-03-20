@@ -18,7 +18,7 @@ public class PointToYaw extends Command {
     private DoubleSupplier  yawSupplier;
     private boolean         wait;
     private DriveBase       robotDrive;
-    private PIDController   pidController = new PIDController(0.8, 0.0, 0.08);
+    private PIDController   pidController = new PIDController(0.04, 0.0, 0);
 
     private static final double NO_VALUE = Double.NaN;
 
@@ -69,7 +69,7 @@ public class PointToYaw extends Command {
         // sure why it is needed but I believe it is because the input from joysticks in the
         // drive() method is expected to be reversed so we have to manually do that. It doesn't
         // work if we remove the negative.
-        double measured = robotDrive.getYawR() % (Math.PI * 2);
+        double measured = robotDrive.getYaw() % (360);
         double rotation = -pidController.calculate(measured);
         
         SmartDashboard.putNumber("PointToWay/setpoint", desiredYaw);
@@ -142,7 +142,7 @@ public class PointToYaw extends Command {
             }
 
             radians *= -1;
-            return radians;
+            return Math.toDegrees(radians);
         }
     }
     
@@ -162,7 +162,7 @@ public class PointToYaw extends Command {
 
         if (magnitude > 0.2) {
             Util.consoleLog("%f", theta);
-            return theta;
+            return Math.toDegrees(theta);
         } else {
             // this means the driver hasn't moved enough to trigger rotation
             // kind of like deadzone but radius of angle instead of individual
