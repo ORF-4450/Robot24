@@ -82,7 +82,7 @@ public class AimSpeaker extends Command {
 
         boolean yawOkay = false;
         boolean pitchOkay = false;
-        double dist = PhotonUtils.calculateDistanceToTargetMeters(0.6, 1.4224,
+        double dist = PhotonUtils.calculateDistanceToTargetMeters(0.6, 1.4224, // camera height, tag height (center)
             Math.toRadians(-currentAngle),
             Math.toRadians(target.getPitch())
         );

@@ -121,6 +121,12 @@ public class Shooter extends SubsystemBase {
         updateDS();
     }
 
+    public void startShooting(double factor) {
+        motorTop.set(shooterSpeed * factor);
+        shooterIsRunning = true;
+        updateDS();
+    }
+
     public void backShoot() {
         motorTop.set(-0.15);
         shooterIsRunning = true;
