@@ -389,11 +389,12 @@ public class RobotContainer
 				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
-		new Trigger(()-> utilityController.getPOV() == 180) // down POV
-			.toggleOnTrue(new Preset(elevShooter, PresetPosition.INTAKE));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
 			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, true)
 		);
+
+		new Trigger(()-> utilityController.getPOV() == 180) // down POV
+			.whileTrue(new RunCommand(()->elevShooter.elevator.moveUnsafe(Util.squareInput(-utilityController.getRightY()))));
 		
 
 		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
@@ -411,9 +412,9 @@ public class RobotContainer
 			// )));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
+			.whileTrue(new RunCommand(() -> elevShooter.shooter.startFeeding(utilityController.getLeftTriggerAxis())));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-1), elevShooter.shooter::stopFeeding));
+			.whileTrue(new RunCommand(() -> elevShooter.shooter.startFeeding(-utilityController.getRightTriggerAxis())));
 
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnFalse(new ReverseIntake(intake, elevShooter, driveBase));
@@ -428,7 +429,7 @@ public class RobotContainer
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
 		// new Trigger(() -> utilityController.getBButton()) // OUTER RING
 		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
-		new Trigger(() -> utilityController.getBButton()) // OUTER RING
+		new Trigger(() -> utilityController.getBButton()) // VISION TRACKING
 			.toggleOnTrue(
 				new SpinUpShooter(elevShooter, driveBase, -39, true).andThen(
 					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())));

@@ -114,6 +114,8 @@ public class AimSpeaker extends Command {
     public void end(boolean interrupted) {
         SmartDashboard.putBoolean("Target Locked", false);
         Util.consoleLog("interrupted=%b", interrupted);
+        if (interrupted)
+            elevatedShooter.shooter.stopShooting();
         robotDrive.disableTracking();
     }
 

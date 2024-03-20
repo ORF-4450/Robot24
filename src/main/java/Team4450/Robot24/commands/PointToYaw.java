@@ -18,7 +18,7 @@ public class PointToYaw extends Command {
     private DoubleSupplier  yawSupplier;
     private boolean         wait;
     private DriveBase       robotDrive;
-    private PIDController   pidController = new PIDController(0.04, 0.0, 0);
+    private PIDController   pidController = new PIDController(0.02, 0.0, 0);
 
     private static final double NO_VALUE = Double.NaN;
 

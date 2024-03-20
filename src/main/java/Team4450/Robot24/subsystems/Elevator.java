@@ -153,8 +153,8 @@ public class Elevator extends SubsystemBase {
         // }
     }
     public void moveUnsafe(double speed) {
-        // setpoint = Double.NaN;
-        // motorMain.set(speed);
+        setpoint = Double.NaN;
+        motorMain.set(speed);
     }
 
     public void moveCenterStage(double speed) {
