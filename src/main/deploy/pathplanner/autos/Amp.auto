@@ -18,41 +18,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Amp1"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Amp2"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "Amp1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp2"
           }
         },
         {
@@ -68,41 +42,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNote"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Amp3"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Amp4"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "Amp3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp4"
           }
         },
         {
