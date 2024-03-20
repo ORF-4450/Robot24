@@ -11,7 +11,7 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
 public class DriveToNote extends Command {
-    PIDController rotationController = new PIDController(0.02, 0, 0); // for rotating drivebase
+    PIDController rotationController = new PIDController(0.008, 0, 0); // for rotating drivebase
     PIDController translationController = new PIDController(0.02, 0, 0); // for moving drivebase in X,Y plane
     DriveBase robotDrive;
     PhotonVision photonVision;

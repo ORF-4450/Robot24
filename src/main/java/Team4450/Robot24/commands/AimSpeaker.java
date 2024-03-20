@@ -59,7 +59,7 @@ public class AimSpeaker extends Command {
         // mapping of %area to angle offset
         pitchOffsets.put(0.13, 5.5);
         // pitchOffsets.put(0.5, -19.5);
-        pitchOffsets.put(0.85, 6.5);
+        pitchOffsets.put(0.85, 6.25);
         SmartDashboard.putBoolean("Target Locked", false);
 
     }
@@ -78,10 +78,10 @@ public class AimSpeaker extends Command {
         double currentAngle = elevatedShooter.shooter.getAngle();
         if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
-        if (!initialMoveDone) {
-            initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
-            return;
-        }
+        // if (!initialMoveDone) {
+        //     initialMoveDone = elevatedShooter.executeSetPosition(PresetPosition.SHOOT_VISION_START);
+        //     return;
+        // }
 
         boolean yawOkay = false;
         boolean pitchOkay = false;
@@ -93,9 +93,10 @@ public class AimSpeaker extends Command {
             robotDrive.setTrackingRotation(Double.NaN);
         } else {
             if (target == null) {
+                Util.consoleLog("null");
                 robotDrive.setTrackingRotation(Double.NaN);
             } else {
-                double output = rotationController.calculate(target.getYaw(), 7);
+                double output = rotationController.calculate(target.getYaw(), 6);
                 if (Math.abs(output) < 0.01) yawOkay = true;
                 robotDrive.setTrackingRotation(output);
             }

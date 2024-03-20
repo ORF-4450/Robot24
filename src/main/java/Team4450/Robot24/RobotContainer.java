@@ -434,7 +434,7 @@ public class RobotContainer
 		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
 		new Trigger(() -> utilityController.getBButton()) // OUTER RING
 			.toggleOnTrue(
-				new SpinUpShooter(elevShooter, driveBase, -10, true).andThen(
+				new SpinUpShooter(elevShooter, driveBase, -39, true).andThen(
 					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())));
 		
 		

@@ -104,7 +104,7 @@ public final class Constants
 
     // the names of the cameras in the PhotonVision software
     // public static String        CAMERA_FRONT_ESTIMATOR = "1";
-    public static String        CAMERA_NOTE = "2";
+    public static String        CAMERA_NOTE = "HD_USB_Camera"; // TODO
     public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera (1)";
 
     public static int           CAMERA_FRONT_SERVO = 0;
@@ -159,7 +159,7 @@ public final class Constants
         public static final double kWheelBase = Units.inchesToMeters(29);
 
         // Drive base radius in meters. Distance from robot center to furthest module.
-        public static final double kDriveBaseRadius = .54;
+        public static final double kDriveBaseRadius = .45;
 
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -269,6 +269,6 @@ public final class Constants
         public static final double kFreeSpeedRpm = 5676;
     }
 
-  //-------------------- No student code above this line ------------------------------------------------------
+  //-------------------- No student code above this line (whoops) ------------------------------------------------------
 
 }
