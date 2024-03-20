@@ -411,13 +411,9 @@ public class RobotContainer
 			// )));
 
 		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(
-				utilityController.getLeftTriggerAxis()
-			), elevShooter.shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(1), elevShooter.shooter::stopFeeding));
 		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(
-				-utilityController.getRightTriggerAxis()
-			), elevShooter.shooter::stopFeeding));
+			.whileTrue(new StartEndCommand(() -> elevShooter.shooter.startFeeding(-1), elevShooter.shooter::stopFeeding));
 
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnFalse(new ReverseIntake(intake, elevShooter, driveBase));
