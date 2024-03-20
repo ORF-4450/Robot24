@@ -3,37 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.794957501952041,
-        "y": 7.035148496222919
+        "x": 8.28958226554846,
+        "y": 0.7699030139503732
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.2120469148358275,
-        "y": 7.060505625638589
+        "x": 7.034563912877826,
+        "y": 1.2753524493284099
       },
       "isLocked": false,
-      "linkedName": "6.3-6.4"
+      "linkedName": "CL.1-2"
     },
     {
       "anchor": {
-        "x": 8.669200792105288,
-        "y": 7.463309861804909
+        "x": 2.607722957261391,
+        "y": 2.954527199977019
       },
       "prevControl": {
-        "x": 6.759933654126568,
-        "y": 7.193823554313776
+        "x": 4.11916772122234,
+        "y": 2.414176082072402
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "6.4-6.5"
+      "linkedName": "CL.2-3"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.3,
+      "name": "spinup",
+      "waypointRelativePos": 0.0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpinUpPodium"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shoot",
+      "waypointRelativePos": 0.95,
       "command": {
         "type": "parallel",
         "data": {
@@ -43,12 +60,6 @@
               "data": {
                 "name": "Shoot"
               }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "IntakeNote"
-              }
             }
           ]
         }
@@ -56,14 +67,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.7,
+    "maxVelocity": 4.0,
     "maxAcceleration": 4.8,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -31.696972125920414,
     "rotateFast": false
   },
   "reversed": false,

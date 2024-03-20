@@ -3,43 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3544706441264736,
-        "y": 5.537771404246512
+        "x": 2.607722957261391,
+        "y": 2.954527199977019
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0078769555687264,
-        "y": 4.805858945051224
+        "x": 2.4239362736537977,
+        "y": 0.8977797019954152
+      },
+      "isLocked": false,
+      "linkedName": "CL.2-3"
+    },
+    {
+      "anchor": {
+        "x": 8.606677992745867,
+        "y": 2.482585302782212
+      },
+      "prevControl": {
+        "x": 8.669579239204989,
+        "y": 2.601540460507603
+      },
+      "nextControl": {
+        "x": 7.907154049985183,
+        "y": 1.1596865427733827
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.7209645669291342,
-        "y": 4.191349401217321
+        "x": 2.415955999136701,
+        "y": 2.809103522782938
       },
       "prevControl": {
-        "x": 2.11607529233577,
-        "y": 4.616779085410022
+        "x": 3.1847064196360537,
+        "y": 2.336103998844903
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "6.1-6.2"
+      "linkedName": "CL.3-4"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -40.15802351472952,
+      "waypointRelativePos": 0.7,
+      "rotationDegrees": 18.01501929772181,
       "rotateFast": false
     }
   ],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "Start spinup for note 1",
-      "waypointRelativePos": 0,
+      "name": "intake",
+      "waypointRelativePos": 0.15,
       "command": {
         "type": "parallel",
         "data": {
@@ -47,7 +63,7 @@
             {
               "type": "named",
               "data": {
-                "name": "SpinUp"
+                "name": "IntakeNote"
               }
             }
           ]
@@ -55,22 +71,33 @@
       }
     },
     {
-      "name": "shoot note 1 + intake",
-      "waypointRelativePos": 0.7,
+      "name": "spin up",
+      "waypointRelativePos": 1.15,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpinUpPodium"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shoot",
+      "waypointRelativePos": 1.9,
+      "command": {
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "Shoot"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "IntakeNoteShooting"
               }
             }
           ]
@@ -79,14 +106,14 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
+    "maxVelocity": 4.0,
     "maxAcceleration": 4.8,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -27.001352756358354,
+    "rotation": -41.2066425797239,
     "rotateFast": false
   },
   "reversed": false,

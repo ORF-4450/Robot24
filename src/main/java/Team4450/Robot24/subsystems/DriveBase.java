@@ -6,9 +6,12 @@ package Team4450.Robot24.subsystems;
 
 import static Team4450.Robot24.Constants.alliance;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -833,5 +836,10 @@ public class DriveBase extends SubsystemBase {
       },
       this // Reference to this subsystem to set requirements
     );
+    PPHolonomicDriveController.setRotationTargetOverride(this::getPPRotationTargetOverride);
+  }
+
+  public Optional<Rotation2d> getPPRotationTargetOverride() {
+    return Optional.empty();
   }
 }
