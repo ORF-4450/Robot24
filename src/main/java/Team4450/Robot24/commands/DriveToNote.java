@@ -51,12 +51,13 @@ public class DriveToNote extends Command {
 
     @Override
     public void execute() {
-        if (!photonVision.hasTargets()) {
+        PhotonTrackedTarget target = photonVision.getClosestTarget();
+
+        if (target == null) {
             robotDrive.setTrackingRotation(Double.NaN);
             return;
         }
 
-        PhotonTrackedTarget target = photonVision.getClosestTarget();
 
         double rotation = rotationController.calculate(target.getYaw());
         double movement = translationController.calculate(target.getPitch());

@@ -268,7 +268,7 @@ public class PhotonVision extends SubsystemBase
             closest = targets.get(0);
 
             for (int i = 0; i < targets.size(); i++) {
-                if (getTargetMagnitudeDistance(targets.get(i)) < getTargetMagnitudeDistance(closest))
+                if (targets.get(i).getPitch() < closest.getPitch())
                     closest = targets.get(i);
             }
 

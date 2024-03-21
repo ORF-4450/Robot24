@@ -1,5 +1,6 @@
 package Team4450.Robot24.commands;
 
+import static Team4450.Robot24.Constants.PODIUM_ANGLE;
 import static Team4450.Robot24.Constants.alliance;
 
 import java.util.function.DoubleSupplier;
@@ -47,8 +48,12 @@ public class AimSpeaker extends Command {
         SendableRegistry.addLW(pivotController, "Pivot Rotation PID");
 
         // mapping of distance (meters) to pitch offset
-        pitchOffsets.put(0.13, 5.5);
-        pitchOffsets.put(0.85, 6.25);
+        pitchOffsets.put(1.45, -50.0);
+        pitchOffsets.put(2.37, -39.0);
+        pitchOffsets.put(3.45, -26.0);
+        pitchOffsets.put(3.69, -22.0);
+        
+        
 
         // mapping of distance (meters) to yaw value
         yawOffsets.put(0.0, 6.0);
@@ -73,7 +78,9 @@ public class AimSpeaker extends Command {
         int targetId = tagNames.SPEAKER_MAIN;
         PhotonTrackedTarget target = frontCamera.getTarget(targetId);
 
+
         if (target == null ) {
+            Util.consoleLog("null target");
             SmartDashboard.putBoolean("Target Locked", false);
             SmartDashboard.putNumber("Distance to Speaker", Double.NaN);
             robotDrive.setTrackingRotation(Double.NaN);
@@ -82,8 +89,8 @@ public class AimSpeaker extends Command {
 
         boolean yawOkay = false;
         boolean pitchOkay = false;
-        double dist = PhotonUtils.calculateDistanceToTargetMeters(0.6, 1.4224, // camera height, tag height (center)
-            Math.toRadians(-currentAngle),
+        double dist = PhotonUtils.calculateDistanceToTargetMeters(0.57, 1.4224, // camera height, tag height (center)
+            Math.toRadians(25),
             Math.toRadians(target.getPitch())
         );
 
@@ -99,14 +106,14 @@ public class AimSpeaker extends Command {
 
 
         // shooter pivot ==================================
-        double offset = target.getPitch() - pitchOffsets.get(dist);
-        double newAngle = Util.clampValue(currentAngle - offset, -90, 0); // for safety
-        elevatedShooter.shooter.setAngle(newAngle);
+        // double offset = target.getPitch() - pitchOffsets.get(dist);
+        // double newAngle = Util.clampValue(currentAngle - offset, -90, 0); // for safety
+        elevatedShooter.shooter.setAngle(pitchOffsets.get(dist));
 
         Util.consoleLog("dist=%f angle=%f", dist, pitchOffsets.get(dist));
         Util.consoleLog("shooter_angle=%f pitch=%f yaw=%f", currentAngle, target.getPitch(), target.getYaw());
-        if (Math.abs(offset) < 1) pitchOkay = true;
-        SmartDashboard.putBoolean("Target Locked", yawOkay && pitchOkay);
+        // if (Math.abs(offset) < 1) pitchOkay = true;
+        SmartDashboard.putBoolean("Target Locked", yawOkay);
         SmartDashboard.putNumber("Distance to Speaker", dist);
     }
 

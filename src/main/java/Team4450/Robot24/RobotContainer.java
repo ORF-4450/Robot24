@@ -422,7 +422,10 @@ public class RobotContainer
 			.whileTrue(new InstantCommand(()->elevShooter.resetEncoders()));
 		
 		new Trigger(() -> utilityController.getYButton()) // PODIUM
-			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(
+				new SpinUpShooter(elevShooter, driveBase, true))
+			);
+		
 		new Trigger(() -> utilityController.getXButton()) // manual
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, true));
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER

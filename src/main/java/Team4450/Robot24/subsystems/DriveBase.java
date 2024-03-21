@@ -23,6 +23,7 @@ import Team4450.Robot24.Constants.ModuleConstants;
 import Team4450.Robot24.utility.SwerveUtils;
 import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Constants;
+import Team4450.Robot24.Robot;
 import Team4450.Robot24.RobotContainer;
 import Team4450.Lib.Util;
 
@@ -284,6 +285,10 @@ public class DriveBase extends SubsystemBase {
     return odometry.getEstimatedPosition();
   }
 
+  public Pose2d getPosePP() {
+    return getPose();
+  }
+
   /**
    * Resets the odometry to the specified pose.
    *
@@ -430,7 +435,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void driveChassisSpeedsPP(ChassisSpeeds speeds) {
-    // if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
+    if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
     driveChassisSpeeds(speeds);
   }
   
@@ -811,14 +816,18 @@ public class DriveBase extends SubsystemBase {
   private void configureAutoBuilder() {
     Util.consoleLog();
 
+    PIDConstants rotPID = new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0);
+    if (RobotBase.isSimulation())
+      rotPID = new PIDConstants(1, 0.0, 0.0);
+
     AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
+      this::getPosePP, // Robot pose supplier
       this::resetOdometryPathPlanner, // Method to reset odometry (will be called if your auto has a starting pose)
       this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       this::driveChassisSpeedsPP, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Rotation PID constants
+              rotPID, // Rotation PID constants
               DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
               DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
 
@@ -836,10 +845,10 @@ public class DriveBase extends SubsystemBase {
       },
       this // Reference to this subsystem to set requirements
     );
-    PPHolonomicDriveController.setRotationTargetOverride(this::getPPRotationTargetOverride);
+    // PPHolonomicDriveController.setRotationTargetOverride(this::getPPRotationTargetOverride);
   }
 
-  public Optional<Rotation2d> getPPRotationTargetOverride() {
-    return Optional.empty();
-  }
+  // public Optional<Rotation2d> getPPRotationTargetOverride() {
+  //   return Optional.empty();
+  // }
 }
