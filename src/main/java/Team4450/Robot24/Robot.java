@@ -291,6 +291,11 @@ public class Robot extends TimedRobot
     if (tracing) FunctionTracer.INSTANCE.printFunctions(Util.logPrintStream);
   }
 
+  @Override
+  public void disabledExit() {
+      robotContainer.lockMechanisms();
+  }
+
   /**
    * This function is called once at the start of test mode.
    */

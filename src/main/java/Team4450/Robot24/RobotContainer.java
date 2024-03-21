@@ -45,6 +45,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -394,7 +395,16 @@ public class RobotContainer
 		);
 
 		new Trigger(()-> utilityController.getPOV() == 180) // down POV
-			.whileTrue(new RunCommand(()->elevShooter.elevator.moveUnsafe(Util.squareInput(-utilityController.getRightY()))));
+			.whileTrue(new RunCommand(()->{
+				elevShooter.elevator.moveUnsafe(Util.squareInput(utilityController.getRightY()));
+				// elevShooter.shooter.unlockPosition();
+			}));
+
+		new Trigger(()-> utilityController.getPOV() == 180) // on release down POV
+			.onFalse(new RunCommand(()->{
+				elevShooter.elevator.lockPosition();
+				elevShooter.shooter.lockPosition();
+			}));
 		
 
 		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
@@ -417,14 +427,24 @@ public class RobotContainer
 			.whileTrue(new RunCommand(() -> elevShooter.shooter.startFeeding(-utilityController.getRightTriggerAxis())));
 
 		new Trigger(() -> utilityController.getBackButton())
-			.toggleOnFalse(new ReverseIntake(intake, elevShooter, driveBase));
+			.toggleOnTrue(new ReverseIntake(intake, elevShooter, driveBase));
 		new Trigger(() -> utilityController.getStartButton())
-			.whileTrue(new InstantCommand(()->elevShooter.resetEncoders()));
-		
-		new Trigger(() -> utilityController.getYButton()) // PODIUM
-			.toggleOnTrue(new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(
-				new SpinUpShooter(elevShooter, driveBase, true))
+			.toggleOnTrue(
+				(	new Preset(elevShooter, PresetPosition.SOURCE).andThen(
+					new RunCommand(()->{
+						elevShooter.shooter.startShooting(-1);
+						elevShooter.shooter.startFeeding(1);
+				}))).until(elevShooter.shooter::hasNote).andThen(
+					new Preset(elevShooter, PresetPosition.INTAKE)
+				)
 			);
+		
+		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
+			.toggleOnTrue(
+				new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(
+				new SpinUpShooter(elevShooter, driveBase, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), true)
+			)));
 		
 		new Trigger(() -> utilityController.getXButton()) // manual
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, true));
@@ -434,8 +454,10 @@ public class RobotContainer
 		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
 		new Trigger(() -> utilityController.getBButton()) // VISION TRACKING
 			.toggleOnTrue(
-				new SpinUpShooter(elevShooter, driveBase, -39, true).andThen(
-					new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())));
+				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+				new SpinUpShooter(elevShooter, driveBase, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())
+			)));
 		
 		
 		// new Trigger(() -> utilityController.getBButton())
@@ -609,6 +631,11 @@ public class RobotContainer
 
 	public void fixPathPlannerGyro() {
 		driveBase.fixPathPlannerGyro();
+	}
+
+	public void lockMechanisms() {
+		elevShooter.elevator.lockPosition();
+		elevShooter.shooter.lockPosition();
 	}
          
 	/**

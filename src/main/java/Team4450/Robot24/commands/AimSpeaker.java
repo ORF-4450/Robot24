@@ -26,6 +26,7 @@ public class AimSpeaker extends Command {
     private final PhotonVision shooterCamera;
     private final PhotonVision frontCamera;
     private final DoubleSupplier joystick;
+    private boolean upperShot = false;
     private final AprilTagNames tagNames = new AprilTagNames(alliance);
 
     private final PIDController rotationController = new PIDController(0.02, 0, 0);
@@ -34,11 +35,12 @@ public class AimSpeaker extends Command {
     private final InterpolatingDoubleTreeMap pitchOffsets = new InterpolatingDoubleTreeMap();
     private final InterpolatingDoubleTreeMap yawOffsets = new InterpolatingDoubleTreeMap();
 
-    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, DoubleSupplier joystick) {
+    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, DoubleSupplier joystick, boolean upperShot) {
         this.robotDrive = robotDrive;
         this.elevatedShooter = elevatedShooter;
         this.shooterCamera = shooterCamera;
         this.frontCamera = shooterCamera;//frontCamera;
+        this.upperShot = upperShot;
         this.joystick = joystick;
 
         addRequirements(elevatedShooter);
@@ -48,10 +50,17 @@ public class AimSpeaker extends Command {
         SendableRegistry.addLW(pivotController, "Pivot Rotation PID");
 
         // mapping of distance (meters) to pitch offset
-        pitchOffsets.put(1.45, -50.0);
-        pitchOffsets.put(2.37, -39.0);
-        pitchOffsets.put(3.45, -26.0);
-        pitchOffsets.put(3.69, -22.0);
+        if (!upperShot) {
+            pitchOffsets.put(1.45, -50.0);
+            pitchOffsets.put(2.37, -39.0);
+            pitchOffsets.put(3.45, -26.0);
+            pitchOffsets.put(3.69, -22.0);
+        } else {
+            pitchOffsets.put(1.45, -44.0);
+            pitchOffsets.put(2.37, -33.0);
+            pitchOffsets.put(3.45, -20.0);
+            pitchOffsets.put(3.69, -16.0);
+        }
         
         
 
@@ -61,6 +70,10 @@ public class AimSpeaker extends Command {
 
         SmartDashboard.putBoolean("Target Locked", false);
     }
+
+    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, DoubleSupplier joystick) {
+        this(robotDrive, elevatedShooter, shooterCamera, joystick, false);
+    }    
 
     @Override
     public void initialize() {
@@ -121,7 +134,7 @@ public class AimSpeaker extends Command {
     public void end(boolean interrupted) {
         SmartDashboard.putBoolean("Target Locked", false);
         Util.consoleLog("interrupted=%b", interrupted);
-        if (interrupted)
+        // if (interrupted)
             elevatedShooter.shooter.stopShooting();
         robotDrive.disableTracking();
     }

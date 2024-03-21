@@ -54,8 +54,8 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = false;
                 break;
             case SHOOT_VISION_START:
-                pivotAngle = -27;
-                elevatorHeight = 0.2;
+                pivotAngle = -39;
+                elevatorHeight = 0.15;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;
                 break;
@@ -97,7 +97,7 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = true;
                 break;
             case SOURCE:
-                pivotAngle = -180;
+                pivotAngle = -50;
                 elevatorHeight = MAIN_SAFE_TOP;
                 centerstageHeight = CENTERSTAGE_SAFE_TOP;
                 atTop = true;

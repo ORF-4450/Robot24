@@ -98,6 +98,16 @@ public class Shooter extends SubsystemBase {
         topMotorEncoder.setPosition(0);
         bottomMotorEncoder.setPosition(0);
     }
+
+    public void lockPosition() {
+        setpoint = getAngle();
+    }
+
+    public void unlockPosition() {
+        setpoint = Double.NaN;
+    }
+
+    
     
     /**
      * set whether the note sensor triggers the feed rollers to stop or not
@@ -206,6 +216,7 @@ public class Shooter extends SubsystemBase {
         // SmartDashboard.putNumber("pivot_measured", getAngle());
         SmartDashboard.putBoolean("Note Sensor", hasNote());
 
+        if (Double.isNaN(setpoint)) return;
         SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(setpoint));
         double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(setpoint));
         SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());

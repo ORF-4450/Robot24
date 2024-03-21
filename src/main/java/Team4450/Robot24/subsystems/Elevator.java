@@ -113,9 +113,9 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("winch_setpoint", setpoint);
         mainPID.setSetpoint(setpoint);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
-            SmartDashboard.putNumber("winch_nonclamped", nonclamped);
+        SmartDashboard.putNumber("winch_nonclamped", nonclamped);
         double motorOutput = Util.clampValue(nonclamped, 1);
-                SmartDashboard.putNumber("winch_output", motorOutput);
+        SmartDashboard.putNumber("winch_output", motorOutput);
         motorMain.set(motorOutput);
         if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
         if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
@@ -197,6 +197,10 @@ public class Elevator extends SubsystemBase {
         followEncoder.setPosition(MAIN_START_COUNTS);
         setpoint = MAIN_START_COUNTS;
         centerstageEncoder.setPosition(0);
+    }
+
+    public void lockPosition() {
+        setpoint = mainEncoder.getPosition();
     }
 
     // /**
