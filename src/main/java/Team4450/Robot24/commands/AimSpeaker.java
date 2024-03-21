@@ -86,7 +86,7 @@ public class AimSpeaker extends Command {
     public void execute() {
         elevatedShooter.shooter.startShooting();
         double currentAngle = elevatedShooter.shooter.getAngle();
-        if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
+        // if (RobotBase.isSimulation()) shooterCamera.adjustSimCameraAngle(0, Math.toRadians(currentAngle), Math.toRadians(180));
 
         int targetId = tagNames.SPEAKER_MAIN;
         PhotonTrackedTarget target = frontCamera.getTarget(targetId);
@@ -101,7 +101,7 @@ public class AimSpeaker extends Command {
         }
 
         boolean yawOkay = false;
-        boolean pitchOkay = false;
+        // boolean pitchOkay = false;
         double dist = PhotonUtils.calculateDistanceToTargetMeters(0.57, 1.4224, // camera height, tag height (center)
             Math.toRadians(25),
             Math.toRadians(target.getPitch())

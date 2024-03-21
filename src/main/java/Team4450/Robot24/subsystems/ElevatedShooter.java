@@ -1,5 +1,7 @@
 package Team4450.Robot24.subsystems;
 
+import static Team4450.Robot24.Constants.TRAP_ANGLE;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -8,7 +10,7 @@ public class ElevatedShooter extends SubsystemBase {
 	public final Elevator      elevator;
 
 
-    public static enum PresetPosition {INTAKE, SHOOT, SHOOT_VISION_START, SHOOT_AMP_FRONT, SHOOT_PODIUM_HIGH, SHOOT_AMP_BACK,SHOOT_AMP_FRONT_TWO, VERTICAL_BOTTOM, VERTICAL_TOP, SOURCE, CLIMB, NONE};
+    public static enum PresetPosition {INTAKE, SHOOT, TRAP, SHOOT_VISION_START, SHOOT_AMP_FRONT, SHOOT_PODIUM_HIGH, SHOOT_AMP_BACK,SHOOT_AMP_FRONT_TWO, VERTICAL_BOTTOM, VERTICAL_TOP, SOURCE, CLIMB, NONE};
 
     public boolean shootDoesTheSpeakerInsteadOfTheAmp = true;
 
@@ -55,6 +57,12 @@ public class ElevatedShooter extends SubsystemBase {
                 break;
             case SHOOT_VISION_START:
                 pivotAngle = -39;
+                elevatorHeight = 0.15;
+                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                atTop = false;
+                break;
+            case TRAP:
+                pivotAngle = TRAP_ANGLE;
                 elevatorHeight = 0.15;
                 centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
                 atTop = false;

@@ -24,9 +24,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Amp2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
+              }
+            ]
           }
         },
         {
@@ -48,9 +61,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Amp4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
+              }
+            ]
           }
         },
         {

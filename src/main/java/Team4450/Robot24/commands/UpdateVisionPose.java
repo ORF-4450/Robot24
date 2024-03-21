@@ -38,7 +38,7 @@ public class UpdateVisionPose extends Command {
         this.robotDrive = robotDrive;
 
         // require camera subsystem.
-        addRequirements(cameraSubsystem);
+        // addRequirements(cameraSubsystem);
     }
     
     @Override
@@ -59,7 +59,7 @@ public class UpdateVisionPose extends Command {
                 return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
-        if(true)return;
+        // if(true)return;
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
         // update pose estimator pose with current epoch timestamp and the pose from the camera

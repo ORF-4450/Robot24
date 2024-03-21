@@ -18,7 +18,7 @@ public class ShootSpeaker extends Command {
     @Override
     public void initialize() {
         if (RobotBase.isSimulation()) AdvantageScope.getInstance().dropAllNotes();
-        elevatedShooter.shooter.startShooting();
+        // elevatedShooter.shooter.startShooting();
         elevatedShooter.shooter.startFeeding(1);
         startTime = Util.timeStamp();
     }
@@ -26,7 +26,7 @@ public class ShootSpeaker extends Command {
     @Override
     public void execute() {
         elevatedShooter.shooter.startFeeding(1);
-        elevatedShooter.shooter.startShooting();
+        // elevatedShooter.shooter.startShooting();
     }
 
     @Override

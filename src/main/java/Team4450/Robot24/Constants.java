@@ -65,6 +65,7 @@ public final class Constants
     public static final double  PODIUM_ANGLE = -26;
     public static final double  SUBWOOFER_ANGLE = -52;
 
+    public static final double  TRAP_ANGLE = -39;
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
@@ -93,8 +94,8 @@ public final class Constants
 
      
     public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0.2794, 0.6604),
-        new Rotation3d(0, Math.toRadians(-15), Math.toRadians(180))
+        new Translation3d(0, 0, 0.57),
+        new Rotation3d(0, Math.toRadians(-25), Math.toRadians(180))
     );
     
     public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(

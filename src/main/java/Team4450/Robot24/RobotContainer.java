@@ -13,6 +13,7 @@ import Team4450.Robot24.commands.autonomous.AutoStart;
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
 import Team4450.Robot24.commands.AimSpeaker;
+import Team4450.Robot24.commands.AimTrap;
 import Team4450.Robot24.commands.Preset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
@@ -350,9 +351,13 @@ public class RobotContainer
 		// toggle slow-mode
 		new Trigger(() -> driverController.getLeftBumper())
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
-		// Advance DS tab display.
+		// aim trap
 		new Trigger(() -> driverController.getLeftTrigger())
-			.onTrue(new InstantCommand(shuffleBoard::switchTab));
+			.whileTrue(
+				new Preset(elevShooter, PresetPosition.TRAP).alongWith(
+				new AimTrap(driveBase, pvShooterCamera, elevShooter)
+			));
+
 
 		// reset field orientation
 		new Trigger(() -> driverController.getStartButton())
