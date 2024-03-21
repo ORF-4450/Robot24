@@ -18,6 +18,11 @@ public class Preset extends Command {
     }
 
     @Override
+    public void initialize() {
+        Util.consoleLog();
+    }
+
+    @Override
     public void execute() {
         done = elevatedShooter.executeSetPosition(preset);
     }

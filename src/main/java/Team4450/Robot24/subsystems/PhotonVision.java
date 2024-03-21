@@ -209,7 +209,7 @@ public class PhotonVision extends SubsystemBase
     }
 
     public boolean isPoseEstimation() {
-        return pipelineType == PipelineType.POSE_ESTIMATION;
+        return pipelineType != PipelineType.OBJECT_TRACKING;
     }
 
     /**

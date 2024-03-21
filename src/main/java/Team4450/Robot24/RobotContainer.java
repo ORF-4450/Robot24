@@ -446,8 +446,8 @@ public class RobotContainer
 		
 		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
 			.toggleOnTrue(
-				new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(
-				new SpinUpShooter(elevShooter, driveBase, true).andThen(
+				new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(//-20
+				new SpinUpShooter(elevShooter, driveBase, -20, true).andThen(
 				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), true)
 			)));
 		
@@ -460,7 +460,7 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBButton()) // VISION TRACKING
 			.toggleOnTrue(
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-				new SpinUpShooter(elevShooter, driveBase, true).andThen(
+				new SpinUpShooter(elevShooter, driveBase, -39, true).andThen(
 				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())
 			)));
 		

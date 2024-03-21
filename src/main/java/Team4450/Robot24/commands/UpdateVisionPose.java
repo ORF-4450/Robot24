@@ -38,7 +38,7 @@ public class UpdateVisionPose extends Command {
         this.robotDrive = robotDrive;
 
         // require camera subsystem.
-        // addRequirements(cameraSubsystem);
+        addRequirements(cameraSubsystem);
     }
     
     @Override

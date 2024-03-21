@@ -42,6 +42,7 @@ public class SpinUpShooter extends Command {
 
     @Override
     public void initialize() {
+        Util.consoleLog();
         elevatedShooter.shooter.hasShot = false;
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
         
