@@ -130,7 +130,7 @@ public class Elevator extends SubsystemBase {
         if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
     }
 
-    public void stopMoving() {
+    public void unlockPosition() {
         goal = Double.NaN;
     }
 

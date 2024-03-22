@@ -14,12 +14,7 @@ public class SpinUpShooter extends Command {
     private State state = State.NONE;
 
     private double angle;
-    private boolean justShoot = false;
     private boolean delay = false;
-
-    public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle) {
-        this(elevatedShooter, robotDrive, angle, false);
-    }
 
     public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive, double angle, boolean delay) {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
@@ -28,17 +23,7 @@ public class SpinUpShooter extends Command {
         this.delay = delay;
         addRequirements(elevatedShooter);
     }
-    public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive) {
-        this(elevatedShooter, robotDrive, Double.NaN);
-    }
 
-    public SpinUpShooter(ElevatedShooter elevatedShooter, DriveBase robotDrive, boolean justShoot) {
-        SmartDashboard.putString("ShootSpeaker Status", state.name());
-        this.elevatedShooter = elevatedShooter;
-        this.justShoot = justShoot;
-        this.angle = 0;
-        addRequirements(elevatedShooter);
-    }
 
     @Override
     public void initialize() {
@@ -46,7 +31,7 @@ public class SpinUpShooter extends Command {
         elevatedShooter.shooter.hasShot = false;
         elevatedShooter.shooter.enableClosedLoopFeedStop(false);
         
-        if (justShoot) {
+        if (Double.isNaN(angle)) {
             state = State.BACKFEED;
             startTime = Util.timeStamp();
         }
@@ -63,12 +48,8 @@ public class SpinUpShooter extends Command {
             case NONE:
                 break;
             case MOVING:
-                double angleSetpoint;
-                if (Double.isNaN(angle)) {
-                    angleSetpoint = 0;
-                } else {
-                    angleSetpoint = angle;
-                }
+                double angleSetpoint = angle;
+
                 if (elevatedShooter.executeSetPosition(angleSetpoint, 0, 0.15, false)) {
                     state = State.BACKFEED;
                     startTime = Util.timeStamp();
