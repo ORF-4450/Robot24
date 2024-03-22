@@ -22,7 +22,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -46,13 +49,13 @@ public class Shooter extends SubsystemBase {
     private double shooterSpeed = SHOOTER_SPEED;
     private double feedSpeed = SHOOTER_FEED_SPEED;
 
-    private PIDController pivotPID;
+    private ProfiledPIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
     private final double PIVOT_TOLERANCE = 1; //counts
 
     private final double PIVOT_START = -39;
 
-    private double setpoint = PIVOT_START;
+    private double goal = PIVOT_START;
 
     // NOTE: I removed the shuffleboard speed setting because they were too
     // much of a hassle to handle with all of the different speed states the shooter could be in
@@ -72,7 +75,9 @@ public class Shooter extends SubsystemBase {
 
         noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyOpen);
 
-        pivotPID = new PIDController(0.05, 0, 0);
+        pivotPID = new ProfiledPIDController(0.05, 0, 0,
+            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(45))
+        );
         pivotPID.setTolerance(PIVOT_TOLERANCE);
 
         Util.consoleLog("Shooter created!");
@@ -100,11 +105,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public void lockPosition() {
-        setpoint = getAngle();
+        goal = getAngle();
     }
 
     public void unlockPosition() {
-        setpoint = Double.NaN;
+        goal = Double.NaN;
     }
 
     
@@ -155,7 +160,7 @@ public class Shooter extends SubsystemBase {
      * @param angle the angle in degrees
      */
     public void setAngle(double angle) {
-        setpoint = angle;
+        goal = angle;
     }
 
     /**
@@ -199,12 +204,16 @@ public class Shooter extends SubsystemBase {
         return angle / SHOOTER_PIVOT_FACTOR;
     }
 
+    private double encoderCountsToAngle(double counts) {
+        return counts * SHOOTER_PIVOT_FACTOR;
+    }
+
     /**
      * Sets the shooter assembly speed (for manual joystick use)
      * @param speed the speed
      */
     public void movePivotRelative(double speed) {
-        setpoint += speed;
+        goal += speed;
         // motorPivot.set(0.4*speed);
         // if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (0.5*speed));
     }
@@ -216,9 +225,9 @@ public class Shooter extends SubsystemBase {
         // SmartDashboard.putNumber("pivot_measured", getAngle());
         SmartDashboard.putBoolean("Note Sensor", hasNote());
 
-        if (Double.isNaN(setpoint)) return;
-        SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(setpoint));
-        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(setpoint));
+        if (Double.isNaN(goal)) return;
+        SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(goal));
+        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(goal));
         SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
         motorPivot.set(motorOutput);
         if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (2*motorOutput));

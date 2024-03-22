@@ -9,8 +9,6 @@ import static Team4450.Robot24.Constants.ELEVATOR_WINCH_FACTOR;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
@@ -19,6 +17,8 @@ import Team4450.Lib.Util;
 import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -27,7 +27,8 @@ public class Elevator extends SubsystemBase {
     private CANSparkMax motorFollower = new CANSparkMax(ELEVATOR_MOTOR_RIGHT, MotorType.kBrushless);
     private CANSparkMax motorCenterstage = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
 
-    private PIDController mainPID;
+    // private PIDController mainPID;
+    private ProfiledPIDController mainPID;
     private PIDController centerstagePID;
 
     private SparkLimitSwitch lowerLimitSwitch;
@@ -43,7 +44,7 @@ public class Elevator extends SubsystemBase {
     private final double MAIN_START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR;
     private final double CENTERSTAGE_START_COUNTS = 0;
 
-    private double setpoint = Double.NaN;
+    private double goal = Double.NaN;
     private double centerstageSetpoint = CENTERSTAGE_START_COUNTS;
     
 
@@ -75,7 +76,7 @@ public class Elevator extends SubsystemBase {
         // mainEncoder.setPositionConversionFactor(-1);
         // followEncoder.setPositionConversionFactor(-1);
 
-        mainPID = new PIDController(0.12, 0, 0);
+        mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(200, 1));
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(MAIN_TOLERANCE);
         // followerPID = new PIDController(0.01, 0, 0);
@@ -107,11 +108,12 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("centerstage_m", centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR); 
         
 
-        if (Double.isNaN(setpoint))
+        if (Double.isNaN(goal))
             return;
         // elevator main winch PID loop
-        SmartDashboard.putNumber("winch_setpoint", setpoint);
-        mainPID.setSetpoint(setpoint);
+        SmartDashboard.putNumber("winch_setpoint", goal);
+        // mainPID.setSetpoint(goal);
+        mainPID.setGoal(goal);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
         SmartDashboard.putNumber("winch_nonclamped", nonclamped);
         double motorOutput = Util.clampValue(nonclamped, 1);
@@ -129,7 +131,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void stopMoving() {
-        setpoint = Double.NaN;
+        goal = Double.NaN;
     }
 
     /**
@@ -137,9 +139,9 @@ public class Elevator extends SubsystemBase {
      * @param speed (such as from a joystick value)
      */
     public void move(double speed) {
-        setpoint -= speed;
-        if (setpoint < -59)//-59)
-            setpoint = -59;//-59;
+        goal -= speed;
+        if (goal < -59)//-59)
+            goal = -59;//-59;
         // if (setpoint > -16)
         //     setpoint = -16;
         // if (speed < 0)
@@ -153,7 +155,7 @@ public class Elevator extends SubsystemBase {
         // }
     }
     public void moveUnsafe(double speed) {
-        setpoint = Double.NaN;
+        goal = Double.NaN;
         motorMain.set(speed);
     }
 
@@ -166,7 +168,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setElevatorHeight(double height) {
-        setpoint = height / ELEVATOR_WINCH_FACTOR; // meters -> enc. counts
+        goal = height / ELEVATOR_WINCH_FACTOR; // meters -> enc. counts
     }
 
     public void setCenterstageHeight(double height) {
@@ -195,12 +197,12 @@ public class Elevator extends SubsystemBase {
     public void resetEncoders() {
         mainEncoder.setPosition(MAIN_START_COUNTS);
         followEncoder.setPosition(MAIN_START_COUNTS);
-        setpoint = MAIN_START_COUNTS;
+        goal = MAIN_START_COUNTS;
         centerstageEncoder.setPosition(0);
     }
 
     public void lockPosition() {
-        setpoint = mainEncoder.getPosition();
+        goal = mainEncoder.getPosition();
     }
 
     // /**
