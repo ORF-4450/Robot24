@@ -1,6 +1,6 @@
 package Team4450.Robot24.commands;
 
-import static Team4450.Robot24.Constants.PODIUM_ANGLE;
+import static Team4450.Robot24.Constants.CAMERA_SHOOTER_TRANSFORM;
 import static Team4450.Robot24.Constants.alliance;
 
 import java.util.function.DoubleSupplier;
@@ -16,17 +16,14 @@ import Team4450.Robot24.utility.AprilTagNames;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.util.sendable.SendableRegistry;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AimSpeaker extends Command {
     private final DriveBase robotDrive;
     private final ElevatedShooter elevatedShooter;
-    private final PhotonVision shooterCamera;
     private final PhotonVision frontCamera;
     private final DoubleSupplier joystick;
-    private boolean upperShot = false;
     private final AprilTagNames tagNames = new AprilTagNames(alliance);
 
     private final PIDController rotationController = new PIDController(0.02, 0, 0);
@@ -38,9 +35,7 @@ public class AimSpeaker extends Command {
     public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision shooterCamera, DoubleSupplier joystick, boolean upperShot) {
         this.robotDrive = robotDrive;
         this.elevatedShooter = elevatedShooter;
-        this.shooterCamera = shooterCamera;
-        this.frontCamera = shooterCamera;//frontCamera;
-        this.upperShot = upperShot;
+        this.frontCamera = shooterCamera;
         this.joystick = joystick;
 
         addRequirements(elevatedShooter);
@@ -62,8 +57,7 @@ public class AimSpeaker extends Command {
             pitchOffsets.put(3.69, -16.0);
         }
         
-        
-
+    
         // mapping of distance (meters) to yaw value
         yawOffsets.put(0.0, 6.0);
         yawOffsets.put(20.0, 6.0);
@@ -102,8 +96,8 @@ public class AimSpeaker extends Command {
 
         boolean yawOkay = false;
         // boolean pitchOkay = false;
-        double dist = PhotonUtils.calculateDistanceToTargetMeters(0.57, 1.4224, // camera height, tag height (center)
-            Math.toRadians(25),
+        double dist = PhotonUtils.calculateDistanceToTargetMeters(CAMERA_SHOOTER_TRANSFORM.getZ(), 1.4224, // camera height, tag height (center)
+            -CAMERA_SHOOTER_TRANSFORM.getRotation().getY(),
             Math.toRadians(target.getPitch())
         );
 

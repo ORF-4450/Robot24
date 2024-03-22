@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-03.09.24-1";
+	public static String		PROGRAM_NAME = "CW-03.22.24-1";
 
 	public static Robot			robot;
 
@@ -60,11 +60,9 @@ public final class Constants
     // public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (18.0 / 54.0)) * 360;
     
 
-
     public static final double  OUTER_ANGLE = -15;
     public static final double  PODIUM_ANGLE = -26;
     public static final double  SUBWOOFER_ANGLE = -52;
-
     public static final double  TRAP_ANGLE = -39;
     
     // ELEVATOR ======
@@ -104,13 +102,8 @@ public final class Constants
     );
 
     // the names of the cameras in the PhotonVision software
-    // public static String        CAMERA_FRONT_ESTIMATOR = "1";
-    public static String        CAMERA_NOTE = "HD_USB_Camera"; // TODO
+    public static String        CAMERA_NOTE = "HD_USB_Camera";
     public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera (1)";
-
-    public static int           CAMERA_FRONT_SERVO = 0;
-    public static int           CAMERA_BACK_SERVO = 1;
-    
 
     public static final int     REV_PDB = 20;
     public static final int     CTRE_CANDLE = 21;
