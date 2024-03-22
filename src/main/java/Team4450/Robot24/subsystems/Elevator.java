@@ -76,7 +76,9 @@ public class Elevator extends SubsystemBase {
         // mainEncoder.setPositionConversionFactor(-1);
         // followEncoder.setPositionConversionFactor(-1);
 
-        mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(200, 1));
+        mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
+            (0.5 / -ELEVATOR_WINCH_FACTOR), 0.5 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
+        ));
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(MAIN_TOLERANCE);
         // followerPID = new PIDController(0.01, 0, 0);
@@ -142,8 +144,8 @@ public class Elevator extends SubsystemBase {
         goal -= speed;
         if (goal < -59)//-59)
             goal = -59;//-59;
-        // if (setpoint > -16)
-        //     setpoint = -16;
+        if (goal > -10)
+            goal = -10;
         // if (speed < 0)
         //     speed *= 0.1;
         // speed *= -0.5;
