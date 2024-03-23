@@ -17,9 +17,7 @@ import Team4450.Robot24.commands.AimTrap;
 import Team4450.Robot24.commands.Preset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
-import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
-import Team4450.Robot24.commands.ParkWheels;
 import Team4450.Robot24.commands.PointToYaw;
 import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
@@ -354,8 +352,9 @@ public class RobotContainer
 		// aim trap
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(
-				new Preset(elevShooter, PresetPosition.TRAP).alongWith(
-				new AimTrap(driveBase, pvShooterCamera, elevShooter)
+					new Preset(elevShooter, PresetPosition.TRAP).andThen(
+					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.5, true)
+				).alongWith(new AimTrap(driveBase, pvShooterCamera)
 			));
 
 
@@ -396,7 +395,7 @@ public class RobotContainer
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
-			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, false)
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, 0.3, false)
 		);
 
 		new Trigger(()-> utilityController.getPOV() == 180) // down POV
@@ -453,21 +452,21 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
 			.toggleOnTrue(
 				new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(//-20
-				new SpinUpShooter(elevShooter, driveBase, Double.NaN, true).andThen(
+				new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
 				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), true)
 			)));
 		
 		new Trigger(() -> utilityController.getXButton()) // manual
-			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, Double.NaN, false));
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
-			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, false));
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, false));
 		// new Trigger(() -> utilityController.getBButton()) // OUTER RING
 		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
 		new Trigger(() -> utilityController.getBButton()) // VISION TRACKING
 			.toggleOnTrue(
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-				new SpinUpShooter(elevShooter, driveBase, -39, true).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS())
+				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)
 			)));
 		
 		
@@ -536,48 +535,28 @@ public class RobotContainer
 		NamedCommands.registerCommand("IntakeNoteShooting", new IntakeNote(intake, elevShooter, true));
 
 		NamedCommands.registerCommand("ShootSpeaker",
-			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true).andThen(
-			new WaitCommand(0.8 ).andThen(new ShootSpeaker(elevShooter))
+			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("ShootPodium",
-			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true).andThen(
+			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("ShootFar",
-			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true).andThen(
+			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
-		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, true));
-		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, false));
+		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
+		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
 		
-		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, true));
-		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, true));
+		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true));
+		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true));
 
 		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
 
-		
-		// NamedCommands.registerCommand("ShootPodium", new ParallelCommandGroup(
-		// 	new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE),
-		// 	new WaitCommand(1.6).andThen(new ShootSpeaker(elevShooter)
-		// )));
-		// NamedCommands.registerCommand("ShootFar", new ParallelCommandGroup(
-		// 	new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE),
-		// 	new WaitCommand(1.1).andThen(new ShootSpeaker(elevShooter)
-		// )));
-
-		NamedCommands.registerCommand("ShootThenIntake", new SpinUpShooter(elevShooter, driveBase, Double.NaN, true).andThen(
-			new ShootSpeaker(elevShooter)
-			.andThen(new IntakeNote(intake, elevShooter))
-		));
-
-
-		// NamedCommands.registerCommand("PointShootSpeaker", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
-		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS()));
-		// NamedCommands.registerCommand("ShootSpeakerPodium", new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE));
-		// NamedCommands.registerCommand("ShootSpeakerSubwoofer", new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE));
+		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false));
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
-		NamedCommands.registerCommand("ClimbDown", new Preset(elevShooter, PresetPosition.VERTICAL_BOTTOM));
 		NamedCommands.registerCommand("AmpReady", new ParallelCommandGroup(
 			new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 			new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
@@ -589,11 +568,9 @@ public class RobotContainer
 		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
 		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
 
-		NamedCommands.registerCommand("ParkWheels", new ParkWheels(driveBase));
 		NamedCommands.registerCommand("ShuffleTab", new InstantCommand(shuffleBoard::switchTab));
 		NamedCommands.registerCommand("ResetGyro", new InstantCommand(driveBase::zeroGyro));
 
-		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvShooterCamera));
 		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
 		
 

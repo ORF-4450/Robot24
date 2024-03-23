@@ -9,21 +9,52 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * the tag "belongs" to rather than its physical location.
  */
 public class AprilTagNames {
+    /** The AprilTag ID for the right half of the current alliance's Source */
     public final int SOURCE_RIGHT;
+
+    /** The AprilTag ID for the left half of the current alliance's Source */
     public final int SOURCE_LEFT;
+
+    /** The AprilTag ID for the current alliance's Amp */
     public final int AMP;
+
+    /** The AprilTag ID for the center of the current alliance's Speaker */
     public final int SPEAKER_MAIN;
+
+    /** The AprilTag ID for the side (offset) tag of the current alliance's Speaker */
     public final int SPEAKER_OFFSET;
+
+    /** The AprilTag ID for the Trap on the back side of current alliance's Stage (from DS wall perspective) */
     public final int TRAP_BACK;
+
+    /** The AprilTag ID for the Trap on the left side of current alliance's Stage (from DS wall perspective) */
     public final int TRAP_LEFT;
+
+    /** The AprilTag ID for the Trap on the right side of current alliance's Stage (from DS wall perspective) */
     public final int TRAP_RIGHT;
+
+    /** The AprilTag ID for the right half of the OPPOSING alliance's Source */
     public final int OPP_SOURCE_RIGHT;
+
+    /** The AprilTag ID for the left half of the OPPOSING alliance's Source */
     public final int OPP_SOURCE_LEFT;
+
+    /** The AprilTag ID for the OPPOSING alliance's Amp */
     public final int OPP_AMP;
+
+    /** The AprilTag ID for the center of the OPPOSING alliance's Speaker */
     public final int OPP_SPEAKER_MAIN;
+
+    /** The AprilTag ID for the side (offset) tag of the OPPOSING alliance's Speaker */
     public final int OPP_SPEAKER_OFFSET;
+
+    /** The AprilTag ID for the Trap on the back side of OPPOSING alliance's Stage (from DS wall perspective) */
     public final int OPP_TRAP_BACK;
+
+    /** The AprilTag ID for the Trap on the left side of OPPOSING alliance's Stage (from DS wall perspective) */
     public final int OPP_TRAP_LEFT;
+
+    /** The AprilTag ID for the Trap on the right side of OPPOSING alliance's Stage (from DS wall perspective) */
     public final int OPP_TRAP_RIGHT;
     
 

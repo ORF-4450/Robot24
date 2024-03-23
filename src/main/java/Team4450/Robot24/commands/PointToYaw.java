@@ -24,7 +24,7 @@ public class PointToYaw extends Command {
 
     /**
      * Point to a yaw value
-     * @param yawSupplier a supplier of desired yaw values (IN RADIANS!)
+     * @param yawSupplier a supplier of desired yaw values (IN degrees!)
      * @param robotDrive the drive subsystem
      * @param wait whether or not to wait until it is completed to drive again (whether this command "requires" drivebase)
      */
@@ -38,8 +38,8 @@ public class PointToYaw extends Command {
         SendableRegistry.addLW(pidController, "PointToYaw PID");
         SmartDashboard.putData("PointToYaw PID", pidController);
 
-        // // if wait is set to true, then "require" the drive subsystem to ovverride other commands
-        // if (wait) addRequirements(robotDrive);
+        // if wait is set to true, then "require" the drive subsystem to ovverride other commands
+        if (wait) addRequirements(robotDrive);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class PointToYaw extends Command {
     }
     
     /**
-    * generate a yaw from axis values
+    * helper value to generate a yaw from axis values
     *
     * @param xAxis
     * @param yAxis

@@ -12,6 +12,11 @@ public class ReverseIntake extends Command {
     private final Intake  intake;
     private final ElevatedShooter elevatedShooter;
 
+    /**
+     * Reverses the Intake and Shooter feeders and wheels to 'outtake' a note
+     * @param intake the Intake subsystem
+     * @param elevatedShooter the ElevatedShooter subsystem
+     */
     public ReverseIntake(Intake intake, ElevatedShooter elevatedShooter) {
         this.intake = intake;
         this.elevatedShooter = elevatedShooter;
@@ -20,7 +25,10 @@ public class ReverseIntake extends Command {
 
     @Override
     public void execute() {
-        // intake.start((driveBase.getChassisSpeeds().vxMetersPerSecond) / 8.0);
+        // this is kind of interesting: we were trying to make the intake
+        // run at speed of movement of drivebase, and it worked pretty well! 
+        // we decided it wasn't needed but kind of fun so I left it here:
+        //          intake.start((driveBase.getChassisSpeeds().vxMetersPerSecond) / 8.0);
         elevatedShooter.shooter.startFeeding(-1);
         elevatedShooter.shooter.startShooting(-1);
         intake.start(-1);

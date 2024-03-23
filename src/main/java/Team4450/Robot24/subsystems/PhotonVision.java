@@ -69,6 +69,10 @@ public class PhotonVision extends SubsystemBase
         this(cameraName, pipelineType, new Transform3d());
     }
 
+    public Transform3d getRobotToCam() {
+        return robotToCam;
+    }
+
     /**
      * Create an instance of PhotonVision class for a camera.
      * @param cameraName The name of the camera.

@@ -37,7 +37,7 @@ public class UpdateVisionPose extends Command {
         this.cameraSubsystem = cameraSubsystem;
         this.robotDrive = robotDrive;
 
-        // require camera subsystem.
+        // require camera subsystem because defaultcommand
         addRequirements(cameraSubsystem);
     }
     
