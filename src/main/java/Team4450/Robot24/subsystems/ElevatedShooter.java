@@ -72,6 +72,7 @@ public class ElevatedShooter extends SubsystemBase {
     public boolean executeSetPosition(PresetPosition position) {
         this.position = position;
         switch (position) {
+            
             // set target position/rotation values for each position
             case INTAKE:
                 endGoalPivotAngle = -39;
