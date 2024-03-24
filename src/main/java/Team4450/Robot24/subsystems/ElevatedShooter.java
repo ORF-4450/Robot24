@@ -172,7 +172,8 @@ public class ElevatedShooter extends SubsystemBase {
 
         // what follows is a whole bunch of logic that makes safe travel possible.
         // it's kind confusing to follow, but I promise you it DOES WORK. I've provided
-        // a flowchart at the link below for people to look at and understand this -cole
+        // a flowchart+diagram at the link below for people to look at and understand this -cole
+        // https://docs.google.com/drawings/d/1LPBGhWrGQfPFZmyQl5N3DZTWH7uCNGu50NGBOTV1PWI/edit
 
         if (isAtTopHalf() == atTop) { // check if we are already at the correct half
             if (shooter.isAtAngle(endGoalPivotAngle)) {
@@ -180,8 +181,7 @@ public class ElevatedShooter extends SubsystemBase {
                     // the pivot is at the correct end goal, and so is the elevator
                     // we're done!
                     elevator.setElevatorHeight(endGoalElevatorHeight);
-                    elevator.move(0); // TODO: I don't understand/remember why this is here -cole 3/23/24
-
+                    elevator.move(0); // TODO: I don't understand/remember why I put this here -cole 3/23/24
                     // this NT data is for debugging, letters kind of arbitrary but in order of line:
                     SmartDashboard.putString("position_step", "A");
                     return true;
