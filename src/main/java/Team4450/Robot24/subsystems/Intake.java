@@ -9,12 +9,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Team4450.Lib.Util;
-import Team4450.Robot24.AdvantageScope;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * The Intake for the 2024 robot the USS ProtoStar
+ */
 public class Intake extends SubsystemBase {
     private CANSparkMax motor1 = new CANSparkMax(INTAKE_MOTOR_1, MotorType.kBrushless);
     private CANSparkMax motor2 = new CANSparkMax(INTAKE_MOTOR_2, MotorType.kBrushless);
@@ -26,14 +26,14 @@ public class Intake extends SubsystemBase {
         motor1.setIdleMode(IdleMode.kBrake);
         motor2.setIdleMode(IdleMode.kBrake);
         
-        motor2.follow(motor1);
-        
+        motor2.follow(motor1); // they need to do the same things
+        // we don't reverse one because they are physically mounted reversed
 
         Util.consoleLog("Intake created!");
     }
 
     /**
-     * run the intake at INTAKE_SPEED x speedfactor
+     * run the intake at INTAKE_SPEED * speedfactor
      * @param speedfactor from -1 to 0 to 1
      */
     public void start(double speedfactor) {
@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * start the intake running at full speed
+     * start the intake running at full speed (INTAKE_SPEED)
      */
     public void start() {
         start(1);

@@ -24,7 +24,6 @@ import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.SpinUpShooter;
 import Team4450.Robot24.commands.UpdateVisionPose;
-import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -44,7 +43,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -67,7 +65,7 @@ public class RobotContainer
 	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
 	private final ElevatedShooter elevShooter;
-	private final Candle        candle;
+	// private final Candle        candle;
 	
 	// Subsystem Default Commands.
 
@@ -189,7 +187,7 @@ public class RobotContainer
 		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
-		candle = new Candle(CTRE_CANDLE);
+		// candle = new Candle(CTRE_CANDLE);
 
 		// Create any persistent commands.
 
@@ -240,9 +238,8 @@ public class RobotContainer
 		// 	}
 		// 	, elevShooter));
 		elevShooter.setDefaultCommand(new RunCommand(
-			()->elevShooter.setUnsafeRelativePosition(
+			()->elevShooter.moveRelative(
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
-				-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND), // centerstage
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
 		elevShooter));
 		
@@ -451,7 +448,7 @@ public class RobotContainer
 		
 		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
 			.toggleOnTrue(
-				new Preset(elevShooter, PresetPosition.SHOOT_PODIUM_HIGH).andThen(//-20
+				new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(//-20
 				new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
 				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), true)
 			)));
@@ -485,7 +482,7 @@ public class RobotContainer
 	 * @return The Command to run in autonomous.
 	 */
 	public Command getAutonomousCommand() {
-		PathPlannerAuto  	ppAutoCommand;
+		// PathPlannerAuto  	ppAutoCommand;
 		Command				autoCommand;
 
 		autoCommand = autoChooser.getSelected();
@@ -503,7 +500,7 @@ public class RobotContainer
 
 		if (autoCommand instanceof PathPlannerAuto)
 		{
-			ppAutoCommand = (PathPlannerAuto) autoCommand;
+			// ppAutoCommand = (PathPlannerAuto) autoCommand;
 	
 			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
 		}

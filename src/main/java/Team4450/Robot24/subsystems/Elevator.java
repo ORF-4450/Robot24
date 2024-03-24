@@ -1,7 +1,5 @@
 package Team4450.Robot24.subsystems;
 
-import static Team4450.Robot24.Constants.ELEVATOR_CENTERSTAGE_FACTOR;
-import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_INNER;
 import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_LEFT;
 import static Team4450.Robot24.Constants.ELEVATOR_MOTOR_RIGHT;
 import static Team4450.Robot24.Constants.ELEVATOR_WINCH_FACTOR;
@@ -16,36 +14,34 @@ import com.revrobotics.SparkLimitSwitch.Type;
 import Team4450.Lib.Util;
 import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * The Elevator subsystem for the 2024 robot USS ProtoStar.
+ * Should not be used on its own, should be contained within ElevatedShooter subsystem for safety.
+ */
 public class Elevator extends SubsystemBase {
     private CANSparkMax motorMain = new CANSparkMax(ELEVATOR_MOTOR_LEFT, MotorType.kBrushless);
     private CANSparkMax motorFollower = new CANSparkMax(ELEVATOR_MOTOR_RIGHT, MotorType.kBrushless);
-    private CANSparkMax motorCenterstage = new CANSparkMax(ELEVATOR_MOTOR_INNER, MotorType.kBrushless);
 
-    // private PIDController mainPID;
+    // we use a ProfiledPIDController for acceleration and deceleration control
     private ProfiledPIDController mainPID;
-    private PIDController centerstagePID;
 
+    // not really using these... womp womp
     private SparkLimitSwitch lowerLimitSwitch;
     private SparkLimitSwitch upperLimitSwitch;
   
     private RelativeEncoder mainEncoder;
     private RelativeEncoder followEncoder;
-    private RelativeEncoder centerstageEncoder;
 
-    private final double MAIN_TOLERANCE = 1.5;
-    private final double CENTERSTAGE_TOLERANCE = 1;
 
-    private final double MAIN_START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR;
-    private final double CENTERSTAGE_START_COUNTS = 0;
+    private final double TOLERANCE_COUNTS = 1.5; // in encoder counts, not "meters"
+    private final double START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR; // the start counts
 
     private double goal = Double.NaN;
-    private double centerstageSetpoint = CENTERSTAGE_START_COUNTS;
     
 
     public Elevator() {
@@ -59,33 +55,27 @@ public class Elevator extends SubsystemBase {
 
         motorFollower.setIdleMode(IdleMode.kBrake);
         motorMain.setIdleMode(IdleMode.kBrake);
-        motorCenterstage.setIdleMode(IdleMode.kCoast);
 
+        // we aren't using these...
         lowerLimitSwitch = motorFollower.getReverseLimitSwitch(Type.kNormallyOpen);
         upperLimitSwitch = motorFollower.getForwardLimitSwitch(Type.kNormallyOpen);
-
         lowerLimitSwitch.enableLimitSwitch(true);
         upperLimitSwitch.enableLimitSwitch(true);
 
         mainEncoder = motorMain.getEncoder();
         followEncoder = motorFollower.getEncoder();
-        centerstageEncoder = motorCenterstage.getEncoder();
 
         resetEncoders();
 
-        // mainEncoder.setPositionConversionFactor(-1);
-        // followEncoder.setPositionConversionFactor(-1);
-
+        // PID constants, but also the motion profiling constraints
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
             (0.5 / -ELEVATOR_WINCH_FACTOR), 0.5 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
         ));
         SmartDashboard.putData("winch_pid", mainPID);
-        mainPID.setTolerance(MAIN_TOLERANCE);
-        // followerPID = new PIDController(0.01, 0, 0);
-        centerstagePID = new PIDController(0.03, 0, 0);
-        centerstagePID.setTolerance(CENTERSTAGE_TOLERANCE);
+        mainPID.setTolerance(TOLERANCE_COUNTS);
     }
 
+    // for closed loop control on Spark MAXs: never worked
     // private void configurePID(SparkPIDController pidController, double p, double i, double d) {
     //     pidController.setP(p);
     //     pidController.setI(i);
@@ -94,127 +84,114 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // to reset using limit switchs... which we don't have...
         // if (lowerLimitSwitch.isPressed()) {
         //     mainEncoder.setPosition(0); // reset the encoder counts
         //     followEncoder.setPosition(0);
-        //     centerstageEncoder.setPosition(0);[]
         // }
-        SmartDashboard.putNumber("winch_measured", mainEncoder.getPosition());
-        SmartDashboard.putNumber("centerstage_measured", centerstageEncoder.getPosition());
         
+        // simulation and logging
         AdvantageScope.getInstance().setElevatorHeight(getElevatorHeight());
-        AdvantageScope.getInstance().setCarriageHeight(getCenterstageHeight());
-
+        SmartDashboard.putNumber("winch_measured", mainEncoder.getPosition());
         SmartDashboard.putNumber("winch_1_m", mainEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
-        SmartDashboard.putNumber("windh_2_m", followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
-        SmartDashboard.putNumber("centerstage_m", centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR); 
+        SmartDashboard.putNumber("winch_2_m", followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
+        SmartDashboard.putNumber("winch_setpoint", goal);
+
         
 
-        if (Double.isNaN(goal))
+        if (Double.isNaN(goal)) // in "unlocked"/"limp" mode so just return
             return;
-        // elevator main winch PID loop
-        SmartDashboard.putNumber("winch_setpoint", goal);
-        // mainPID.setSetpoint(goal);
+
+        // SOFT LIMITS ================
+        if (goal < -59)
+            goal = -59;
+        if (goal > -10)
+            goal = -10;
+
+        // main pid/profile loop
         mainPID.setGoal(goal);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
-        SmartDashboard.putNumber("winch_nonclamped", nonclamped);
         double motorOutput = Util.clampValue(nonclamped, 1);
-        SmartDashboard.putNumber("winch_output", motorOutput);
         motorMain.set(motorOutput);
+
+        // output logging and simulation
+        SmartDashboard.putNumber("winch_output", motorOutput);
         if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
         if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
-
-        // centerstage PID loop
-        SmartDashboard.putNumber("centerstage_setpoint", centerstageSetpoint);
-        centerstagePID.setSetpoint(centerstageSetpoint);
-        motorOutput = centerstagePID.calculate(centerstageEncoder.getPosition());
-        motorCenterstage.set(motorOutput);
-        if (Robot.isSimulation()) centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*motorOutput));
     }
 
+    /**
+     * remove setpoint generation, essentially making the elevator go limp
+     * and disables normal move() commands.
+     */
     public void unlockPosition() {
         goal = Double.NaN;
     }
 
     /**
-     * move elevator in direction based on speed
-     * @param speed (such as from a joystick value)
+     * increment/decrement the setpoint/goal value
+     * @param change (such as from a joystick value)
      */
-    public void move(double speed) {
-        goal -= speed;
-        if (goal < -59)//-59)
-            goal = -59;//-59;
-        if (goal > -10)
-            goal = -10;
-        // if (speed < 0)
-        //     speed *= 0.1;
-        // speed *= -0.5;
-        // motorMain.set(speed);
-        // if (Robot.isSimulation()) {
-        //     if (speed > 0) speed *= 10;
-        //     mainEncoder.setPosition(mainEncoder.getPosition() + (1*speed));
-        //     followEncoder.setPosition(followEncoder.getPosition() + (1*speed));
-        // }
+    public void move(double change) {
+        goal -= change;
     }
+
+    /**
+     * Bypass all setpoint generation and just run direct motor power. This
+     * also bypasses all soft limits, so use EXTREME CAUTION! Remember, the elevator
+     * is capable of TEARING OFF LIMBS AND DESTROYING ITSELF with a force of MORE THAN
+     * 400 POUNDS.
+     * @param speed the direct motor speed
+     */
     public void moveUnsafe(double speed) {
         goal = Double.NaN;
         motorMain.set(speed);
     }
 
-    public void moveCenterStage(double speed) {
-        centerstageSetpoint += speed;
-        // motorCenterstage.set(speed);
-        // if (Robot.isSimulation()) {
-        //     centerstageEncoder.setPosition(centerstageEncoder.getPosition() + (1*speed));
-        // }
-    }
-
+    /**
+     * set the elevator setpoint/goal to the given height
+     * @param height in "meters"
+     */
     public void setElevatorHeight(double height) {
         goal = height / ELEVATOR_WINCH_FACTOR; // meters -> enc. counts
     }
 
-    public void setCenterstageHeight(double height) {
-        centerstageSetpoint = height / ELEVATOR_CENTERSTAGE_FACTOR; // meters -> enc. counts
-    }
-
+    /**
+     * check if the elevator is at a given height within tolerance
+     * @param height the height in "meters" to check against
+     * @return whether it's close enough (within tolerance)
+     */
     public boolean elevatorIsAtHeight(double height) {
-        double setpoint = height / ELEVATOR_WINCH_FACTOR;
-        return Math.abs(setpoint - mainEncoder.getPosition()) < MAIN_TOLERANCE;
+        double setpoint = height / ELEVATOR_WINCH_FACTOR; // "meters" to counts
+        return Math.abs(setpoint - mainEncoder.getPosition()) < TOLERANCE_COUNTS;
     }
 
-    public boolean centerstageIsAtHeight(double height) {
-        double setpoint = height / ELEVATOR_CENTERSTAGE_FACTOR;
-        return Math.abs(setpoint - centerstageEncoder.getPosition()) < CENTERSTAGE_TOLERANCE;
-    }
-
+    /**
+     * Get the height in "meters" of the elevator/pivot.
+     * @return height in "meters"
+     */
     public double getElevatorHeight() {
+        // encoder counts to "meters"
         double mainValue = mainEncoder.getPosition() * ELEVATOR_WINCH_FACTOR;
         return mainValue;
-        // double followValue = followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR;
-        // return (0.5 * (mainValue + followValue)); // mean
     }
 
-    public double getCenterstageHeight() {return centerstageEncoder.getPosition() * ELEVATOR_CENTERSTAGE_FACTOR;}
 
+    /**
+     * reset the ecoders to the current position, essentially says wherever it is
+     * is the "zero"/startup position
+     */
     public void resetEncoders() {
-        mainEncoder.setPosition(MAIN_START_COUNTS);
-        followEncoder.setPosition(MAIN_START_COUNTS);
-        goal = MAIN_START_COUNTS;
-        centerstageEncoder.setPosition(0);
+        mainEncoder.setPosition(START_COUNTS);
+        followEncoder.setPosition(START_COUNTS);
+        goal = START_COUNTS;
     }
 
+    /**
+     * set the setpoint to the current position, essentially "locking" the
+     * mechanism in place
+     */
     public void lockPosition() {
         goal = mainEncoder.getPosition();
     }
-
-    // /**
-    //  * The height of the elevator (measured at shooter pivot)
-    //  * above the ground
-    //  * @return the height in meters of MAXSpline shaft above ground
-    //  */
-    // public double getHeight() {
-    //     double avgCounts = 0.5 * (mainEncoder.getPosition() + followEncoder.getPosition());
-    //     return avgCounts;
-    // }
-
 }

@@ -16,20 +16,33 @@ import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/* ANGLE REFERENCE:
+                   ||||
+                   ||
+                   ||
+                 \ ||
+        <-- shoot  ||------0deg-------
+                   || \___
+                   ||  \  \__
+                   ||    \   \-39deg
+                   ||      \     \__
+          -90deg | ||  -50deg \    INTAKE
+  =================================INTAKE  front -->
+  8888                              8888
+  8888                              8888
+ */
+
 /**
- * Subsystem for the Shooter subassemebly on the 2024 robot
+ * Subsystem for the Shooter subassemebly on the 2024 robot. Should not be
+ * used on its own, should be contained within ElevatedShooter subsystem
  */
 public class Shooter extends SubsystemBase {
     private CANSparkMax motorTop = new CANSparkMax(SHOOTER_MOTOR_TOP, MotorType.kBrushless);
@@ -37,7 +50,7 @@ public class Shooter extends SubsystemBase {
     private CANSparkMax motorFeeder = new CANSparkMax(SHOOTER_MOTOR_FEEDER, MotorType.kBrushless);
     private CANSparkMax motorPivot = new CANSparkMax(SHOOTER_MOTOR_PIVOT, MotorType.kBrushless);
 
-    public boolean hasShot = false;
+    public boolean hasShot = false; // used to end spin up command, should only be read publicly
 
 
     private RelativeEncoder pivotEncoder;
@@ -51,9 +64,9 @@ public class Shooter extends SubsystemBase {
 
     private ProfiledPIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
-    private final double PIVOT_TOLERANCE = 1; //counts
+    private final double PIVOT_TOLERANCE = 1; //encoder counts: note angle
 
-    private final double PIVOT_START = -39;
+    private final double PIVOT_START = -39; // angle in degrees
 
     private double goal = PIVOT_START;
 
@@ -61,6 +74,9 @@ public class Shooter extends SubsystemBase {
     // much of a hassle to handle with all of the different speed states the shooter could be in
     // (feeding, slow feeding, inverse feeding, shooting, etc.)
 
+    /**
+     * Shooter of 2024 robot USS ProtoStar
+     */
     public Shooter() {
         Util.consoleLog();
 
@@ -73,23 +89,31 @@ public class Shooter extends SubsystemBase {
 
         resetEncoders();
 
+        // plugges into Spark MAX itself
         noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyOpen);
 
+        // profiled PID controller allows us to control acceleration and
+        // deceleration and max speed of the pivot!
         pivotPID = new ProfiledPIDController(0.05, 0, 0,
-            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(45))
+            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(45)) // max velocity(/s), max accel(/s)
         );
-        pivotPID.setTolerance(PIVOT_TOLERANCE);
+        pivotPID.setTolerance(PIVOT_TOLERANCE); // encoder counts not degrees for this one
 
         Util.consoleLog("Shooter created!");
     }
 
+    /**
+     * whether the shooter posesses a note
+     * @return if the robot has note (true) or note (false)
+     */
     public boolean hasNote() {
         return noteSensor.isPressed();
     }
 
     /**
-     * enables the feed motor (sushi rollers) to push the Note into
+     * enables the feed motor (sushi rollers) to push the Note into (or out of)
      * the rolling shooter wheels (which must be enabled seperately)
+     * @param speedfactor the speed bounded [-1,1] of max feedspeed
      */
     public void startFeeding(double speedfactor) {
         SmartDashboard.putNumber("sushi", speedfactor);
@@ -98,18 +122,30 @@ public class Shooter extends SubsystemBase {
         updateDS();
     }
 
+    /*
+     * set the current position as the "zero" position.
+     * Careful!
+     */
     public void resetEncoders() {
         pivotEncoder.setPosition(angleToEncoderCounts(-39));
         topMotorEncoder.setPosition(0);
         bottomMotorEncoder.setPosition(0);
     }
 
+    /**
+     * set the current setpoint/goal to the current position,
+     * essentially "locking" the pivot in place
+     */
     public void lockPosition() {
         goal = getAngle();
     }
 
+    /**
+     * remove setpoint control, causing pivot to become limp and
+     * react to external forces with no braking or anything.
+     */
     public void unlockPosition() {
-        goal = Double.NaN;
+        goal = Double.NaN; // when setpoint NaN it doesn't do it
     }
 
     
@@ -129,19 +165,26 @@ public class Shooter extends SubsystemBase {
         updateDS();
     }
 
-    /** spins the shooter wheels in preperation for a Note */
+    /** spins the shooter wheels */
     public void startShooting() {
         motorTop.set(shooterSpeed);
         shooterIsRunning = true;
         updateDS();
     }
 
+    /**
+     * spins the shooter wheels at the given % speed
+     * @param factor bounded [-1, 1] of total max speed
+     */
     public void startShooting(double factor) {
         motorTop.set(shooterSpeed * factor);
         shooterIsRunning = true;
         updateDS();
     }
 
+    /**
+     * run the shooter wheels backwards at 15% power.
+     */
     public void backShoot() {
         motorTop.set(-0.15);
         shooterIsRunning = true;
@@ -168,7 +211,7 @@ public class Shooter extends SubsystemBase {
      * @return the angle in degrees
      */
     public double getAngle() {
-        return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR;
+        return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
     }
 
     /**
@@ -185,51 +228,53 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * checks if shooter is at angle with 3 deg tolerance
+     * checks if shooter is at angle with tolerance
      * @param angle the angle to check against
-     * @return
+     * @return true or false
      */
     public boolean isAtAngle(double angle) {
-        // if (Double.isNaN(setpoint))
-        //     return true;
+        // check if the absolute difference < tolerance
         return Math.abs(pivotEncoder.getPosition() - angleToEncoderCounts(angle)) < PIVOT_TOLERANCE;
     }
 
     /**
      * given an angle, return the encoder counts
      * @param angle angle of shooter position: 0 is nominal angle in degrees
+     *              (see beginning of Shooter.java for reference)
      * @return the raw encoder position
      */
     private double angleToEncoderCounts(double angle) {
         return angle / SHOOTER_PIVOT_FACTOR;
     }
 
-    private double encoderCountsToAngle(double counts) {
-        return counts * SHOOTER_PIVOT_FACTOR;
-    }
-
     /**
-     * Sets the shooter assembly speed (for manual joystick use)
-     * @param speed the speed
+     * Increment or decrement the setpoint (for manual joystick use)
+     * @param amount the # of degrees to change setpoint by
      */
-    public void movePivotRelative(double speed) {
-        goal += speed;
+    public void movePivotRelative(double amount) {
+        goal += amount;
         // motorPivot.set(0.4*speed);
         // if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (0.5*speed));
     }
 
     @Override
     public void periodic() {
+        // for simulation and logging
         AdvantageScope.getInstance().setShooterAngle(getAngle());
         SmartDashboard.putNumber("Shooter Angle", getAngle());
-        // SmartDashboard.putNumber("pivot_measured", getAngle());
         SmartDashboard.putBoolean("Note Sensor", hasNote());
-
-        if (Double.isNaN(goal)) return;
         SmartDashboard.putNumber("pivot_setpoint", angleToEncoderCounts(goal));
-        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(goal));
         SmartDashboard.putNumber("pivot_measured", pivotEncoder.getPosition());
+
+        // if goal/setpoint is NaN, then just ignore the setpoint
+        if (Double.isNaN(goal)) return;
+
+        double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(goal));
         motorPivot.set(motorOutput);
+
+        // simulate shooter movement by incrementing position based on speed (not super accurate but
+        // until REV adds proper Spark MAX simulation support this is what works within reason without
+        // doing a ton of annoying physics I didn't want to worry about -cole)
         if (Robot.isSimulation()) pivotEncoder.setPosition(pivotEncoder.getPosition() + (2*motorOutput));
     }
 

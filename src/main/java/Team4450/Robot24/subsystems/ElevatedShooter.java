@@ -5,31 +5,67 @@ import static Team4450.Robot24.Constants.TRAP_ANGLE;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A combination subsyetsm that controls the Shooter and Elevator. This is used
+ * because of the close relation between where it's safe to pivot and extend.
+ * This class basically does all that checking and moving for you so you can just give
+ * it values and it moves SAFELY (theoretically)
+ */
 public class ElevatedShooter extends SubsystemBase {
+    // these are both publicly accessible to allow passthrough for things like
+    // shoot commands, but we are trusting commads not to abuse this by moving
+    // the actual mechanisms (pivot/elevator)
     public final Shooter       shooter;
 	public final Elevator      elevator;
 
+    /** an enum that represents several Preset positions of the Elevator and Shooter */
+    public static enum PresetPosition {
+        /** the position to start intaking at */ INTAKE,
+        /** the position to start shooting at */ SHOOT,
+        /** the position to start Trap at */ TRAP,
+        /** the position to start tracking at */ SHOOT_VISION_START,
+        /** the position to start shooting Amp at */ SHOOT_AMP_FRONT, 
+        /** the position to start shooting at a high shot position */ HIGH_SHOT, 
+        /** the position to start reverse Amp at */ SHOOT_AMP_BACK,
+        /** the position to start the second Amp scoring sequence */ SHOOT_AMP_FRONT_TWO, 
+        /** the position to move to vertical shooter at zero extension */ VERTICAL_BOTTOM, 
+        /** the position to move to vertical shooter at high extension */ VERTICAL_TOP, 
+        /** the position to start intaking from the Source at */ SOURCE, 
+        /** the position to start climbing at */ CLIMB, 
+        /** No position */ NONE
+    };
 
-    public static enum PresetPosition {INTAKE, SHOOT, TRAP, SHOOT_VISION_START, SHOOT_AMP_FRONT, SHOOT_PODIUM_HIGH, SHOOT_AMP_BACK,SHOOT_AMP_FRONT_TWO, VERTICAL_BOTTOM, VERTICAL_TOP, SOURCE, CLIMB, NONE};
+    // NOTE: all elevator heights in THIS java file (different in Elevator.java)
+    // are in "meters" (not quite exactly meters but close enough...). Same deal
+    // with the pivot angles (but in degrees of course)
 
+    /** whether the "score" button (RB) does the Speaker or Amp shoot sequence */
     public boolean shootDoesTheSpeakerInsteadOfTheAmp = true;
 
-    private double elevatorHeight;
-    private double pivotAngle;
-    private double centerstageHeight;
+    /** the end goal of the elevator height: not the setpoint but the eventual preset goal */
+    private double endGoalElevatorHeight;
+
+    /** the end goal of the pivot angle: not the setpoint but the eventual preset goal */
+    private double endGoalPivotAngle;
+
+    /** whether the end goal is at the top half or bottom half (crosses the crossbar) */
     private boolean atTop;
     private PresetPosition position = PresetPosition.NONE;
 
     // in meters and degrees
-    private final double CENTERSTAGE_SAFE_TOP = 0.4;
-    private final double CENTERSTAGE_SAFE_BOTTOM = 0;
+    /** the safe extension height to pivot at top half */
     private final double MAIN_SAFE_TOP = 0.62;
+
+    /** the safe extension height to pivot at lower half */
     private final double MAIN_SAFE_BOTTOM = 0.2;
+
+    /** the safe pivot angle to extend at */
     private final double PIVOT_SAFE = -90; // angle okay to move up/down
     
 
     /**
-     * MUST be called in the command scheduler loop via execute() or periodic()
+     * Sets the end goal state via a PresetPosition. Unless you are calling execute()
+     * seperately, this MUST be called in the command scheduler loop regularly
      * @param position the preset position for the shooter and elevator combo
      * @return whether or not it is in position (true), or there is still more work to do (false)
      */
@@ -38,76 +74,63 @@ public class ElevatedShooter extends SubsystemBase {
         switch (position) {
             // set target position/rotation values for each position
             case INTAKE:
-                pivotAngle = -39;
-                elevatorHeight = 0.114;
-                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                endGoalPivotAngle = -39;
+                endGoalElevatorHeight = 0.114;
                 atTop = false;
                 break;
             case CLIMB:
-                pivotAngle = -160;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+                endGoalPivotAngle = -160;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
             case SHOOT:
-                pivotAngle = -39;
-                elevatorHeight = 0.15;
-                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                endGoalPivotAngle = -39;
+                endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
             case SHOOT_VISION_START:
-                pivotAngle = -39;
-                elevatorHeight = 0.15;
-                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                endGoalPivotAngle = -39;
+                endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
             case TRAP:
-                pivotAngle = TRAP_ANGLE;
-                elevatorHeight = 0.15;
-                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                endGoalPivotAngle = TRAP_ANGLE;
+                endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
             case SHOOT_AMP_FRONT:
-                pivotAngle = -3;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+                endGoalPivotAngle = -3;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
-            case SHOOT_PODIUM_HIGH:
-                pivotAngle = -20;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+            case HIGH_SHOT:
+                endGoalPivotAngle = -20;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
             case SHOOT_AMP_FRONT_TWO:
-                pivotAngle = 15;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+                endGoalPivotAngle = 15;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
-            
-            case SHOOT_AMP_BACK: // no=========================
-                pivotAngle = -150;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+            case SHOOT_AMP_BACK: // not using
+                endGoalPivotAngle = -150;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
             case VERTICAL_BOTTOM:
-                pivotAngle = PIVOT_SAFE;
-                elevatorHeight = MAIN_SAFE_BOTTOM;
-                centerstageHeight = CENTERSTAGE_SAFE_BOTTOM;
+                endGoalPivotAngle = PIVOT_SAFE;
+                endGoalElevatorHeight = MAIN_SAFE_BOTTOM;
                 atTop = false;
                 break;
             case VERTICAL_TOP:
-                pivotAngle = PIVOT_SAFE;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+                endGoalPivotAngle = PIVOT_SAFE;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
             case SOURCE:
-                pivotAngle = -50;
-                elevatorHeight = MAIN_SAFE_TOP;
-                centerstageHeight = CENTERSTAGE_SAFE_TOP;
+                endGoalPivotAngle = -50;
+                endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
             case NONE:
@@ -117,66 +140,102 @@ public class ElevatedShooter extends SubsystemBase {
         return execute();
     }
 
-    public boolean executeSetPosition(double pivotAngle, double centerstageHeight, double elevatorHeight, boolean topHalf) {
+    /**
+     * Sets the end goal state via a PresetPosition. Unless you are calling execute()
+     * seperately, this MUST be called in the command scheduler loop regularly
+     * @param pivotAngle the desired end pivot angle (degrees)
+     * @param elevatorHeight the desired end elevator height (meters)
+     * @param topHalf whether the endo goal is at top half (true) or not (false)
+     * @return whether or not it is in position (true), or there is still more work to do (false)
+     */
+    public boolean executeSetPosition(double pivotAngle, double elevatorHeight, boolean topHalf) {
         this.position = PresetPosition.NONE;
-        this.pivotAngle = pivotAngle;
-        this.centerstageHeight = centerstageHeight;
-        this.elevatorHeight = elevatorHeight;
+        this.endGoalPivotAngle = pivotAngle;
+        this.endGoalElevatorHeight = elevatorHeight;
         this.atTop = topHalf;
         return execute();
     }
 
+    /**
+     * Check if the system is at the end state, and if it's not: set the next goal/setpoint
+     * in order to achive the goal. This automatically breaks up the setpoints so that they
+     * are sequential and "safe" so that nothing hits anything else.
+     * @apiNote NOTE that it's probably best not to use this directly, and call
+     * either of executeSetPosition()'s methods because they call this interally
+     * @return
+     */
     public boolean execute() {
-        // actual movement
+        /** the safe height to pivot at end goal (choose between MAIN_SAFE_TOP or _BOTTOM for end goal) */
         double safeTargetMainHeight = atTop ? MAIN_SAFE_TOP : MAIN_SAFE_BOTTOM;
-        double safeTargetCenterstageHeight = atTop ? CENTERSTAGE_SAFE_TOP : CENTERSTAGE_SAFE_BOTTOM;
+        /** the safe height to pivot at intermediate goal (choose between MAIN_SAFE_TOP or _BOTTOM for intermediate goal) */
         double safeOtherMainHeight = !atTop ? MAIN_SAFE_TOP : MAIN_SAFE_BOTTOM;
-        double safeOtherCenterstageHeight = !atTop ? CENTERSTAGE_SAFE_TOP : CENTERSTAGE_SAFE_BOTTOM;
 
-        if (isAtTopHalf() == atTop) {
-            if (shooter.isAtAngle(pivotAngle)) {
-                if (centerstageIsAtHeight(centerstageHeight) && elevatorIsAtHeight(elevatorHeight)) {
-                    elevator.setCenterstageHeight(centerstageHeight);
-                    elevator.setElevatorHeight(elevatorHeight);
-                    elevator.move(0);
-                    elevator.moveCenterStage(0);
+        // what follows is a whole bunch of logic that makes safe travel possible.
+        // it's kind confusing to follow, but I promise you it DOES WORK. I've provided
+        // a flowchart at the link below for people to look at and understand this -cole
+
+        if (isAtTopHalf() == atTop) { // check if we are already at the correct half
+            if (shooter.isAtAngle(endGoalPivotAngle)) {
+                if (elevatorIsAtHeight(endGoalElevatorHeight)) {
+                    // the pivot is at the correct end goal, and so is the elevator
+                    // we're done!
+                    elevator.setElevatorHeight(endGoalElevatorHeight);
+                    elevator.move(0); // TODO: I don't understand/remember why this is here -cole 3/23/24
+
+                    // this NT data is for debugging, letters kind of arbitrary but in order of line:
                     SmartDashboard.putString("position_step", "A");
                     return true;
                 } else {
+                    // the elevator is at the safe pivot height and the
+                    // pivot has pivoted to end state, but we still need
+                    // to move elevator to target end height
                     SmartDashboard.putString("position_step", "B");
-                    elevator.setCenterstageHeight(centerstageHeight);
-                    elevator.setElevatorHeight(elevatorHeight);
+                    elevator.setElevatorHeight(endGoalElevatorHeight);
                 }
-            } else if (centerstageIsAtHeight(safeTargetCenterstageHeight) && elevatorIsAtHeight(safeTargetMainHeight)) {
+            } else if (elevatorIsAtHeight(safeTargetMainHeight)) {
+                // we are at the correct height to pivot to final angle at
+                // (not necessarily final height), so we pivot here
                 SmartDashboard.putString("position_step", "C");
-                elevator.setCenterstageHeight(safeTargetCenterstageHeight);
                 elevator.setElevatorHeight(safeTargetMainHeight);
-                shooter.setAngle(pivotAngle);
+                shooter.setAngle(endGoalPivotAngle);
             } else {
+                // the elevator is at the correct half, but it's not yet
+                // at a place where it can safely pivot, so we go to the
+                // safe pivot height for the correct half
                 SmartDashboard.putString("position_step", "D");
-                elevator.setCenterstageHeight(safeTargetCenterstageHeight);
                 elevator.setElevatorHeight(safeTargetMainHeight);
             }
-        } else {
+        } else { // at the wrong half of the extension for our goal
             if (shooter.isAtAngle(PIVOT_SAFE)) {
+                // we are at the safe pivot angle to climb past the crossbar,
+                // so we do that now
                 SmartDashboard.putString("position_step", "E");
-                elevator.setCenterstageHeight(safeTargetCenterstageHeight);
                 elevator.setElevatorHeight(safeTargetMainHeight);
                 shooter.setAngle(PIVOT_SAFE);
-            } else if (centerstageIsAtHeight(safeOtherCenterstageHeight) && elevatorIsAtHeight(safeOtherMainHeight)) {
+            } else if (elevatorIsAtHeight(safeOtherMainHeight)) {
+                // we are at the wrong half, and the pivot isn't quite ready to
+                // climb past the crossbar (either up or down), so we make it
+                // safe to do that now because we are at the safe pivot height
                 SmartDashboard.putString("position_step", "F");
-                elevator.setCenterstageHeight(safeOtherCenterstageHeight);
                 elevator.setElevatorHeight(safeOtherMainHeight);
                 shooter.setAngle(PIVOT_SAFE);
             } else {
+                // we are at the wrong half, and not at a safe place to pivot to
+                // the vertical clib position yet, so we move to that position
+                // now
                 SmartDashboard.putString("position_step", "G");
-                elevator.setCenterstageHeight(safeOtherCenterstageHeight);
                 elevator.setElevatorHeight(safeOtherMainHeight);
             }
         }
         return false;
     }
-       
+    
+    /**
+     * A combination subsyetsm that controls the Shooter and Elevator. This is used
+     * because of the close relation between where it's safe to pivot and extend.
+     * This class basically does all that checking and moving for you so you can just give
+     * it values and it moves SAFELY (theoretically)
+     */
     public ElevatedShooter() {
         shooter = new Shooter();
 		elevator = new Elevator();
@@ -185,46 +244,45 @@ public class ElevatedShooter extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // we log the name of the preset position to look at for debugging
         SmartDashboard.putString("Preset Position", position.name());
     }
 
-    // private boolean safeToPivot() {
-    //     boolean centerstageSafeTop = centerstageIsAtHeight(CENTERSTAGE_SAFE_TOP);
-    //     boolean centerstageSafeBottom = centerstageIsAtHeight(CENTERSTAGE_SAFE_BOTTOM);
-    //     boolean mainSafeTop = elevatorIsAtHeight(MAIN_SAFE_TOP);
-    //     boolean mainSafeBottom = elevatorIsAtHeight(MAIN_SAFE_BOTTOM);
-    //     return (centerstageSafeTop && mainSafeTop) || (centerstageSafeBottom && mainSafeBottom);    
-    // }
-
-    public void setUnsafeRelativePosition(double pivotAngleChange, double centerstageHeightChange, double elevatorHeightChange) {
+    /**
+     * Move the pivot and shooter setpoints/goals relative to the current setpoint/goal
+     * @param pivotAngleChange joystick (degree) increment/decrement
+     * @param elevatorHeightChange joystick increment/decrement
+     */
+    public void moveRelative(double pivotAngleChange, double elevatorHeightChange) {
         shooter.movePivotRelative(pivotAngleChange);
         elevator.move(elevatorHeightChange * 0.9);
-        elevator.moveCenterStage(centerstageHeightChange);
     }
 
+    /**
+     * whether the carriage/shooter is currently at the top half of the elevator or not
+     * @return true or false
+     */
     private boolean isAtTopHalf() {
         return elevator.getElevatorHeight() > 0.4;
     }
 
-    private boolean centerstageIsAtHeight(double height) {
-        return true;
-        // return elevator.centerstageIsAtHeight(height);
-    }
+    /**
+     * Passthrough function to elevator.elevatorIsAtHeight 
+     * @param height the height to check
+     * @return if it's at the height (within tolerance)
+     */
     private boolean elevatorIsAtHeight(double height) {
         return elevator.elevatorIsAtHeight(height);
     }
-    
 
-
-    // @Override
-    // public void periodic() {
-  
-    // }
-
-    // public boolean isAtPosition() {
-    //     return false;
-    // }
-
+    /**
+     * passthrough function to shooter.hasNote
+     * @return whether a note is possessed
+     */
     public boolean hasNote() {return shooter.hasNote();}
+
+    /**
+     * reset both the shooter and elevator encoders
+     */
     public void resetEncoders() {shooter.resetEncoders();elevator.resetEncoders();}
 }

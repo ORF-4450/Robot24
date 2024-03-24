@@ -1,12 +1,8 @@
 package Team4450.Robot24;
 
-import static Team4450.Robot24.Constants.robot;
-
 import java.util.ArrayList;
 
-import java.util.Optional;
-
-import Team4450.Lib.Util;
+import Team4450.Robot24.subsystems.MAXSwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
@@ -23,6 +19,8 @@ public class AdvantageScope {
     private ArrayList<Integer> reservedNotes = new ArrayList<Integer>();
     // private double[] notes = new double[7 * 11];
     private Pose3d[] notes = new Pose3d[11];
+    private double[] swerveStates = new double[8];
+    private double gyro = 0;
     private ArrayList<Pose3d> visionTargets = new ArrayList<Pose3d>();
 
     public AdvantageScope() {
@@ -53,6 +51,9 @@ public class AdvantageScope {
         sendPoses("robot", new Pose3d(robotPose));
         sendPoses("notes", notes);
         sendPoses("targets", visionTargets.toArray(new Pose3d[0]));
+
+        SmartDashboard.putNumberArray("Visualization/swerve_modules", swerveStates);
+        SmartDashboard.putNumber("Visualization/gyro", gyro);
 
         for (int i=0;i<reservedNotes.size();i++) {
             int id = reservedNotes.get(i);
@@ -120,6 +121,19 @@ public class AdvantageScope {
 
     public void setRobotPose(Pose2d pose) {
         robotPose = pose;
+        gyro = pose.getRotation().getDegrees();
+    }
+
+    // FL, FR, BL, BR
+    public void setSwerveModules(MAXSwerveModule fl, MAXSwerveModule fr, MAXSwerveModule bl, MAXSwerveModule br) {
+        swerveStates[0] = fl.getState().angle.getDegrees();
+        swerveStates[1] = fl.getState().speedMetersPerSecond;
+        swerveStates[2] = fr.getState().angle.getDegrees();
+        swerveStates[3] = fr.getState().speedMetersPerSecond;
+        swerveStates[4] = bl.getState().angle.getDegrees();
+        swerveStates[5] = bl.getState().speedMetersPerSecond;
+        swerveStates[6] = br.getState().angle.getDegrees();
+        swerveStates[7] = br.getState().speedMetersPerSecond;
     }
 
     public static AdvantageScope getInstance() {

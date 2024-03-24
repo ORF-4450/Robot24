@@ -5,7 +5,6 @@ import static Team4450.Robot24.Constants.*;
 
 import Team4450.Lib.*;
 import Team4450.Robot24.wpilib.TimedRobot;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;

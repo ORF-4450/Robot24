@@ -64,7 +64,7 @@ public class SpinUpShooter extends Command {
             case MOVING:
                 double angleSetpoint = angle;
                 // this is one of the few times where we specify exact state instead of using PresetPosition
-                if (elevatedShooter.executeSetPosition(angleSetpoint, 0, 0.15, false)) {
+                if (elevatedShooter.executeSetPosition(angleSetpoint, 0.15, false)) {
                     state = State.BACKFEED;
                     startTime = Util.timeStamp();
                 }

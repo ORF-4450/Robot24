@@ -237,31 +237,31 @@ public class Candle extends SubsystemBase {
 
 		switch (animation) {
 			case ColorFlow :
-				newAnimation = new ColorFlowAnimation(128, 20, 70, 0, 0.7, numLed, Direction.Forward);
+				newAnimation = new ColorFlowAnimation(128, 20, 70, 0, speed, numLed, Direction.Forward);
 				break;
 			case Fire :
-				newAnimation = new FireAnimation(0.5, 0.7, numLed, 0.7, 0.5);
+				newAnimation = new FireAnimation(0.5, speed, numLed, 0.7, 0.5);
 				break;
 			case Larson :
-				newAnimation = new LarsonAnimation(0, 255, 46, 0, 1, numLed, BounceMode.Front, 3);
+				newAnimation = new LarsonAnimation(0, 255, 46, 0, speed, numLed, BounceMode.Front, 3);
 				break;
 			case Rainbow :
-				newAnimation = new RainbowAnimation(1, 0.1, numLed);
+				newAnimation = new RainbowAnimation(1, speed, numLed);
 				break;
 			case RgbFade :
-				newAnimation = new RgbFadeAnimation(0.7, 0.4, numLed);
+				newAnimation = new RgbFadeAnimation(0.7,speed, numLed);
 				break;
 			case SingleFade :
-				newAnimation = new SingleFadeAnimation(50, 2, 200, 0, 0.5, numLed);
+				newAnimation = new SingleFadeAnimation(50, 2, 200, 0, speed, numLed);
 				break;
 			case Strobe :
-				newAnimation = new StrobeAnimation(240, 10, 180, 0, 98.0 / 256.0, numLed);
+				newAnimation = new StrobeAnimation(240, 10, 180, 0, speed / 256.0, numLed);
 				break;
 			case Twinkle :
-				newAnimation = new TwinkleAnimation(30, 70, 60, 0, 0.4, numLed, TwinklePercent.Percent6);
+				newAnimation = new TwinkleAnimation(30, 70, 60, 0, speed, numLed, TwinklePercent.Percent6);
 				break;
 			case TwinkleOff :
-				newAnimation = new TwinkleOffAnimation(70, 90, 175, 0, 0.8, numLed, TwinkleOffPercent.Percent100);
+				newAnimation = new TwinkleOffAnimation(70, 90, 175, 0, speed, numLed, TwinkleOffPercent.Percent100);
 				break;
 			case Off :
 				newAnimation = null;
