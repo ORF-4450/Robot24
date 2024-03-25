@@ -13,8 +13,10 @@ import static Team4450.Robot24.Constants.SHOOTER_SPEED;
 import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
@@ -54,6 +56,7 @@ public class Shooter extends SubsystemBase {
 
 
     private RelativeEncoder pivotEncoder;
+    private AbsoluteEncoder pivotCoolEncoder;
     private RelativeEncoder topMotorEncoder;
     private RelativeEncoder bottomMotorEncoder;
 
@@ -84,6 +87,7 @@ public class Shooter extends SubsystemBase {
         motorFeeder.setInverted(true);
 
         pivotEncoder = motorPivot.getEncoder();
+        pivotCoolEncoder = motorPivot.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
 
@@ -211,7 +215,11 @@ public class Shooter extends SubsystemBase {
      * @return the angle in degrees
      */
     public double getAngle() {
-        return pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
+        double roughAngle = pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
+        // if (roughAngle < 15 && roughAngle > -80) { // TODO GEAR RATIO
+        //     return pivotCoolEncoder.getPosition();
+        // }
+        return roughAngle;
     }
 
     /**
