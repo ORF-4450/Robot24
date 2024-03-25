@@ -213,6 +213,7 @@ public class AimSpeaker extends Command {
         if (RobotBase.isSimulation()) shotSpeed = 10;
         theta = -Math.toRadians(theta);
 
+        // see https://www.desmos.com/3d/bdc5aeb804
         Vector<N3> robotSpeeds = VecBuilder.fill(chassisSpeeds.vyMetersPerSecond, chassisSpeeds.vxMetersPerSecond, 0);
         Vector<N3> idealShotVector = VecBuilder.fill(0, shotSpeed*Math.cos(theta), shotSpeed*Math.sin(theta));
         Vector<N3> finalShotVector = idealShotVector.plus(robotSpeeds);
