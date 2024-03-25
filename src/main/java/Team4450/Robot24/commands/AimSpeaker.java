@@ -12,9 +12,15 @@ import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.utility.AprilTagNames;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -112,8 +118,6 @@ public class AimSpeaker extends Command {
 
     @Override
     public void execute() {
-        elevatedShooter.shooter.startShooting(); // keep the wheels spun up!
-
         double currentAngle = elevatedShooter.shooter.getAngle();
 
         // if we had a camera actually mounted on the shooter itself, we would want
@@ -146,6 +150,16 @@ public class AimSpeaker extends Command {
             Math.toRadians(target.getPitch())
         );
 
+
+        double pitchAngle = pitchOffsets.get(dist);
+        double yawAngle = yawOffsets.get(dist);
+
+        double[] velocityOffsets = getMovementOffsets(pitchAngle);
+        yawAngle += 1.0 * velocityOffsets[0];
+        pitchAngle += 1.0 * velocityOffsets[1];
+
+        elevatedShooter.shooter.startShooting(1.0 * velocityOffsets[2]); // keep the wheels spun up!
+
         // ============= rotation of robot ==============================
         // points the physical drivebase at the speaker usig yaw offsets
 
@@ -154,7 +168,7 @@ public class AimSpeaker extends Command {
         else {
             // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
             // at the current distance
-            double output = rotationController.calculate(target.getYaw(), yawOffsets.get(dist));
+            double output = rotationController.calculate(target.getYaw(), yawAngle);
             if (Math.abs(output) < 0.02) yawOkay = true; // if within tolerance than the yaw is good
             robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
         }
@@ -165,7 +179,7 @@ public class AimSpeaker extends Command {
         //
         // NOTE: at intake position it's not safe to pivot,
         // another command must first raise elevator a little
-        double setpoint = pitchOffsets.get(dist); // degrees
+        double setpoint = pitchAngle; // degrees
         elevatedShooter.shooter.setAngle(setpoint); // degrees
         if (Math.abs(setpoint - currentAngle) < 3) pitchOkay = true; // 3 deg tolerance
 
@@ -184,6 +198,41 @@ public class AimSpeaker extends Command {
 
         elevatedShooter.shooter.stopShooting();
         robotDrive.disableTracking();
+    }
+
+    /**
+     * Returns the degree and speed offsets for aiming based on the robot velocity.
+     * This is because if we shoot while moving the Note keeps the inertia/momentum
+     * so we need to rotate off target to make it go in.
+     * @param theta the desired pitch of the shooter
+     * @return an array of 3 values: the change in yaw angle, the change in pitch angle, and the change in speed needed
+     */
+    private double[] getMovementOffsets(double theta) {
+        ChassisSpeeds chassisSpeeds = robotDrive.getChassisSpeeds();
+        double shotSpeed = elevatedShooter.shooter.getWheelSpeed();
+        if (RobotBase.isSimulation()) shotSpeed = 10;
+        theta = -Math.toRadians(theta);
+
+        Vector<N3> robotSpeeds = VecBuilder.fill(chassisSpeeds.vyMetersPerSecond, chassisSpeeds.vxMetersPerSecond, 0);
+        Vector<N3> idealShotVector = VecBuilder.fill(0, shotSpeed*Math.cos(theta), shotSpeed*Math.sin(theta));
+        Vector<N3> finalShotVector = idealShotVector.plus(robotSpeeds);
+
+        double fX = finalShotVector.get(0, 0);
+        double fY = finalShotVector.get(1, 0);
+        double fZ = finalShotVector.get(2, 0);
+        double fMag=Math.sqrt(Math.pow(fX,2) + Math.pow(fY,2) + Math.pow(fZ,2));
+
+
+        theta = Math.toDegrees(theta);
+        double alpha = -Math.toDegrees(Math.atan(fX / fY));
+        double beta = Math.toDegrees(Math.atan(fZ / fY));
+        double speedMultiplier = fMag / shotSpeed;
+
+        double[] output = {alpha, theta - beta, speedMultiplier};
+
+        Util.consoleLog("d_yaw=%f, theta=%f, d_pitch=%f, m_speed=%f", alpha, theta, theta-beta, speedMultiplier);
+
+        return output;
     }
 
     @Override
