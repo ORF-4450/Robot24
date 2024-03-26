@@ -24,6 +24,7 @@ import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.SpinUpShooter;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -65,7 +66,7 @@ public class RobotContainer
 	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
 	private final ElevatedShooter elevShooter;
-	// private final Candle        candle;
+	private final Candle        candle;
 	
 	// Subsystem Default Commands.
 
@@ -183,11 +184,11 @@ public class RobotContainer
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
 		// pvFrontCamera = new PhotonVision(CAMERA_FRONT_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_FRONT_TRANSFORM);
-		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.APRILTAG_TRACKING, CAMERA_SHOOTER_TRANSFORM);
+		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.POSE_ESTIMATION, CAMERA_SHOOTER_TRANSFORM);
 		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
-		// candle = new Candle(CTRE_CANDLE);
+		candle = new Candle(CTRE_CANDLE);
 
 		// Create any persistent commands.
 
@@ -424,13 +425,26 @@ public class RobotContainer
 
 		new Trigger(() -> utilityController.getLeftTrigger())
 			.whileTrue(new RunCommand(() -> {
+				intake.start(utilityController.getLeftTriggerAxis());
 				elevShooter.shooter.startFeeding(utilityController.getLeftTriggerAxis());
 				elevShooter.shooter.startShooting(-utilityController.getRightTriggerAxis());
+			}));
+		new Trigger(() -> utilityController.getLeftTrigger())
+			.onFalse(new RunCommand(() -> {
+				elevShooter.shooter.stopFeeding();
+				elevShooter.shooter.stopFeeding();
+				intake.stop();
 			}));
 		new Trigger(() -> utilityController.getRightTrigger())
 			.whileTrue(new RunCommand(() -> {
 				elevShooter.shooter.startFeeding(-utilityController.getRightTriggerAxis());
 				elevShooter.shooter.startShooting(-utilityController.getRightTriggerAxis());
+			}));
+		new Trigger(() -> utilityController.getRightTrigger())
+			.onFalse(new RunCommand(() -> {
+				elevShooter.shooter.stopFeeding();
+				elevShooter.shooter.stopFeeding();
+				intake.stop();
 			}));
 
 		new Trigger(() -> utilityController.getBackButton())
@@ -439,7 +453,7 @@ public class RobotContainer
 			.toggleOnTrue(
 				(	new Preset(elevShooter, PresetPosition.SOURCE).andThen(
 					new RunCommand(()->{
-						elevShooter.shooter.startShooting(-1);
+						elevShooter.shooter.startShooting(-0.5);
 						elevShooter.shooter.startFeeding(1);
 				}))).until(elevShooter.shooter::hasNote).andThen(
 					new Preset(elevShooter, PresetPosition.INTAKE)
@@ -622,6 +636,11 @@ public class RobotContainer
 		elevShooter.elevator.lockPosition();
 		elevShooter.shooter.lockPosition();
 	}
+	public void unlockMechanisms() {
+		elevShooter.elevator.unlockPosition();
+		elevShooter.shooter.unlockPosition();
+	}
+	
          
 	/**
      * Loads a PathPlanner path file into a path planner trajectory.

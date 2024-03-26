@@ -472,7 +472,7 @@ public class PhotonVision extends SubsystemBase
      * @return The Optional estimated pose (empty optional means no pose or uncertain/bad pose).
      */
     public Optional<EstimatedRobotPose> getEstimatedPose() {
-        if (pipelineType != PipelineType.POSE_ESTIMATION) {
+        if (!isAprilTag()) {
             return Optional.empty();
         }
         Optional<EstimatedRobotPose> estimatedPoseOptional = poseEstimator.update();

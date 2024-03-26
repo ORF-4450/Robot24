@@ -43,9 +43,9 @@ public class AdvantageScope {
     }
 
     public void update() {
-        Pose3d elevatorPose = new Pose3d(0, 0, cHeight, new Rotation3d());
+        Pose3d elevatorPose = new Pose3d(0, 0, elevHeight, new Rotation3d());
         Pose3d shooterPose = new Pose3d(0.09, 0, 0.275+elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
-        Pose3d carriagePose = new Pose3d(0, 0, elevHeight, new Rotation3d());
+        Pose3d carriagePose = new Pose3d(0, 0, elevHeight+0.08, new Rotation3d());
         sendPoses("components", elevatorPose, shooterPose, carriagePose);
 
         sendPoses("robot", new Pose3d(robotPose));

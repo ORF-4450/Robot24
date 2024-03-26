@@ -11,6 +11,7 @@ import static Team4450.Robot24.Constants.SHOOTER_MOTOR_PIVOT;
 
 import static Team4450.Robot24.Constants.SHOOTER_SPEED;
 import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
+import static Team4450.Robot24.Constants.SHOOTER_PRECISE_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -23,6 +24,7 @@ import com.revrobotics.SparkLimitSwitch.Type;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -99,7 +101,7 @@ public class Shooter extends SubsystemBase {
         // profiled PID controller allows us to control acceleration and
         // deceleration and max speed of the pivot!
         pivotPID = new ProfiledPIDController(0.05, 0, 0,
-            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(45)) // max velocity(/s), max accel(/s)
+            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(360)) // max velocity(/s), max accel(/s)
         );
         pivotPID.setTolerance(PIVOT_TOLERANCE); // encoder counts not degrees for this one
 
@@ -142,6 +144,7 @@ public class Shooter extends SubsystemBase {
      */
     public void lockPosition() {
         goal = getAngle();
+        pivotPID.reset(angleToEncoderCounts(goal));
     }
 
     /**
@@ -216,9 +219,9 @@ public class Shooter extends SubsystemBase {
      */
     public double getAngle() {
         double roughAngle = pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
-        // if (roughAngle < 15 && roughAngle > -80) { // TODO GEAR RATIO
-        //     return pivotCoolEncoder.getPosition();
-        // }
+        if (roughAngle < 15 && roughAngle > -80 && RobotBase.isReal()) {
+            return pivotCoolEncoder.getPosition() * SHOOTER_PRECISE_PIVOT_FACTOR;
+        }
         return roughAngle;
     }
 

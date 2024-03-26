@@ -39,7 +39,7 @@ public class Elevator extends SubsystemBase {
 
 
     private final double TOLERANCE_COUNTS = 1.5; // in encoder counts, not "meters"
-    private final double START_COUNTS = 0.11 / ELEVATOR_WINCH_FACTOR; // the start counts
+    private final double START_COUNTS = 0.08 / ELEVATOR_WINCH_FACTOR; // the start counts
 
     private double goal = Double.NaN;
     
@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
         // PID constants, but also the motion profiling constraints
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
-            (0.5 / -ELEVATOR_WINCH_FACTOR), 0.5 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
+            (0.5 / -ELEVATOR_WINCH_FACTOR), 2 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
         ));
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(TOLERANCE_COUNTS);
@@ -193,5 +193,6 @@ public class Elevator extends SubsystemBase {
      */
     public void lockPosition() {
         goal = mainEncoder.getPosition();
+        mainPID.reset(goal);
     }
 }

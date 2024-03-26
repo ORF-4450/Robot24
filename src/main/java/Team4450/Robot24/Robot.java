@@ -193,7 +193,7 @@ public class Robot extends TimedRobot
     // {
     //   FunctionTracer.INSTANCE.printFunctions(Util.logPrintStream);
     // }
-
+    robotContainer.unlockMechanisms();
     Util.consoleLog("end -------------------------------------------------------------------------");
   }
 

@@ -57,6 +57,7 @@ public final class Constants
 
     // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+    public static final double  SHOOTER_PRECISE_PIVOT_FACTOR = (1.0 / 3.0) * 360;
     // public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (18.0 / 54.0)) * 360;
     
 

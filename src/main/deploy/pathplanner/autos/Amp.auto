@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6931781823013052,
-      "y": 6.717418930559588
+      "x": 1.8546058758784187,
+      "y": 7.701975677099503
     },
-    "rotation": 60.78289814366172
+    "rotation": 90.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootSpeaker"
+            "name": "AmpReady"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAmp"
           }
         },
         {
@@ -43,12 +49,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "ShootAmp"
@@ -69,26 +69,14 @@
                 "data": {
                   "pathName": "Amp4"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AmpReady"
-                }
               }
             ]
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "ShootAmp"
+            "name": "ShootSpeaker"
           }
         }
       ]
