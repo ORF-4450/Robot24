@@ -30,6 +30,7 @@ import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
+import Team4450.Robot24.subsystems.Candle.AnimationTypes;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
 import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
@@ -188,7 +189,7 @@ public class RobotContainer
 		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
-		candle = new Candle(CTRE_CANDLE);
+		candle = new Candle(CTRE_CANDLE, 8);
 
 		// Create any persistent commands.
 
@@ -199,6 +200,9 @@ public class RobotContainer
     	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
 		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
 		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
+		candle.setDefaultCommand(new RunCommand(()->{
+			candle.setAnimation(AnimationTypes.Fire);
+		}, candle));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
