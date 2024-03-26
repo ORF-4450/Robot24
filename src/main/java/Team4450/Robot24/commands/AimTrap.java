@@ -2,7 +2,6 @@ package Team4450.Robot24.commands;
 
 import static Team4450.Robot24.Constants.alliance;
 
-import org.opencv.core.Mat;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;

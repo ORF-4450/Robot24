@@ -3,12 +3,8 @@ package Team4450.Robot24.subsystems;
 import Team4450.Lib.Util;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.util.Color;
 
-import java.awt.Robot;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.Animation;
@@ -273,16 +269,11 @@ public class Candle extends SubsystemBase {
 				break;
 		}
 
-		ErrorCode error = candle.animate(newAnimation);
+		candle.animate(newAnimation);
 
 		Util.consoleLog("%s", newAnimation.toString());
 
-		if (error == ErrorCode.OK) {
-			if (newAnimation == null)
-				Util.consoleLog("Off");
-			else
-				Util.consoleLog(newAnimation.toString());
-		} else if (RobotBase.isReal()) Util.consoleLog(error.toString());
+		Util.consoleLog(newAnimation.toString());
 	}
 }
 

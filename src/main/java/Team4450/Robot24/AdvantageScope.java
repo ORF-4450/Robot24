@@ -14,7 +14,6 @@ public class AdvantageScope {
     private static AdvantageScope instance;
     private double elevHeight = 0;
     private double shooterAngle = 0;
-    private double cHeight = 0;
     private Pose2d robotPose = new Pose2d();
 
     private ArrayList<Integer> reservedNotes = new ArrayList<Integer>();
@@ -32,7 +31,7 @@ public class AdvantageScope {
     }
 
     public void setCarriageHeight(double h) {
-        cHeight = h;
+        // cHeight = h;
     }
 
     public void setShooterAngle(double a) {
