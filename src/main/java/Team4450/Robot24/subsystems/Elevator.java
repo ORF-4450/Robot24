@@ -105,8 +105,8 @@ public class Elevator extends SubsystemBase {
         // SOFT LIMITS ================
         if (goal < -59)
             goal = -59;
-        if (goal > -10)
-            goal = -10;
+        if (goal > -5)
+            goal = -5;
 
         // main pid/profile loop
         mainPID.setGoal(goal);
