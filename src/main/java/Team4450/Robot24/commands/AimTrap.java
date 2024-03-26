@@ -2,6 +2,7 @@ package Team4450.Robot24.commands;
 
 import static Team4450.Robot24.Constants.alliance;
 
+import org.opencv.core.Mat;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;
@@ -9,6 +10,7 @@ import Team4450.Lib.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -48,6 +50,7 @@ public class AimTrap extends Command {
     @Override
     public void initialize() {
         Util.consoleLog();
+        SmartDashboard.putBoolean("Target Locked", false);
     }
 
     @Override
@@ -90,6 +93,8 @@ public class AimTrap extends Command {
         double xOutput = xTranslationController.calculate(xOffset, 0); // 0 meters offset from side to side
         double yOutput = yTranslationController.calculate(yOffset, 1.2); // 1.2 meters offset from front
 
+        SmartDashboard.putBoolean("Target Locked", Math.abs(rotOutput)<0.1 && Math.abs(xOutput)<0.1 && Math.abs(yOutput)<0.1);
+
         robotDrive.driveRobotRelative(yOutput, xOutput, rotOutput); // use outputs
     }
     
@@ -97,6 +102,7 @@ public class AimTrap extends Command {
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
+        SmartDashboard.putBoolean("Target Locked", false);
         robotDrive.driveRobotRelative(0, 0, 0); // stop moving
     }
 }
