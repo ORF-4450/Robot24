@@ -130,7 +130,7 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = true;
                 break;
             case SOURCE:
-                endGoalPivotAngle = -50;
+                endGoalPivotAngle = -120;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;

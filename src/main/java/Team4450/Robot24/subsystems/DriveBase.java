@@ -860,7 +860,7 @@ public class DriveBase extends SubsystemBase {
 
     // different PID values for real/simulation because they are quite different.
     PIDConstants rotPID = new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0);
-    if (RobotBase.isSimulation()) rotPID = new PIDConstants(1, 0.0, 0.0);
+    if (RobotBase.isSimulation()) rotPID = new PIDConstants(0.5, 0.0, 0.0);
 
     AutoBuilder.configureHolonomic(
       this::getPosePP, // Robot pose supplier

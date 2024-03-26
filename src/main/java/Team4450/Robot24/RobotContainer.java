@@ -23,6 +23,7 @@ import Team4450.Robot24.commands.ReverseIntake;
 import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.SpinUpShooter;
+import Team4450.Robot24.commands.UpdateCandle;
 import Team4450.Robot24.commands.UpdateVisionPose;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
@@ -30,7 +31,6 @@ import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
-import Team4450.Robot24.subsystems.Candle.AnimationTypes;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
 import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
@@ -200,9 +200,8 @@ public class RobotContainer
     	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
 		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
 		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
-		candle.setDefaultCommand(new RunCommand(()->{
-			candle.setAnimation(AnimationTypes.Fire);
-		}, candle));
+
+		candle.setDefaultCommand(new UpdateCandle(candle));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -355,7 +354,7 @@ public class RobotContainer
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(
 					new Preset(elevShooter, PresetPosition.TRAP).andThen(
-					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.5, true)
+					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.7, true)
 				).alongWith(new AimTrap(driveBase, pvShooterCamera)
 			));
 
@@ -397,7 +396,7 @@ public class RobotContainer
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
-			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, 0.3, false)
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, 0.6, false)
 		);
 
 		new Trigger(()-> utilityController.getPOV() == 180) // down POV

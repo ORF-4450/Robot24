@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.529212410276673,
-        "y": 6.4395825689799535
+        "x": 1.9237292919030284,
+        "y": 6.060532084027131
       },
       "isLocked": false,
       "linkedName": "6.2-6.3"
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "intake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
         "data": {
