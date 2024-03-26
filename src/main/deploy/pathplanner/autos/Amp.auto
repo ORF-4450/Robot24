@@ -2,19 +2,32 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.8546058758784187,
-      "y": 7.701975677099503
+      "x": 0.5208921297472228,
+      "y": 7.01
     },
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "AmpReady"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp0"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
+              }
+            ]
           }
         },
         {
