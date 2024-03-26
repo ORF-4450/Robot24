@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class UpdateCandle extends Command {
     private Candle candle;
-    private enum State {DISABLED, INTAKING, HAS_NOTE, TARGET_LOCKED, ALLIANCE}
+    private enum State {DISABLED, INTAKING, HAS_NOTE, TARGET_LOCKED, ALLIANCE, OFF}
     private State state = State.DISABLED;
     private double time;
 
@@ -38,16 +38,18 @@ public class UpdateCandle extends Command {
             state = State.ALLIANCE;
         } else if (SmartDashboard.getBoolean("Intake", false)){
             state = State.INTAKING;
-        } else if (SmartDashboard.getBoolean("Note Sensor", false)) {
-            state = State.HAS_NOTE;
         } else if (SmartDashboard.getBoolean("Target Locked", false)) {
             state = State.TARGET_LOCKED;
+        } else if (SmartDashboard.getBoolean("Note Sensor", false)) {
+            state = State.HAS_NOTE;
+        } else {
+            state = State.OFF;
         }
         setLeds();
     }
 
     private void blink(Color color) {
-        if (Math.round(Util.getElaspedTime(time)) % 2 == 0) {
+        if (Util.getElaspedTime(time) % 1 < 0.5) {
             candle.setLeds(color);
         } else {
             candle.setLedsOff();
@@ -71,6 +73,8 @@ public class UpdateCandle extends Command {
             case TARGET_LOCKED:
                 blink(Color.kGreen);
                 break;
+            case OFF:
+                candle.setLedsOff();
         }
     }
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AdvantageScope {
@@ -105,6 +106,11 @@ public class AdvantageScope {
 
         }
         return false;
+    }
+
+    public boolean hasNoteSim() {
+        if (reservedNotes.size() > 0 && RobotBase.isSimulation()) return true;
+        else return false;
     }
 
     public void dropNote(int id) {
