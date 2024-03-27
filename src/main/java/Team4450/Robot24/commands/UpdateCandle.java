@@ -28,6 +28,7 @@ public class UpdateCandle extends Command {
     @Override
     public void initialize() {
         time = Util.timeStamp();
+        // candle.setSpeed(0.1);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class UpdateCandle extends Command {
     private void setLeds() {
         switch (state) {
             case DISABLED:
-                candle.setAnimation(AnimationTypes.Fire);
+                candle.setAnimation(AnimationTypes.Rainbow);
                 break;
             case ALLIANCE:
                 candle.setLeds(alliance==Alliance.Blue ? Color.kBlue : Color.kRed);
@@ -75,6 +76,7 @@ public class UpdateCandle extends Command {
                 break;
             case OFF:
                 candle.setLedsOff();
+                break;
         }
     }
 }

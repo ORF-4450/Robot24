@@ -94,7 +94,7 @@ public class AimTrap extends Command {
 
         SmartDashboard.putBoolean("Target Locked", Math.abs(rotOutput)<0.1 && Math.abs(xOutput)<0.1 && Math.abs(yOutput)<0.1);
 
-        robotDrive.driveRobotRelative(yOutput, xOutput, rotOutput); // use outputs
+        // robotDrive.driveRobotRelative(yOutput, xOutput, rotOutput); // use outputs
     }
     
 

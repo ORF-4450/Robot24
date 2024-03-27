@@ -138,7 +138,7 @@ public class Candle extends SubsystemBase {
 	 *            Blue color value 0-255.
 	 */
 	public void setLeds(int red, int green, int blue) {
-		Util.consoleLog("%d %d %d", red, green, blue);
+		// Util.consoleLog("%d %d %d", red, green, blue);
 
 		ErrorCode errorCode = candle.setLEDs(red, green, blue);
 
@@ -160,7 +160,7 @@ public class Candle extends SubsystemBase {
 	 * 			  Count of leds in block 1-maxleds.
 	 */
 	public void setLeds(int red, int green, int blue, int startIndex, int count) {
-		Util.consoleLog("%d %d %d start=%d count=%d", red, green, blue, startIndex, count);
+		// Util.consoleLog("%d %d %d start=%d count=%d", red, green, blue, startIndex, count);
 
 		ErrorCode errorCode = candle.setLEDs(red, green, blue, 0, startIndex, count);
 
@@ -271,9 +271,9 @@ public class Candle extends SubsystemBase {
 
 		candle.animate(newAnimation);
 
-		Util.consoleLog("%s", newAnimation.toString());
+		// Util.consoleLog("%s", newAnimation.toString());
 
-		Util.consoleLog(newAnimation.toString());
+		// Util.consoleLog(newAnimation.toString());
 	}
 }
 

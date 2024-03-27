@@ -56,21 +56,21 @@
     },
     {
       "name": "shoot note 1 + intake",
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 0.6,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Shoot"
+                "name": "IntakeNoteShooting"
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "IntakeNoteShooting"
+                "name": "Shoot"
               }
             }
           ]

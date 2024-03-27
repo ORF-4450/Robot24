@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "SpinUpFar"
+                "name": "SpinUp"
               }
             }
           ]
@@ -50,7 +50,7 @@
     },
     {
       "name": "shoot",
-      "waypointRelativePos": 0.9,
+      "waypointRelativePos": 0.8,
       "command": {
         "type": "parallel",
         "data": {

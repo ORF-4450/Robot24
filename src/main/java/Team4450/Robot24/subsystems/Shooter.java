@@ -222,9 +222,9 @@ public class Shooter extends SubsystemBase {
      */
     public double getAngle() {
         double roughAngle = pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
-        if (roughAngle < 15 && roughAngle > -80 && RobotBase.isReal()) {
-            return pivotCoolEncoder.getPosition() * SHOOTER_PRECISE_PIVOT_FACTOR;
-        }
+        // if (roughAngle < 15 && roughAngle > -80 && RobotBase.isReal()) {
+        //     return pivotCoolEncoder.getPosition() * SHOOTER_PRECISE_PIVOT_FACTOR;
+        // }
         return roughAngle;
     }
 
@@ -284,7 +284,7 @@ public class Shooter extends SubsystemBase {
         if (Double.isNaN(goal)) return;
 
         double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(goal));
-        motorPivot.set(motorOutput);
+        // motorPivot.set(motorOutput);
 
         // simulate shooter movement by incrementing position based on speed (not super accurate but
         // until REV adds proper Spark MAX simulation support this is what works within reason without

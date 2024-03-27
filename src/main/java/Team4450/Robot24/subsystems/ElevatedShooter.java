@@ -76,7 +76,7 @@ public class ElevatedShooter extends SubsystemBase {
             // set target position/rotation values for each position
             case INTAKE:
                 endGoalPivotAngle = -39;
-                endGoalElevatorHeight = 0.114;
+                endGoalElevatorHeight = 0.09;
                 atTop = false;
                 break;
             case CLIMB:
