@@ -61,7 +61,7 @@ public class PointToYaw extends Command {
             return;
         }
 
-        // calculate needed rotation with robot yaw (in radians) as input
+        // calculate needed rotation with robot yaw (in degrees?) as input
         //
         // getYawR() doesn't wrap around at 2pi (360deg), it just keeps on
         // going: so we take remainder of dividing by 2pi to get the "wrapped" around
@@ -99,9 +99,9 @@ public class PointToYaw extends Command {
         Util.consoleLog();
 
         pidController.reset();
-        pidController.setTolerance(.05);      // in radians.
+        pidController.setTolerance(1);
         // pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
-        pidController.enableContinuousInput(-Math.PI, Math.PI);
+        pidController.enableContinuousInput(-180, 180);
         robotDrive.enableTracking();
     }
 

@@ -63,18 +63,23 @@ public class UpdateCandle extends Command {
                 candle.setAnimation(AnimationTypes.Rainbow);
                 break;
             case ALLIANCE:
+                candle.setAnimation(null);
                 candle.setLeds(alliance==Alliance.Blue ? Color.kBlue : Color.kRed);
                 break;
             case INTAKING:
+                candle.setAnimation(null);
                 blink(Color.kRed);
                 break;
             case HAS_NOTE:
+                candle.setAnimation(null);
                 candle.setLeds(Color.kGreen);
                 break;
             case TARGET_LOCKED:
+                candle.setAnimation(null);
                 blink(Color.kGreen);
                 break;
             case OFF:
+                candle.setAnimation(null);
                 candle.setLedsOff();
                 break;
         }

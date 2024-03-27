@@ -242,10 +242,14 @@ public class RobotContainer
 		// 	}
 		// 	, elevShooter));
 		elevShooter.setDefaultCommand(new RunCommand(
-			()->elevShooter.moveRelative(
+			()->{elevShooter.moveRelative(
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
-				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)), // elevator
-		elevShooter));
+				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)); // elevator
+				intake.start(utilityController.getLeftTriggerAxis()); // intake
+				elevShooter.shooter.startFeeding(utilityController.getLeftTriggerAxis() - utilityController.getRightTriggerAxis()); // feed
+				elevShooter.shooter.startShooting(-utilityController.getLeftTriggerAxis()); // backshoot
+			},
+		elevShooter, intake));
 		
 		
 		// intake.setDefaultCommand(new ReverseIntake(intake));
@@ -354,7 +358,7 @@ public class RobotContainer
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(
 					new Preset(elevShooter, PresetPosition.TRAP).andThen(
-					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.7, true)
+					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.7, false)
 				).alongWith(new AimTrap(driveBase, pvShooterCamera)
 			));
 
@@ -426,29 +430,6 @@ public class RobotContainer
 			// 	new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
 			// )));
 
-		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new RunCommand(() -> {
-				intake.start(utilityController.getLeftTriggerAxis());
-				elevShooter.shooter.startFeeding(utilityController.getLeftTriggerAxis());
-				elevShooter.shooter.startShooting(-utilityController.getRightTriggerAxis());
-			}));
-		new Trigger(() -> utilityController.getLeftTrigger())
-			.onFalse(new RunCommand(() -> {
-				elevShooter.shooter.stopFeeding();
-				elevShooter.shooter.stopFeeding();
-				intake.stop();
-			}));
-		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new RunCommand(() -> {
-				elevShooter.shooter.startFeeding(-utilityController.getRightTriggerAxis());
-				elevShooter.shooter.startShooting(-utilityController.getRightTriggerAxis());
-			}));
-		new Trigger(() -> utilityController.getRightTrigger())
-			.onFalse(new RunCommand(() -> {
-				elevShooter.shooter.stopFeeding();
-				elevShooter.shooter.stopFeeding();
-				intake.stop();
-			}));
 
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnTrue(new ReverseIntake(intake, elevShooter));
@@ -569,7 +550,11 @@ public class RobotContainer
 		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
 
-		NamedCommands.registerCommand("AimSpeaker", new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false));
+		NamedCommands.registerCommand("AimSpeaker", 
+				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)
+			)));
 		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
 		NamedCommands.registerCommand("AmpReady", new ParallelCommandGroup(
 			new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
