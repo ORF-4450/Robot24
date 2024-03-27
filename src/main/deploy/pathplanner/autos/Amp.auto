@@ -20,14 +20,14 @@
                 "data": {
                   "pathName": "Amp0"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AmpReady"
-                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AmpReady"
           }
         },
         {

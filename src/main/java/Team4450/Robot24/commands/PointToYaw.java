@@ -162,6 +162,7 @@ public class PointToYaw extends Command {
 
         if (magnitude > 0.2) {
             Util.consoleLog("%f", theta);
+            SmartDashboard.putNumber("axis_yaw", Math.toDegrees(theta));
             return Math.toDegrees(theta);
         } else {
             // this means the driver hasn't moved enough to trigger rotation
