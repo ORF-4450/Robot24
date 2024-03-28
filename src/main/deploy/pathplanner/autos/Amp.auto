@@ -20,14 +20,14 @@
                 "data": {
                   "pathName": "Amp0"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AmpReady"
           }
         },
         {
@@ -37,9 +37,35 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Amp1"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Amp1"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {

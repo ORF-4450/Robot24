@@ -14,10 +14,8 @@ import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_PRECISE_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
@@ -57,9 +55,10 @@ public class Shooter extends SubsystemBase {
 
     public boolean hasShot = false; // used to end spin up command, should only be read publicly
 
+    private final double pivotFactor = SHOOTER_PIVOT_FACTOR;
+    // private final double pivotFactor = SHOOTER_PRECISE_PIVOT_FACTOR;
 
     private RelativeEncoder pivotEncoder;
-    private AbsoluteEncoder pivotCoolEncoder;
     private RelativeEncoder topMotorEncoder;
     private RelativeEncoder bottomMotorEncoder;
 
@@ -89,10 +88,10 @@ public class Shooter extends SubsystemBase {
         motorBottom.follow(motorTop);
         motorFeeder.setInverted(true);
 
-        // pivotEncoder = motorPivot.getEncoder();
-        pivotEncoder = motorPivot.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192); // rev through bore keep 8192 (constant)
+        pivotEncoder = motorPivot.getEncoder();
+        // pivotEncoder = motorPivot.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192); // rev through bore keep 8192 (constant)
         // pivotEncoder.setInverted(true);
-        // pivotCoolEncoder = motorPivot.getAlternateEncoder(1);
+        
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
 
@@ -224,7 +223,7 @@ public class Shooter extends SubsystemBase {
      * @return the angle in degrees
      */
     public double getAngle() {
-        double roughAngle = pivotEncoder.getPosition() * SHOOTER_PIVOT_FACTOR; // convert to degrees
+        double roughAngle = pivotEncoder.getPosition() * pivotFactor; // convert to degrees
         // if (roughAngle < 15 && roughAngle > -80 && RobotBase.isReal()) {
         //     return pivotCoolEncoder.getPosition() * SHOOTER_PRECISE_PIVOT_FACTOR;
         // }
@@ -261,7 +260,7 @@ public class Shooter extends SubsystemBase {
      * @return the raw encoder position
      */
     private double angleToEncoderCounts(double angle) {
-        return angle / SHOOTER_PIVOT_FACTOR;
+        return angle / pivotFactor;
     }
 
     /**

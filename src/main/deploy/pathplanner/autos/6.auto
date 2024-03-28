@@ -12,21 +12,41 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "6.1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6.2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6.3"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "6.1"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "6.2"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "6.3"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNoteShooting"
+                }
+              }
+            ]
           }
         },
         {
@@ -39,12 +59,6 @@
           "type": "path",
           "data": {
             "pathName": "6.5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         },
         {
