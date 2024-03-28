@@ -21,6 +21,7 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
+import com.revrobotics.SparkMaxAlternateEncoder;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -88,8 +89,8 @@ public class Shooter extends SubsystemBase {
         motorBottom.follow(motorTop);
         motorFeeder.setInverted(true);
 
-        pivotEncoder = motorPivot.getEncoder();
-        pivotEncoder = motorPivot.getalternate
+        // pivotEncoder = motorPivot.getEncoder();
+        pivotEncoder = motorPivot.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192); // rev through bore keep 8192 (constant)
         // pivotCoolEncoder = motorPivot.getAlternateEncoder(1);
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
