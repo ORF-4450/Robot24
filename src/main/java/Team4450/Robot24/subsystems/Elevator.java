@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
         // PID constants, but also the motion profiling constraints
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
-            (0.5 / -ELEVATOR_WINCH_FACTOR), 2 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
+            (1 / -ELEVATOR_WINCH_FACTOR), 4 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
         ));
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(TOLERANCE_COUNTS);

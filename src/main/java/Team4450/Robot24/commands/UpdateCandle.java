@@ -46,11 +46,12 @@ public class UpdateCandle extends Command {
         } else {
             state = State.OFF;
         }
+        // Util.consoleLog("state=%s", state.toString());
         setLeds();
     }
 
     private void blink(Color color) {
-        if (Util.getElaspedTime(time) % 1 < 0.5) {
+        if (Util.getElaspedTime(time) % 0.5 < 0.3) {
             candle.setLeds(color);
         } else {
             candle.setLedsOff();

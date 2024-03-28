@@ -70,7 +70,7 @@ public class SpinUpShooter extends Command {
                 }
                 break;
             case BACKFEED: // run the sushis back a little so that it has more momentum feeding
-                if (Util.getElaspedTime(startTime) < 0.05) {
+                if (Util.getElaspedTime(startTime) < 0.09) {
                     elevatedShooter.shooter.startFeeding(-0.3);
                     // start by feeding the note backwards a bit (-30% speed for 0.05 seconds see above)
                 }

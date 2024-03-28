@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
 
     private ProfiledPIDController pivotPID;
     private boolean shooterIsRunning = false, feederIsRunning = false;
-    private final double PIVOT_TOLERANCE = 1; //encoder counts: note angle
+    private final double PIVOT_TOLERANCE = 1; //encoder counts: not angle
 
     private final double PIVOT_START = -39; // angle in degrees
 
@@ -89,7 +89,8 @@ public class Shooter extends SubsystemBase {
         motorFeeder.setInverted(true);
 
         pivotEncoder = motorPivot.getEncoder();
-        pivotCoolEncoder = motorPivot.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+        pivotEncoder = motorPivot.getalternate
+        // pivotCoolEncoder = motorPivot.getAlternateEncoder(1);
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
 
@@ -100,8 +101,8 @@ public class Shooter extends SubsystemBase {
 
         // profiled PID controller allows us to control acceleration and
         // deceleration and max speed of the pivot!
-        pivotPID = new ProfiledPIDController(0.05, 0, 0,
-            new Constraints(angleToEncoderCounts(180), angleToEncoderCounts(360)) // max velocity(/s), max accel(/s)
+        pivotPID = new ProfiledPIDController(0.08, 0, 0,
+            new Constraints(angleToEncoderCounts(360), angleToEncoderCounts(4*360)) // max velocity(/s), max accel(/s)
         );
         pivotPID.setTolerance(PIVOT_TOLERANCE); // encoder counts not degrees for this one
 
@@ -235,8 +236,8 @@ public class Shooter extends SubsystemBase {
      */
     public double getWheelSpeed() {
         double wheelRadius = 1.5 * 0.0254; // 1.5 in -> meters
-        double topWheelSpeed = (topMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
-        double bottomWheelSpeed = (bottomMotorEncoder.getVelocity() / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
+        double topWheelSpeed = (Math.abs(topMotorEncoder.getVelocity()) / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
+        double bottomWheelSpeed = (Math.abs(bottomMotorEncoder.getVelocity()) / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
         double averageWheelSpeed = 0.2 * (topWheelSpeed + bottomWheelSpeed); // mean of top and bottom
         return averageWheelSpeed;
     }

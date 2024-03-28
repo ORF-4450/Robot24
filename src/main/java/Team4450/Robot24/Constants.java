@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-03.27.24-1";
+	public static String		PROGRAM_NAME = "CW-03.28.24-1";
 
 	public static Robot			robot;
 
@@ -63,7 +63,7 @@ public final class Constants
 
     public static final double  OUTER_ANGLE = -15;
     public static final double  PODIUM_ANGLE = -26;
-    public static final double  SUBWOOFER_ANGLE = -52;
+    public static final double  SUBWOOFER_ANGLE = -55;
     public static final double  TRAP_ANGLE = -39;
     
     // ELEVATOR ======
@@ -87,7 +87,7 @@ public final class Constants
     public static final double    PV_TARGET_PITCH = -20;
 
     public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0.2794, 0.6604),
+        new Translation3d(0, 0.2794, 0.5715),
         new Rotation3d(0, 0, Math.toRadians(180))
     );
 

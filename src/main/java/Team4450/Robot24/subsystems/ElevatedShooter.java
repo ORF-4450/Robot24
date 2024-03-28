@@ -57,7 +57,7 @@ public class ElevatedShooter extends SubsystemBase {
     private final double MAIN_SAFE_TOP = 0.62;
 
     /** the safe extension height to pivot at lower half */
-    private final double MAIN_SAFE_BOTTOM = 0.2;
+    private final double MAIN_SAFE_BOTTOM = 0.16;
 
     /** the safe pivot angle to extend at */
     private final double PIVOT_SAFE = -90; // angle okay to move up/down
@@ -100,7 +100,7 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = false;
                 break;
             case SHOOT_AMP_FRONT:
-                endGoalPivotAngle = -3;
+                endGoalPivotAngle = -6;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;

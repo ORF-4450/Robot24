@@ -245,9 +245,6 @@ public class RobotContainer
 			()->{elevShooter.moveRelative(
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)); // elevator
-				intake.start(utilityController.getLeftTriggerAxis()); // intake
-				elevShooter.shooter.startFeeding(utilityController.getLeftTriggerAxis() - utilityController.getRightTriggerAxis()); // feed
-				elevShooter.shooter.startShooting(-utilityController.getLeftTriggerAxis()); // backshoot
 			},
 		elevShooter, intake));
 		
@@ -429,6 +426,15 @@ public class RobotContainer
 			// 	new SpinUpShooter(elevShooter, driveBase, true).andThen(
 			// 	new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
 			// )));
+
+		new Trigger(()->utilityController.getLeftTrigger()).whileTrue(new StartEndCommand(
+			()->{elevShooter.shooter.startFeeding(1);elevShooter.shooter.backShoot();intake.start();},
+			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
+		));
+		new Trigger(()->utilityController.getRightTrigger()).whileTrue(new StartEndCommand(
+			()->{elevShooter.shooter.startFeeding(-1);elevShooter.shooter.backShoot();},
+			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
+		));
 
 
 		new Trigger(() -> utilityController.getBackButton())

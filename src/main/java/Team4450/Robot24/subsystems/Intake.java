@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase {
     public void start(double speedfactor) {
         // Util.consoleLog();
 
-        isrunning = true;
+        isrunning = Math.abs(speedfactor) > 0.02;
         updateDS();
 
         SmartDashboard.putNumber("intake_speedfactor", speedfactor);

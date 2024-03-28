@@ -83,10 +83,14 @@ public class AimSpeaker extends Command {
             pitchOffsets.put(3.69, -16.0);
         } else {
             // LOWER SHOT POSITION
-            pitchOffsets.put(1.45, -50.0);
-            pitchOffsets.put(2.37, -39.0);
-            pitchOffsets.put(3.45, -26.0);
-            pitchOffsets.put(3.69, -22.0);
+            pitchOffsets.put(1.69, -55.0);
+            pitchOffsets.put(1.77, -48.0);
+            pitchOffsets.put(2.10, -42.06);
+            pitchOffsets.put(2.53, -35.07);
+            pitchOffsets.put(2.87, -30.26);
+            pitchOffsets.put(3.28, -27.78);
+            pitchOffsets.put(3.53, -26.32);
+            pitchOffsets.put(4.57, -19.92);
         }
         
     
@@ -95,7 +99,7 @@ public class AimSpeaker extends Command {
         // perfectly centered within PV frame, but that's only if the camera is on
         // the center of the robot. If it is on the side we have to "center" a little
         // bit off to the side:
-        yawOffsets.put(0.0, 6.0);
+        yawOffsets.put(1.69, 9.0);
         yawOffsets.put(20.0, 6.0);
 
         // this indicator should represent whether the shooter AND the drivebase are in
@@ -154,7 +158,7 @@ public class AimSpeaker extends Command {
         double yawAngle = yawOffsets.get(dist);
 
         double[] velocityOffsets = getMovementOffsets(pitchAngle);
-        yawAngle += 1.0 * velocityOffsets[0];
+        yawAngle += 0.7 * velocityOffsets[0];
         pitchAngle += 1.0 * velocityOffsets[1];
 
         elevatedShooter.shooter.startShooting(1.0 * velocityOffsets[2]); // keep the wheels spun up!
@@ -179,6 +183,7 @@ public class AimSpeaker extends Command {
         // NOTE: at intake position it's not safe to pivot,
         // another command must first raise elevator a little
         double setpoint = pitchAngle; // degrees
+        setpoint = Util.clampValue(setpoint, -90, 0);
         elevatedShooter.shooter.setAngle(setpoint); // degrees
         if (Math.abs(setpoint - currentAngle) < 3) pitchOkay = true; // 3 deg tolerance
 
@@ -226,7 +231,10 @@ public class AimSpeaker extends Command {
         theta = Math.toDegrees(theta);
         double alpha = -Math.toDegrees(Math.atan(fX / fY));
         double beta = Math.toDegrees(Math.atan(fZ / fY));
-        double speedMultiplier = fMag / shotSpeed;
+        double speedMultiplier = 1;//fMag / shotSpeed;
+
+        if (RobotBase.isReal())
+            alpha *= -1;
 
         double[] output = {alpha, theta - beta, speedMultiplier};
 
