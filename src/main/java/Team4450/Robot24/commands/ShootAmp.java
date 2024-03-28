@@ -3,6 +3,7 @@ package Team4450.Robot24.commands;
 import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -43,7 +44,9 @@ public class ShootAmp extends Command {
                 break;
             case SHOOTING: // start the initial shoot maneuver
                 elevatedShooter.shooter.startFeeding(-0.3);
-                if (!elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 0.2)
+                boolean moveon = !elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 0.2;
+                if (RobotBase.isSimulation()) moveon = true;
+                if (moveon)
                     state = State.MOVING2;
                 break;
             case MOVING2: // move the pivot to the second position
