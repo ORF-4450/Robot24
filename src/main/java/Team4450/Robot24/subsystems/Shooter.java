@@ -91,6 +91,7 @@ public class Shooter extends SubsystemBase {
 
         // pivotEncoder = motorPivot.getEncoder();
         pivotEncoder = motorPivot.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192); // rev through bore keep 8192 (constant)
+        // pivotEncoder.setInverted(true);
         // pivotCoolEncoder = motorPivot.getAlternateEncoder(1);
         topMotorEncoder = motorTop.getEncoder();
         bottomMotorEncoder = motorBottom.getEncoder();
