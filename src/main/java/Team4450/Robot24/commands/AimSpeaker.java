@@ -225,7 +225,7 @@ public class AimSpeaker extends Command {
         double fX = finalShotVector.get(0, 0);
         double fY = finalShotVector.get(1, 0);
         double fZ = finalShotVector.get(2, 0);
-        double fMag=Math.sqrt(Math.pow(fX,2) + Math.pow(fY,2) + Math.pow(fZ,2));
+        // double fMag=Math.sqrt(Math.pow(fX,2) + Math.pow(fY,2) + Math.pow(fZ,2));
 
 
         theta = Math.toDegrees(theta);

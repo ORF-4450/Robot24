@@ -11,7 +11,7 @@ import static Team4450.Robot24.Constants.SHOOTER_MOTOR_PIVOT;
 
 import static Team4450.Robot24.Constants.SHOOTER_SPEED;
 import static Team4450.Robot24.Constants.SHOOTER_PIVOT_FACTOR;
-import static Team4450.Robot24.Constants.SHOOTER_PRECISE_PIVOT_FACTOR;
+// import static Team4450.Robot24.Constants.SHOOTER_PRECISE_PIVOT_FACTOR;
 import static Team4450.Robot24.Constants.SHOOTER_FEED_SPEED;
 
 import com.revrobotics.CANSparkMax;
@@ -19,7 +19,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkLimitSwitch.Type;
-import com.revrobotics.SparkMaxAlternateEncoder;
+// import com.revrobotics.SparkMaxAlternateEncoder;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
