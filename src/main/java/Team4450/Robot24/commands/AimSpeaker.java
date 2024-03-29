@@ -36,6 +36,8 @@ public class AimSpeaker extends Command {
     private final DoubleSupplier joystick;
     private final AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
 
+    private boolean upperShot = false;
+
     private final PIDController rotationController = new PIDController(0.02, 0, 0); // for rotating drivebase
 
     // these "InterpolatingDoubleTreeMap"s allow us to put in several data points and get a "best guess"
@@ -75,6 +77,7 @@ public class AimSpeaker extends Command {
         // as a reminder, 0deg is horizontal, and angles are CCW positive
         // referencing the infeed side of the shooter. So an angle of -45 is
         // shooter pointing up and infeed rollers 45deg below horizontal
+        this.upperShot = upperShot;
         if (upperShot) {
             // UPPER SHOT POSITION
             pitchOffsets.put(1.45, -44.0);
@@ -154,6 +157,7 @@ public class AimSpeaker extends Command {
         );
 
 
+        // double pitchAngle = pitchOffsets.get(dist);
         double pitchAngle = pitchOffsets.get(dist);
         double yawAngle = yawOffsets.get(dist);
 

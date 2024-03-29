@@ -89,14 +89,14 @@ public class AimTrap extends Command {
         Util.consoleLog("yaw=%f, x=%f, y=%f", yaw, xOffset, yOffset);
 
         double rotOutput = -rotationController.calculate(yaw, 0); // not sure why negative but keep it that way
-        double xOutput = xTranslationController.calculate(xOffset, 0); // 0 meters offset from side to side
-        double yOutput = yTranslationController.calculate(yOffset, 1.2); // 1.2 meters offset from front
+        double xOutput = xTranslationController.calculate(xOffset, -0.3556); // 0 meters offset from side to side
+        double yOutput = yTranslationController.calculate(yOffset, 1.5); // 1.2 meters offset from front
 
+        rotOutput = 0;
         SmartDashboard.putBoolean("Target Locked", Math.abs(rotOutput)<0.1 && Math.abs(xOutput)<0.1 && Math.abs(yOutput)<0.1);
 
         robotDrive.driveRobotRelative(yOutput, xOutput, rotOutput); // use outputs
     }
-    
 
     @Override
     public void end(boolean interrupted) {

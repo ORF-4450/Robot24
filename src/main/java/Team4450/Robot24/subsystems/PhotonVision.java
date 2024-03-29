@@ -501,7 +501,7 @@ public class PhotonVision extends SubsystemBase
                     usedTagPoses.add(tagPose.get());
             }
             AdvantageScope.getInstance().setVisionTargets(usedTagPoses);
-            Util.consoleLog("used %d tags for estimation", usedTagPoses.size());
+            // Util.consoleLog("used %d tags for estimation", usedTagPoses.size());
 
             return Optional.of(estimatedPose);
         } else {

@@ -7,6 +7,7 @@ import org.photonvision.EstimatedRobotPose;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.Robot;
 import Team4450.Robot24.subsystems.DriveBase;
@@ -53,6 +54,7 @@ public class UpdateVisionPose extends Command {
 
     @Override
     public void execute() {
+        if (RobotState.isAutonomous()) return;
         if (Robot.isSimulation()) {
             cameraSubsystem.updateSimulationPose(robotDrive.getPose());
             return; // if simulator don't try updating pose estimator because the

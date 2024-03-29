@@ -533,7 +533,15 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
-		NamedCommands.registerCommand("IntakeNoteShooting", new IntakeNote(intake, elevShooter, true));
+		NamedCommands.registerCommand("IntakeNoteShooting", new StartEndCommand(()->{
+			intake.start();
+			elevShooter.shooter.startShooting();
+			elevShooter.shooter.startFeeding(1);
+		}, () -> {
+			intake.stop();
+			elevShooter.shooter.stopFeeding();
+			elevShooter.shooter.stopShooting();
+		}, intake));
 
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
@@ -549,13 +557,14 @@ public class RobotContainer
 		));
 		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
+	NamedCommands.registerCommand("SpinUpDelay",new InstantCommand(()->{elevShooter.shooter.startShooting();}));
 		
 		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true));
 
 		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
-
+		NamedCommands.registerCommand("AimSpeakerAuton",new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)));
 		NamedCommands.registerCommand("AimSpeaker", 
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
