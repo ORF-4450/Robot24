@@ -35,8 +35,7 @@ public class AimSpeaker extends Command {
     private final PhotonVision photonVision;
     private final DoubleSupplier joystick;
     private final AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
-
-    private boolean upperShot = false;
+    public static enum Position {LOW, NORMAL, HIGH}
 
     private final PIDController rotationController = new PIDController(0.02, 0, 0); // for rotating drivebase
 
@@ -59,7 +58,7 @@ public class AimSpeaker extends Command {
      * @param joystick a supplier for the rotation joystick value (see above note)
      * @param upperShot whether to use the pitch offsets for a low or high shot
      */
-    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision photonVision, DoubleSupplier joystick, boolean upperShot) {
+    public AimSpeaker(DriveBase robotDrive, ElevatedShooter elevatedShooter, PhotonVision photonVision, DoubleSupplier joystick, Position position) {
         this.robotDrive = robotDrive;
         this.elevatedShooter = elevatedShooter;
         this.photonVision = photonVision;
@@ -77,23 +76,28 @@ public class AimSpeaker extends Command {
         // as a reminder, 0deg is horizontal, and angles are CCW positive
         // referencing the infeed side of the shooter. So an angle of -45 is
         // shooter pointing up and infeed rollers 45deg below horizontal
-        this.upperShot = upperShot;
-        if (upperShot) {
-            // UPPER SHOT POSITION
-            pitchOffsets.put(1.45, -44.0);
-            pitchOffsets.put(2.37, -33.0);
-            pitchOffsets.put(3.45, -20.0);
-            pitchOffsets.put(3.69, -16.0);
-        } else {
-            // LOWER SHOT POSITION
-            pitchOffsets.put(1.69, -55.0);
-            pitchOffsets.put(1.77, -48.0);
-            pitchOffsets.put(2.10, -42.06);
-            pitchOffsets.put(2.53, -35.07);
-            pitchOffsets.put(2.87, -30.26);
-            pitchOffsets.put(3.28, -27.78);
-            pitchOffsets.put(3.53, -26.32);
-            pitchOffsets.put(4.57, -19.92);
+        switch (position) {
+            case LOW:
+                break;
+            case NORMAL:
+                // LOWER SHOT POSITION
+                pitchOffsets.put(1.69, -55.0);
+                pitchOffsets.put(1.77, -48.0);
+                pitchOffsets.put(2.10, -42.06);
+                pitchOffsets.put(2.53, -35.07);
+                pitchOffsets.put(2.87, -30.26);
+                pitchOffsets.put(3.28, -27.78);
+                pitchOffsets.put(3.53, -26.32);
+                pitchOffsets.put(4.57, -19.92);
+                break;
+            case HIGH:
+                // UPPER SHOT POSITION
+                pitchOffsets.put(1.45, -44.0);
+                pitchOffsets.put(2.37, -33.0);
+                pitchOffsets.put(3.45, -20.0);
+                pitchOffsets.put(3.69, -16.0);
+                break;
+
         }
         
     

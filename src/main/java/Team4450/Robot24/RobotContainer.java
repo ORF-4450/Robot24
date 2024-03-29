@@ -3,6 +3,8 @@ package Team4450.Robot24;
 
 import static Team4450.Robot24.Constants.*;
 
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -25,6 +27,7 @@ import Team4450.Robot24.commands.ShootSpeaker;
 import Team4450.Robot24.commands.SpinUpShooter;
 import Team4450.Robot24.commands.UpdateCandle;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.commands.AimSpeaker.Position;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
@@ -454,7 +457,7 @@ public class RobotContainer
 			.toggleOnTrue(
 				new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(//-20
 				new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), true)
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.HIGH)
 			)));
 		
 		new Trigger(() -> utilityController.getXButton()) // manual
@@ -467,7 +470,7 @@ public class RobotContainer
 			.toggleOnTrue(
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL)
 			)));
 		
 		
@@ -551,41 +554,41 @@ public class RobotContainer
 			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
+		NamedCommands.registerCommand("ShootWing",
+			new Preset(elevShooter, PresetPosition.WING_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
+		)));
+		NamedCommands.registerCommand("ShootVision",
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+			new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL))).alongWith(
+			// with
+			new WaitCommand(1).andThen(new ShootSpeaker(elevShooter))
+		));
+		
 		NamedCommands.registerCommand("ShootFar",
 			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
-		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
-	NamedCommands.registerCommand("SpinUpDelay",new InstantCommand(()->{elevShooter.shooter.startShooting();}));
-		
+		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true));
-
+		NamedCommands.registerCommand("StartShooterWheels",new InstantCommand(()->{elevShooter.shooter.startShooting();}));
+		NamedCommands.registerCommand("WingPreset", new Preset(elevShooter, PresetPosition.WING_SHOT));
 		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
-		NamedCommands.registerCommand("AimSpeakerAuton",new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)));
 		NamedCommands.registerCommand("AimSpeaker", 
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
-				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), false)
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL)
 			)));
-		NamedCommands.registerCommand("Climb", new Preset(elevShooter, PresetPosition.CLIMB));
 		NamedCommands.registerCommand("AmpReady", new ParallelCommandGroup(
 			new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 			new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 		));
 		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
-		
-		NamedCommands.registerCommand("ReverseIntake", new ReverseIntake(intake, elevShooter));
-
-		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
-		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
-
-		NamedCommands.registerCommand("ShuffleTab", new InstantCommand(shuffleBoard::switchTab));
-		NamedCommands.registerCommand("ResetGyro", new InstantCommand(driveBase::zeroGyro));
-
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvNoteCamera, true));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP
