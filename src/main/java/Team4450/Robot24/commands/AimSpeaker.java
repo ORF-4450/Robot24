@@ -1,6 +1,7 @@
 package Team4450.Robot24.commands;
 
 import static Team4450.Robot24.Constants.alliance;
+import static Team4450.Robot24.Constants.robot;
 
 import java.util.function.DoubleSupplier;
 
@@ -15,6 +16,7 @@ import Team4450.Robot24.utility.AprilTagNames;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
@@ -34,6 +36,7 @@ public class AimSpeaker extends Command {
     private final ElevatedShooter elevatedShooter;
     private final PhotonVision photonVision;
     private final DoubleSupplier joystick;
+    private double lastSight;
     private final AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
     public static enum Position {LOW, NORMAL, HIGH}
 
@@ -63,6 +66,7 @@ public class AimSpeaker extends Command {
         this.elevatedShooter = elevatedShooter;
         this.photonVision = photonVision;
         this.joystick = joystick;
+        this.lastSight = 0;
 
         // We don't require drivebase here because we still want the main drive command to
         // have control, and we don't need complete control over it. The camera should never
@@ -140,6 +144,8 @@ public class AimSpeaker extends Command {
     @Override
     public void execute() {
         double currentAngle = elevatedShooter.shooter.getAngle();
+        double joystickValue = joystick.getAsDouble(); // check if joystick is moving
+        boolean joystickMoving = joystickValue < -0.03 || joystickValue > 0.03;
 
         // if we had a camera actually mounted on the shooter itself, we would want
         // to update the simulation camera to reflect movement of the shooter. However
@@ -154,12 +160,20 @@ public class AimSpeaker extends Command {
             SmartDashboard.putBoolean("Target Locked", false);
             SmartDashboard.putNumber("Distance to Speaker", Double.NaN);
 
-            // here we don't turn off tracking mode, but temporarily put NaN which disables
-            // it temporarily. no real difference then disabling it but then we don't have to re-enable
-            // so it's just a little easier
-            robotDrive.setTrackingRotation(Double.NaN);
+            Transform2d transform = robotDrive.getPose().minus(photonVision.getTagPose(targetId));
+            double idealYaw = Math.toDegrees(Math.atan2(transform.getY(), transform.getX()));
+            double currentYaw = robotDrive.getYaw();
+
+            if (joystickMoving || Util.getElaspedTime(lastSight) < 2) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
+            else {
+                // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
+                // at the current distance
+                double output = rotationController.calculate(idealYaw - currentYaw, 0);
+                robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
+            }
             return;
         }
+        lastSight = Util.timeStamp();
         // else we just continue as is knowing target is not null
 
         boolean yawOkay = false;
@@ -185,8 +199,7 @@ public class AimSpeaker extends Command {
         // ============= rotation of robot ==============================
         // points the physical drivebase at the speaker usig yaw offsets
 
-        double joystickValue = joystick.getAsDouble(); // check if joystick is moving
-        if (joystickValue < -0.03 || joystickValue > 0.03) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
+        if (joystickMoving) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
         else {
             // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
             // at the current distance

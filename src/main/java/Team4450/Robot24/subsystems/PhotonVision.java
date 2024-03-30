@@ -406,6 +406,15 @@ public class PhotonVision extends SubsystemBase
         // selectPipeline(type.ordinal());
     }
 
+    public Pose2d getTagPose(int id) {
+        Optional<Pose3d> pose3dOptional = fieldLayout.getTagPose(id);
+        if (pose3dOptional.isPresent()) {
+            Pose3d pose3d = pose3dOptional.get();
+            return new Pose2d(pose3d.getX(), pose3d.getY(), pose3d.getRotation().toRotation2d());
+        }
+        else return new Pose2d();
+    }
+
     /**
      * Set the LED mode.
      * @param mode Desired LED mode.
