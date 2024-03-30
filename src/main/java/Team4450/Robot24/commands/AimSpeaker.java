@@ -36,8 +36,8 @@ public class AimSpeaker extends Command {
     private final ElevatedShooter elevatedShooter;
     private final PhotonVision photonVision;
     private final DoubleSupplier joystick;
-    private double lastSight;
-    private final AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
+    private double lastSight = 0;
+    private AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
     public static enum Position {LOW, NORMAL, HIGH}
 
     private final PIDController rotationController = new PIDController(0.02, 0, 0); // for rotating drivebase
@@ -66,7 +66,6 @@ public class AimSpeaker extends Command {
         this.elevatedShooter = elevatedShooter;
         this.photonVision = photonVision;
         this.joystick = joystick;
-        this.lastSight = 0;
 
         // We don't require drivebase here because we still want the main drive command to
         // have control, and we don't need complete control over it. The camera should never
@@ -131,6 +130,8 @@ public class AimSpeaker extends Command {
 
     @Override
     public void initialize() {
+        tagNames = new AprilTagNames(alliance);
+        this.lastSight = 0;
         Util.consoleLog();
         SmartDashboard.putBoolean("Target Locked", false);
 
@@ -168,6 +169,7 @@ public class AimSpeaker extends Command {
             else {
                 // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
                 // at the current distance
+                Util.consoleLog("id = %d", targetId);
                 double output = rotationController.calculate(idealYaw - currentYaw, 0);
                 robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
             }
