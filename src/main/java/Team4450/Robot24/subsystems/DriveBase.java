@@ -472,7 +472,7 @@ public class DriveBase extends SubsystemBase {
    * @param speeds The ChassisSpeeds object.
    */
   public void driveChassisSpeedsPP(ChassisSpeeds speeds) {
-    if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
+    // if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
     driveChassisSpeeds(speeds);
   }
   
@@ -879,7 +879,8 @@ public class DriveBase extends SubsystemBase {
               DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
 
               // below tells PP "don't do any random moving without explicit instructions": will probably change in future
-              new ReplanningConfig(false, false)
+              // new ReplanningConfig(false, false)
+              new ReplanningConfig(true, true)
       ),
       () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance

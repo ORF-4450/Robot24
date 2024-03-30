@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
+import Team4450.Robot24.Constants.DriveConstants;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
@@ -87,7 +88,8 @@ public class DriveToNote extends Command {
         Util.consoleLog("in[yaw=%f, pitch=%f] out[rot=%f, mov=%f]", target.getYaw(), target.getPitch(), rotation, movement);
 
         if (alsoDrive) {
-            robotDrive.driveRobotRelative(-movement, 0, rotation);
+            // robotDrive.driveRobotRelative(-movement, 0, rotation);
+            robotDrive.driveRobotRelative((2 / DriveConstants.kMaxSpeedMetersPerSecond), 0, rotation);
         } else {
             robotDrive.setTrackingRotation(rotation);
         }

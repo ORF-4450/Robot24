@@ -48,6 +48,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -535,7 +536,10 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
-		NamedCommands.registerCommand("FaceNote", new DriveToNote(driveBase, pvNoteCamera, false));
+		NamedCommands.registerCommand("IntakeNoteVision", new ParallelDeadlineGroup(
+			new IntakeNote(intake, elevShooter).withTimeout(3),
+			new DriveToNote(driveBase, pvNoteCamera, true)
+		));
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
 		NamedCommands.registerCommand("IntakeNoteShooting", new StartEndCommand(()->{
