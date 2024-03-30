@@ -69,7 +69,7 @@ public class PointToYaw extends Command {
         // sure why it is needed but I believe it is because the input from joysticks in the
         // drive() method is expected to be reversed so we have to manually do that. It doesn't
         // work if we remove the negative.
-        double measured = robotDrive.getYaw() % (360);
+        double measured = robotDrive.getGyroYaw();
         double rotation = -pidController.calculate(measured);
         
         SmartDashboard.putNumber("PointToWay/setpoint", desiredYaw);

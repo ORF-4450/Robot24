@@ -162,7 +162,7 @@ public class AimSpeaker extends Command {
 
             Transform2d transform = robotDrive.getPose().minus(photonVision.getTagPose(targetId));
             double idealYaw = Math.toDegrees(Math.atan2(transform.getY(), transform.getX()));
-            double currentYaw = robotDrive.getYaw();
+            double currentYaw = robotDrive.getGyroYaw();
 
             if (joystickMoving || Util.getElaspedTime(lastSight) < 2) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
             else {
