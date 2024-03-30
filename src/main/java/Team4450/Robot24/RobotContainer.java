@@ -192,7 +192,7 @@ public class RobotContainer
 		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
 		elevShooter = new ElevatedShooter();
-		candle = new Candle(CTRE_CANDLE, 8);
+		candle = new Candle(CTRE_CANDLE, 8+26);
 
 		// Create any persistent commands.
 
@@ -535,6 +535,8 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoStart", new AutoStart());
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
+		NamedCommands.registerCommand("FaceNote", new DriveToNote(driveBase, pvNoteCamera, false));
+
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
 		NamedCommands.registerCommand("IntakeNoteShooting", new StartEndCommand(()->{
 			intake.start();
@@ -567,6 +569,8 @@ public class RobotContainer
 			new WaitCommand(1).andThen(new ShootSpeaker(elevShooter))
 		));
 		
+		
+
 		NamedCommands.registerCommand("ShootFar",
 			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))

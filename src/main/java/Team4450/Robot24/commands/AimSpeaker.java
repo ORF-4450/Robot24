@@ -81,21 +81,32 @@ public class AimSpeaker extends Command {
                 break;
             case NORMAL:
                 // LOWER SHOT POSITION
-                pitchOffsets.put(1.69, -55.0);
-                pitchOffsets.put(1.77, -48.0);
-                pitchOffsets.put(2.10, -42.06);
-                pitchOffsets.put(2.53, -35.07);
-                pitchOffsets.put(2.87, -30.26);
-                pitchOffsets.put(3.28, -27.78);
-                pitchOffsets.put(3.53, -26.32);
-                pitchOffsets.put(4.57, -19.92);
+                pitchOffsets.put(1.63556, -53.86);
+                pitchOffsets.put(2.309, -43.224);
+                pitchOffsets.put(3.29, -34.63);
+                pitchOffsets.put(4.92, -27.50);
+                pitchOffsets.put(5.56, -25.89);
+                pitchOffsets.put(6.26, -25.0);
+
+                // pitchOffsets.put(1.69, -55.0);
+                // pitchOffsets.put(1.77, -48.0);
+                // pitchOffsets.put(2.10, -42.06);
+                // pitchOffsets.put(2.53, -35.07);
+                // pitchOffsets.put(2.87, -30.26);
+                // pitchOffsets.put(3.28, -27.78);
+                // pitchOffsets.put(3.53, -26.32);
+                // pitchOffsets.put(4.57, -19.92);
                 break;
             case HIGH:
                 // UPPER SHOT POSITION
-                pitchOffsets.put(1.45, -44.0);
-                pitchOffsets.put(2.37, -33.0);
-                pitchOffsets.put(3.45, -20.0);
-                pitchOffsets.put(3.69, -16.0);
+                pitchOffsets.put(4.72, -21.81);
+                pitchOffsets.put(6.37, -18.0);
+                pitchOffsets.put(4.03, -25.3);
+                pitchOffsets.put(6.01, -19.48);
+                // pitchOffsets.put(1.45, -44.0);
+                // pitchOffsets.put(2.37, -33.0);
+                // pitchOffsets.put(3.45, -20.0);
+                // pitchOffsets.put(3.69, -16.0);
                 break;
 
         }
@@ -155,7 +166,7 @@ public class AimSpeaker extends Command {
         boolean pitchOkay = false;
 
         // calculate distance to tag using PhotonUtils (basic trig)
-        double dist = PhotonUtils.calculateDistanceToTargetMeters(photonVision.getRobotToCam().getZ(), 1.4224, // camera height, tag height (center)
+        double dist = PhotonUtils.calculateDistanceToTargetMeters(photonVision.getRobotToCam().getZ(), 1.447, // camera height, tag height (center)
             -photonVision.getRobotToCam().getRotation().getY(),
             Math.toRadians(target.getPitch())
         );

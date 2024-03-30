@@ -34,19 +34,19 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "6.1"
+                        "pathName": "4.1"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "6.2"
+                        "pathName": "4.2"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "6.3"
+                        "pathName": "4.3"
                       }
                     }
                   ]
@@ -66,24 +66,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6.4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6.5"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "6.6"
           }
         }
       ]

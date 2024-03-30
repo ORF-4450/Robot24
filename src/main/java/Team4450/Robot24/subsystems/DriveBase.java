@@ -9,9 +9,12 @@ import static Team4450.Robot24.Constants.alliance;
 
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -87,6 +90,8 @@ public class DriveBase extends SubsystemBase {
   private boolean       fieldRelative = true, currentBrakeMode = false;
   private boolean       alternateRotation = false, istracking = false;
   private double        trackingRotation = 0; // this is the value that will store overridden joystick rot
+
+  public Optional<Rotation2d>        pathplannerOverride = Optional.empty();
 
   // Field2d object creates the field display on the simulation and gives us an API
   // to control what is displayed (the simulated robot).
@@ -897,6 +902,6 @@ public class DriveBase extends SubsystemBase {
    * @return the desired yaw value (or Optional.empty() to just use the values in drawn path)
    */
   public Optional<Rotation2d> getPPRotationTargetOverride() {
-    return Optional.empty();
+    return pathplannerOverride;
   }
 }

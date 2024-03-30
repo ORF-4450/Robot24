@@ -1,11 +1,15 @@
 package Team4450.Robot24.commands;
 
+import java.util.Optional;
+
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import Team4450.Lib.Util;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -68,7 +72,13 @@ public class DriveToNote extends Command {
         // but it happened once...
         if (target == null) {
             robotDrive.setTrackingRotation(Double.NaN); // temporarily disable tracking
+            robotDrive.pathplannerOverride = Optional.empty();
             return;
+        }
+
+        if (RobotState.isAutonomous()) {
+            robotDrive.pathplannerOverride = Optional.of(new Rotation2d(Math.toRadians(robotDrive.getGyroYaw() - target.getYaw())));
+            Util.consoleLog("note align");
         }
 
         double rotation = rotationController.calculate(target.getYaw()); // attempt to minimize
@@ -91,5 +101,6 @@ public class DriveToNote extends Command {
             robotDrive.toggleFieldRelative(); // restore beginning state
         robotDrive.setTrackingRotation(Double.NaN);
         robotDrive.disableTracking();
+        robotDrive.pathplannerOverride = Optional.empty();
     }
 }

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.657795760345985,
-      "y": 6.672325572143704
+      "x": 1.3544706441264736,
+      "y": 5.537771404246512
     },
-    "rotation": 59.50626095206533
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -18,25 +18,19 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Amp0"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AmpReady"
+                  "pathName": "4.1"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Amp1"
+                  "name": "IntakeNote"
                 }
               }
             ]
@@ -45,29 +39,23 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootAmp"
+            "name": "ShootVision"
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Amp2"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "AmpReady"
+                  "pathName": "4.2"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Amp3"
+                  "name": "IntakeNote"
                 }
               }
             ]
@@ -76,7 +64,32 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootAmp"
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "4.3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
           }
         }
       ]

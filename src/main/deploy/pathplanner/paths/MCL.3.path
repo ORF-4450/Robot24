@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.669200792105288,
-        "y": 7.463309861804909
+        "x": 3.938505843901569,
+        "y": 5.6108529134841
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.659250674982832,
-        "y": 7.0825966142673025
+        "x": 4.689036240051648,
+        "y": 6.913849061143063
       },
       "isLocked": false,
-      "linkedName": "6.4-6.5"
+      "linkedName": "MCL.2-3"
     },
     {
       "anchor": {
-        "x": 4.600598900271875,
-        "y": 5.973652738972145
+        "x": 8.259920642795155,
+        "y": 5.768679667939693
       },
       "prevControl": {
-        "x": 5.130842011684024,
-        "y": 6.162970136125458
+        "x": 6.763763392668156,
+        "y": 5.76757396725359
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "6.5-6.6"
+      "linkedName": "MCL.3-4"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "spin up",
-      "waypointRelativePos": 0.0,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,24 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "SpinUp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot",
-      "waypointRelativePos": 0.8,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot"
+                "name": "IntakeNote"
               }
             }
           ]
@@ -68,13 +51,13 @@
   ],
   "globalConstraints": {
     "maxVelocity": 4.8,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 8.66386365760484,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,

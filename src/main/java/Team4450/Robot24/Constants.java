@@ -93,7 +93,7 @@ public final class Constants
 
      
     public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 0.57),
+        new Translation3d(0, 0, 0.6477),
         new Rotation3d(0, Math.toRadians(-25), Math.toRadians(180))
     );
     
