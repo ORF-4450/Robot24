@@ -409,7 +409,7 @@ public class RobotContainer
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
-			.onTrue(new SpinUpShooter(elevShooter, driveBase, -55, 0.65, false)
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -45, 0.65, false)
 		);
 
 		// new Trigger(()-> utilityController.getPOV() == 180) // down POV

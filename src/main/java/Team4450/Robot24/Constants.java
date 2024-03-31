@@ -91,10 +91,9 @@ public final class Constants
         new Rotation3d(0, 0, Math.toRadians(180))
     );
 
-     
     public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 0.6477),
-        new Rotation3d(0, Math.toRadians(-25), Math.toRadians(180))
+        new Translation3d(0, 0, 0.6477), // change last value to height in METERS of lens
+        new Rotation3d(0, Math.toRadians(-25), Math.toRadians(180)) // keep the 180, the -25 is the camera angle (negative!)
     );
     
     public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(
