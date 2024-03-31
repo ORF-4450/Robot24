@@ -880,7 +880,7 @@ public class DriveBase extends SubsystemBase {
 
               // below tells PP "don't do any random moving without explicit instructions": will probably change in future
               // new ReplanningConfig(false, false)
-              new ReplanningConfig(true, true)
+              new ReplanningConfig(true, false)
       ),
       () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance

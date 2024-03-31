@@ -33,7 +33,7 @@ public class ElevatedShooter extends SubsystemBase {
         /** the position to start intaking from the Source at */ SOURCE, 
         /** the position to start climbing at */ CLIMB, 
         /** No position */ NONE,
-        WING_SHOT
+        WING_SHOT, CLIMB_2
     };
 
     // NOTE: all elevator heights in THIS java file (different in Elevator.java)
@@ -85,6 +85,11 @@ public class ElevatedShooter extends SubsystemBase {
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+            case CLIMB_2:
+                endGoalPivotAngle = -160;
+                endGoalElevatorHeight = MAIN_SAFE_TOP - 0.2;
+                atTop = true;
+                break;
             case WING_SHOT:
                 endGoalPivotAngle = -33.3;
                 endGoalElevatorHeight = 0.108;
@@ -101,7 +106,7 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = false;
                 break;
             case TRAP:
-                endGoalPivotAngle = TRAP_ANGLE;
+                endGoalPivotAngle = SmartDashboard.getNumber("trap/angle", TRAP_ANGLE);
                 endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
@@ -246,6 +251,7 @@ public class ElevatedShooter extends SubsystemBase {
     public ElevatedShooter() {
         shooter = new Shooter();
 		elevator = new Elevator();
+        SmartDashboard.putNumber("trap/angle", TRAP_ANGLE);
         SmartDashboard.putString("position_step", "_");
     }
 

@@ -3,51 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5387710089036255,
-        "y": 2.203131472855207
+        "x": 2.2492355652494043,
+        "y": 3.5413177466979935
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.3549843252960323,
-        "y": 0.1463839748736031
+        "x": 5.473795283528068,
+        "y": 1.1635324582033089
       },
       "isLocked": false,
       "linkedName": "CL.2-3"
     },
     {
       "anchor": {
-        "x": 8.869209794781197,
-        "y": 2.611471543627611
+        "x": 8.137572458180632,
+        "y": 2.3090383690067977
       },
       "prevControl": {
-        "x": 8.932111041240319,
-        "y": 2.730426701353002
-      },
-      "nextControl": {
-        "x": 8.169685852020514,
-        "y": 1.2885727836187815
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 3.5387710089036255,
-        "y": 2.203131472855207
-      },
-      "prevControl": {
-        "x": 4.30752142940298,
-        "y": 1.7301319489171716
+        "x": 5.933045659804119,
+        "y": 1.1501198281414413
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CL.3-4"
+      "linkedName": "CL3-3.5"
     }
   ],
   "rotationTargets": [
     {
       "waypointRelativePos": 0.7,
-      "rotationDegrees": 18.01501929772181,
+      "rotationDegrees": 24.04510183870551,
       "rotateFast": false
     }
   ],
@@ -69,51 +53,17 @@
           ]
         }
       }
-    },
-    {
-      "name": "spin up",
-      "waypointRelativePos": 1.15,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpinUpPodium"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot",
-      "waypointRelativePos": 1.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot"
-              }
-            }
-          ]
-        }
-      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 44.8,
-    "maxAcceleration": 4.8,
+    "maxVelocity": 4.8,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 720.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -41.2066425797239,
+    "velocity": 0.0,
+    "rotation": 29.544502412856918,
     "rotateFast": false
   },
   "reversed": false,

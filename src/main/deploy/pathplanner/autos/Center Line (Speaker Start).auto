@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6433255035408881,
-      "y": 4.3785735357929045
+      "x": 0.683611467669364,
+      "y": 4.417657651349529
     },
     "rotation": -58.814230497543726
   },
@@ -24,9 +24,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CL.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         },
         {
@@ -36,9 +48,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "CL.4"
+            "pathName": "CL.3.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

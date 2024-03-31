@@ -1,5 +1,7 @@
 package Team4450.Robot24.commands;
 
+import static Team4450.Robot24.Constants.robot;
+
 import java.util.Optional;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -89,7 +91,7 @@ public class DriveToNote extends Command {
 
         if (alsoDrive) {
             // robotDrive.driveRobotRelative(-movement, 0, rotation);
-            robotDrive.driveRobotRelative((2 / DriveConstants.kMaxSpeedMetersPerSecond), 0, rotation);
+            robotDrive.driveRobotRelative((-movement), 0, rotation);
         } else {
             robotDrive.setTrackingRotation(rotation);
         }
@@ -99,6 +101,8 @@ public class DriveToNote extends Command {
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
+        if (alsoDrive)
+            robotDrive.drive(0, 0, 0, false);
         if (initialFieldRel)
             robotDrive.toggleFieldRelative(); // restore beginning state
         robotDrive.setTrackingRotation(Double.NaN);

@@ -20,7 +20,7 @@ import Team4450.Robot24.utility.AprilTagNames;
  * while also spinning up the shooter wheels at a special low power for trap shooting.
  */
 public class AimTrap extends Command {
-    private PIDController rotationController = new PIDController(0.008, 0, 0); // for rotating drivebase
+    private PIDController rotationController = new PIDController(0.004, 0, 0); // for rotating drivebase
     private PIDController xTranslationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
     private PIDController yTranslationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
 
@@ -44,6 +44,7 @@ public class AimTrap extends Command {
 
         SendableRegistry.addLW(yTranslationController, "Trap Translation PID");
         SendableRegistry.addLW(rotationController, "Trap Rotation PID");
+        SmartDashboard.putNumber("trap/dist", 1.48);
     }
 
     @Override
@@ -88,11 +89,11 @@ public class AimTrap extends Command {
 
         Util.consoleLog("yaw=%f, x=%f, y=%f", yaw, xOffset, yOffset);
 
-        double rotOutput = -rotationController.calculate(yaw, 0); // not sure why negative but keep it that way
+        double rotOutput = rotationController.calculate(yaw, 0); // not sure why negative but keep it that way
         double xOutput = xTranslationController.calculate(xOffset, -0.3556); // 0 meters offset from side to side
-        double yOutput = yTranslationController.calculate(yOffset, 1.5); // 1.2 meters offset from front
+        double yOutput = yTranslationController.calculate(yOffset, SmartDashboard.getNumber("trap/dist", 1.48)); // 1.2 meters offset from front
 
-        rotOutput = 0;
+        // rotOutput = 0;
         SmartDashboard.putBoolean("Target Locked", Math.abs(rotOutput)<0.1 && Math.abs(xOutput)<0.1 && Math.abs(yOutput)<0.1);
 
         robotDrive.driveRobotRelative(yOutput, xOutput, rotOutput); // use outputs

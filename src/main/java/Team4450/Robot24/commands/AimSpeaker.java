@@ -105,6 +105,7 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(4.72, -21.81);
                 pitchOffsets.put(6.37, -18.0);
                 pitchOffsets.put(4.03, -25.3);
+                pitchOffsets.put(7.96, -15.0);
                 pitchOffsets.put(6.01, -19.48);
                 // pitchOffsets.put(1.45, -44.0);
                 // pitchOffsets.put(2.37, -33.0);
@@ -121,7 +122,8 @@ public class AimSpeaker extends Command {
         // the center of the robot. If it is on the side we have to "center" a little
         // bit off to the side:
         yawOffsets.put(1.69, 9.0);
-        yawOffsets.put(20.0, 6.0);
+        yawOffsets.put(4.69, 5.0);
+        // yawOffsets.put(20.0, 6.0);
 
         // this indicator should represent whether the shooter AND the drivebase are in
         // alignment AND ready to shoot.
@@ -161,18 +163,19 @@ public class AimSpeaker extends Command {
             SmartDashboard.putBoolean("Target Locked", false);
             SmartDashboard.putNumber("Distance to Speaker", Double.NaN);
 
-            Transform2d transform = robotDrive.getPose().minus(photonVision.getTagPose(targetId));
-            double idealYaw = Math.toDegrees(Math.atan2(transform.getY(), transform.getX()));
-            double currentYaw = robotDrive.getGyroYaw();
+            // Transform2d transform = robotDrive.getPose().minus(photonVision.getTagPose(targetId));
+            // double idealYaw = Math.toDegrees(Math.atan2(transform.getY(), transform.getX()));
+            // double currentYaw = robotDrive.getGyroYaw();
 
-            if (joystickMoving || Util.getElaspedTime(lastSight) < 2) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
-            else {
-                // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
-                // at the current distance
-                Util.consoleLog("id = %d", targetId);
-                double output = rotationController.calculate(idealYaw - currentYaw, 0);
-                robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
-            }
+            // if (joystickMoving || Util.getElaspedTime(lastSight) < 2) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
+            // else {
+            //     // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
+            //     // at the current distance
+            //     Util.consoleLog("id = %d", targetId);
+            //     double output = rotationController.calculate(idealYaw - currentYaw, 0);
+            //     robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
+            // }
+            robotDrive.setTrackingRotation(Double.NaN);
             return;
         }
         lastSight = Util.timeStamp();

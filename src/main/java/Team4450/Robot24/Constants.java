@@ -64,7 +64,7 @@ public final class Constants
     public static final double  OUTER_ANGLE = -15;
     public static final double  PODIUM_ANGLE = -26;
     public static final double  SUBWOOFER_ANGLE = -55;
-    public static final double  TRAP_ANGLE = -39;
+    public static final double  TRAP_ANGLE = -47;
     
     // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;

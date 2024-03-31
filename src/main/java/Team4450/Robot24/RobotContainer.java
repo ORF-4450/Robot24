@@ -340,8 +340,15 @@ public class RobotContainer
 
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
-		new Trigger(()-> driverController.getPOV() != -1)
-			.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+		// new Trigger(()-> driverController.getPOV() != -1)
+		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+
+		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue(
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
+		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue(
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
 
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
@@ -356,10 +363,11 @@ public class RobotContainer
 		new Trigger(() -> driverController.getLeftBumper())
 			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 		// aim trap
+		SmartDashboard.putNumber("trap/speed", 0.7);
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(
 					new Preset(elevShooter, PresetPosition.TRAP).andThen(
-					new SpinUpShooter(elevShooter, driveBase, Double.NaN, 0.7, false)
+					new SpinUpShooter(elevShooter, driveBase, Double.NaN, SmartDashboard.getNumber("trap/speed", 0.7), false)
 				).alongWith(new AimTrap(driveBase, pvShooterCamera)
 			));
 
@@ -401,20 +409,22 @@ public class RobotContainer
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
-			.onTrue(new SpinUpShooter(elevShooter, driveBase, -60, 0.6, false)
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -55, 0.65, false)
 		);
 
-		new Trigger(()-> utilityController.getPOV() == 180) // down POV
-			.whileTrue(new RunCommand(()->{
-				elevShooter.elevator.moveUnsafe(Util.squareInput(utilityController.getRightY()));
-				// elevShooter.shooter.unlockPosition();
-			}));
+		// new Trigger(()-> utilityController.getPOV() == 180) // down POV
+		// 	.whileTrue(new RunCommand(()->{
+		// 		elevShooter.elevator.moveUnsafe(Util.squareInput(utilityController.getRightY()));
+		// 		// elevShooter.shooter.unlockPosition();
+		// 	}));
 
-		new Trigger(()-> utilityController.getPOV() == 180) // on release down POV
-			.onFalse(new RunCommand(()->{
-				elevShooter.elevator.lockPosition();
-				elevShooter.shooter.lockPosition();
-			}));
+		// new Trigger(()-> utilityController.getPOV() == 180) // on release down POV
+		// 	.onFalse(new RunCommand(()->{
+		// 		elevShooter.elevator.lockPosition();
+		// 		elevShooter.shooter.lockPosition();
+		// 	}));
+		new Trigger(()-> utilityController.getPOV() == 180) // down POV
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB_2));
 		
 
 		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
@@ -537,7 +547,7 @@ public class RobotContainer
 		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNoteVision", new ParallelDeadlineGroup(
-			new IntakeNote(intake, elevShooter).withTimeout(3),
+			new IntakeNote(intake, elevShooter).withTimeout(1),
 			new DriveToNote(driveBase, pvNoteCamera, true)
 		));
 
@@ -554,12 +564,15 @@ public class RobotContainer
 
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
-			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
+			new WaitCommand(0.3).andThen(new ShootSpeaker(elevShooter))
 		));
 		NamedCommands.registerCommand("ShootPodium",
 			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
+
+		NamedCommands.registerCommand("SpinUpCenterline",new SpinUpShooter(elevShooter, driveBase, -28.5, 1, true));
+		
 		NamedCommands.registerCommand("ShootWing",
 			new Preset(elevShooter, PresetPosition.WING_SHOT).andThen(
 			new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
