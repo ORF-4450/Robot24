@@ -8,6 +8,8 @@ import java.util.function.DoubleSupplier;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.ctre.phoenix6.configs.Pigeon2FeaturesConfigs;
+
 import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.ElevatedShooter;
@@ -86,21 +88,47 @@ public class AimSpeaker extends Command {
             case NORMAL:
                 // NORMAL SHOT POSITION
                 // (distance, angle) (add decimals or .0 after all)
-                pitchOffsets.put(1.63556, -53.86);
-                pitchOffsets.put(2.309, -43.224);
-                pitchOffsets.put(3.29, -34.63);
-                pitchOffsets.put(4.92, -27.50);
-                pitchOffsets.put(5.56, -25.89);
-                pitchOffsets.put(6.26, -25.0);
+                // pitchOffsets.put(1.63556, -53.86);
+                // pitchOffsets.put(2.309, -43.224);
+                // pitchOffsets.put(3.29, -34.63);
+                // pitchOffsets.put(4.92, -27.50);
+                // pitchOffsets.put(5.56, -25.89);
+                // pitchOffsets.put(6.26, -25.0);
+                //NEW CAMERA MOUNT BELOW:
+                pitchOffsets.put(2.01,-52.26);
+                pitchOffsets.put(2.97,-44.83);
+                pitchOffsets.put(4.50,-30.11);
+                pitchOffsets.put(6.36,-22.69);
+                pitchOffsets.put(7.75,-20.06);
+                pitchOffsets.put(9.61,-18.32);
+                pitchOffsets.put(11.6,-18.61);
+                pitchOffsets.put(4.31, -32.45);
+                pitchOffsets.put(4.35, -31.86);
+                pitchOffsets.put(3.30, -41.04);
+                pitchOffsets.put(3.79,-36.67);
+                
+
                 break;
             case HIGH:
                 // HIGH SHOT POSITION
                 // (distance, angle)
-                pitchOffsets.put(4.72, -21.81);
-                pitchOffsets.put(6.37, -18.0);
-                pitchOffsets.put(4.03, -25.3);
-                pitchOffsets.put(7.96, -15.0);
-                pitchOffsets.put(6.01, -19.48);
+                // pitchOffsets.put(4.72, -21.81);
+                // pitchOffsets.put(6.37, -18.0);
+                // pitchOffsets.put(4.03, -25.3);
+                // pitchOffsets.put(7.96, -15.0);
+                // pitchOffsets.put(6.01, -19.48);
+                //NEW CAMERA MOUNT BELOW:
+
+                pitchOffsets.put(2.02, -42.50);
+                pitchOffsets.put(3.36, -26.04);
+                pitchOffsets.put(4.48, -23.71);
+                pitchOffsets.put(5.10, -21.96);
+                pitchOffsets.put(6.18, -16.80);
+                pitchOffsets.put(6.98, -16.27);
+                pitchOffsets.put(8.89, -15.40);
+                pitchOffsets.put(5.72, -20.79);
+                pitchOffsets.put(4.23, -25.02);
+                pitchOffsets.put(3.44, -27.78);
                 break;
 
         }
