@@ -1,14 +1,11 @@
 package Team4450.Robot24.commands;
 
 import static Team4450.Robot24.Constants.alliance;
-import static Team4450.Robot24.Constants.robot;
 
 import java.util.function.DoubleSupplier;
 
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
-import com.ctre.phoenix6.configs.Pigeon2FeaturesConfigs;
 
 import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.DriveBase;
@@ -18,7 +15,6 @@ import Team4450.Robot24.utility.AprilTagNames;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
@@ -38,7 +34,7 @@ public class AimSpeaker extends Command {
     private final ElevatedShooter elevatedShooter;
     private final PhotonVision photonVision;
     private final DoubleSupplier joystick;
-    private double lastSight = 0;
+    // private double lastSight = 0;
     private AprilTagNames tagNames = new AprilTagNames(alliance); // helper class for tag names
     public static enum Position {LOW, NORMAL, HIGH}
 
@@ -97,15 +93,15 @@ public class AimSpeaker extends Command {
                 //NEW CAMERA MOUNT BELOW:
                 pitchOffsets.put(2.01,-52.26);
                 pitchOffsets.put(2.97,-44.83);
+                pitchOffsets.put(3.30,-41.04);
+                pitchOffsets.put(3.79,-36.67);
+                pitchOffsets.put(4.31,-32.45);
+                pitchOffsets.put(4.35,-31.86);
                 pitchOffsets.put(4.50,-30.11);
                 pitchOffsets.put(6.36,-22.69);
                 pitchOffsets.put(7.75,-20.06);
                 pitchOffsets.put(9.61,-18.32);
                 pitchOffsets.put(11.6,-18.61);
-                pitchOffsets.put(4.31, -32.45);
-                pitchOffsets.put(4.35, -31.86);
-                pitchOffsets.put(3.30, -41.04);
-                pitchOffsets.put(3.79,-36.67);
                 
 
                 break;
@@ -151,7 +147,7 @@ public class AimSpeaker extends Command {
     @Override
     public void initialize() {
         tagNames = new AprilTagNames(alliance);
-        this.lastSight = 0;
+        // this.lastSight = 0;
         Util.consoleLog();
         SmartDashboard.putBoolean("Target Locked", false);
 
@@ -196,7 +192,7 @@ public class AimSpeaker extends Command {
             robotDrive.setTrackingRotation(Double.NaN);
             return;
         }
-        lastSight = Util.timeStamp();
+        // lastSight = Util.timeStamp();
         // else we just continue as is knowing target is not null
 
         boolean yawOkay = false;

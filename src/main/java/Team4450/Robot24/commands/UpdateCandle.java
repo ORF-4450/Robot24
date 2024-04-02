@@ -6,6 +6,7 @@ import Team4450.Lib.Util;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.Candle.AnimationTypes;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -33,9 +34,9 @@ public class UpdateCandle extends Command {
 
     @Override
     public void execute() {
-        if (RobotState.isDisabled()) {
+        if (RobotState.isDisabled() && !DriverStation.isFMSAttached()) {
             state = State.DISABLED;
-        } else if (RobotState.isAutonomous()) {
+        } else if (RobotState.isDisabled()) {
             state = State.ALLIANCE;
         } else if (SmartDashboard.getBoolean("Intake", false)){
             state = State.INTAKING;
@@ -51,7 +52,7 @@ public class UpdateCandle extends Command {
     }
 
     private void blink(Color color) {
-        if (Util.getElaspedTime(time) % 0.5 < 0.3) {
+        if (Util.getElaspedTime(time) % 0.5 < 0.2) {
             candle.setLeds(color);
         } else {
             candle.setLedsOff();

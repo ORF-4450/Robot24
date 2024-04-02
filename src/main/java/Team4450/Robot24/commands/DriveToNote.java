@@ -1,7 +1,5 @@
 package Team4450.Robot24.commands;
 
-import static Team4450.Robot24.Constants.robot;
-
 import java.util.Optional;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -13,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import Team4450.Robot24.Constants.DriveConstants;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
