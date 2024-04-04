@@ -360,11 +360,12 @@ public class RobotContainer
 		// aim trap
 		SmartDashboard.putNumber("trap/speed", 0.7);
 		new Trigger(() -> driverController.getLeftTrigger())
-			.whileTrue(
-					new Preset(elevShooter, PresetPosition.TRAP).andThen(
-					new SpinUpShooter(elevShooter, driveBase, Double.NaN, SmartDashboard.getNumber("trap/speed", 0.7), false)
-				).alongWith(new AimTrap(driveBase, pvShooterCamera)
-			));
+			.whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+			// .whileTrue(
+			// 		new Preset(elevShooter, PresetPosition.TRAP).andThen(
+			// 		new SpinUpShooter(elevShooter, driveBase, Double.NaN, SmartDashboard.getNumber("trap/speed", 0.7), false)
+			// 	).alongWith(new AimTrap(driveBase, pvShooterCamera)
+			// ));
 
 
 		// reset field orientation
@@ -410,11 +411,11 @@ public class RobotContainer
 			));
 
 		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue( // podium
-			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
+			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
 		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue( // amp
-			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
+			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
 
 		// new Trigger(()-> utilityController.getPOV() == 180) // down POV
 		// 	.whileTrue(new RunCommand(()->{

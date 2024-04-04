@@ -86,8 +86,8 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = true;
                 break;
             case CLIMB_2:
-                endGoalPivotAngle = -160;
-                endGoalElevatorHeight = MAIN_SAFE_TOP - 0.2;
+                endGoalPivotAngle = -132;
+                endGoalElevatorHeight = 0.265;//MAIN_SAFE_TOP - 0.5;
                 atTop = true;
                 break;
             case WING_SHOT:
@@ -276,7 +276,7 @@ public class ElevatedShooter extends SubsystemBase {
      * @return true or false
      */
     private boolean isAtTopHalf() {
-        return elevator.getElevatorHeight() > 0.4;
+        return elevator.getElevatorHeight() > 0.25;
     }
 
     /**

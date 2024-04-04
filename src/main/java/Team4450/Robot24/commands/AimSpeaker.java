@@ -94,14 +94,14 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(2.01,-52.26);
                 pitchOffsets.put(2.97,-44.83);
                 pitchOffsets.put(3.30,-41.04);
-                pitchOffsets.put(3.79,-36.67);
-                pitchOffsets.put(4.31,-32.45);
-                pitchOffsets.put(4.35,-31.86);
-                pitchOffsets.put(4.50,-30.11);
+                pitchOffsets.put(3.786,-31.134);
+                pitchOffsets.put(4.47, -27.78);
+                pitchOffsets.put(5.45, -27.05);
+                pitchOffsets.put(5.76, -22.394);
                 pitchOffsets.put(6.36,-22.69);
                 pitchOffsets.put(7.75,-20.06);
-                pitchOffsets.put(9.61,-18.32);
-                pitchOffsets.put(11.6,-18.61);
+                pitchOffsets.put(9.04,-17.59);
+                // pitchOffsets.put(11.6,-18.61);
                 
 
                 break;
@@ -121,10 +121,11 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(5.10, -21.96);
                 pitchOffsets.put(6.18, -16.80);
                 pitchOffsets.put(6.98, -16.27);
-                pitchOffsets.put(8.89, -15.40);
+                pitchOffsets.put(8.63, -11.03);
                 pitchOffsets.put(5.72, -20.79);
                 pitchOffsets.put(4.23, -25.02);
                 pitchOffsets.put(3.44, -27.78);
+            
                 break;
 
         }
