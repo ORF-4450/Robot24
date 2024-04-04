@@ -51,12 +51,18 @@ public class UpdateCandle extends Command {
         setLeds();
     }
 
-    private void blink(Color color) {
+    private void blink(Color color, Color color2) {
         if (Util.getElaspedTime(time) % 0.5 < 0.2) {
             candle.setLeds(color);
-        } else {
+        } else if (color2 == null) {
             candle.setLedsOff();
+        } else {
+            candle.setLeds(color2);
         }
+    }
+
+    private void blink(Color color) {
+        blink(color, null);
     }
 
     private void setLeds() {
@@ -78,7 +84,7 @@ public class UpdateCandle extends Command {
                 break;
             case TARGET_LOCKED:
                 candle.setAnimation(AnimationTypes.Off);
-                blink(Color.kGreen);
+                blink(Color.kBlue, Color.kYellow);
                 break;
             case OFF:
                 candle.setAnimation(AnimationTypes.Off);

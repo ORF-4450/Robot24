@@ -343,12 +343,7 @@ public class RobotContainer
 		// new Trigger(()-> driverController.getPOV() != -1)
 		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
 
-		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue(
-			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
-		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue(
-			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
-			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
+
 
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
@@ -409,8 +404,17 @@ public class RobotContainer
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
-			.onTrue(new SpinUpShooter(elevShooter, driveBase, -45, 0.65, false)
-		);
+			.toggleOnTrue(new ParallelCommandGroup(
+				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
+				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
+			));
+
+		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue( // podium
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
+		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue( // amp
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true)));
 
 		// new Trigger(()-> utilityController.getPOV() == 180) // down POV
 		// 	.whileTrue(new RunCommand(()->{
@@ -454,15 +458,7 @@ public class RobotContainer
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnTrue(new ReverseIntake(intake, elevShooter));
 		new Trigger(() -> utilityController.getStartButton())
-			.toggleOnTrue(
-				(	new Preset(elevShooter, PresetPosition.SOURCE).andThen(
-					new RunCommand(()->{
-						elevShooter.shooter.startShooting(-0.5);
-						elevShooter.shooter.startFeeding(1);
-				}))).until(elevShooter.shooter::hasNote).andThen(
-					new Preset(elevShooter, PresetPosition.INTAKE)
-				)
-			);
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -45, 0.65, false));
 		
 		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
 			.toggleOnTrue(
