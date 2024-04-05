@@ -59,7 +59,7 @@ public class UpdateVisionPose extends Command {
             return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
-        if (RobotState.isAutonomous()) return;
+        // if (RobotState.isAutonomous()) return;
         // if(true)return;
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
