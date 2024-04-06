@@ -559,6 +559,10 @@ public class RobotContainer
 			elevShooter.shooter.stopShooting();
 		}, intake));
 
+		NamedCommands.registerCommand("DropNote",
+			new SpinUpShooter(elevShooter, driveBase, 0, 0.1, true).andThen(
+			new WaitCommand(0).andThen(new ShootSpeaker(elevShooter))
+		));
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.3).andThen(new ShootSpeaker(elevShooter))
