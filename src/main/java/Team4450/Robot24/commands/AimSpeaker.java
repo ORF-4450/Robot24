@@ -110,6 +110,10 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(3.62, -29.53);
                 pitchOffsets.put(4.34, -26.33);
                 pitchOffsets.put(4.95, -23.12);
+
+                //added after first match friday
+                pitchOffsets.put(3.2278, -32.44);
+                pitchOffsets.put(3.59, -28.2);
                 
                 
 
