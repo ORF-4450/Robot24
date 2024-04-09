@@ -33,7 +33,7 @@ public class ElevatedShooter extends SubsystemBase {
         /** the position to start intaking from the Source at */ SOURCE, 
         /** the position to start climbing at */ CLIMB, 
         /** No position */ NONE,
-        WING_SHOT, CLIMB_2
+        WING_SHOT, CLIMB_2, CLIMB_3
     };
 
     // NOTE: all elevator heights in THIS java file (different in Elevator.java)
@@ -86,6 +86,11 @@ public class ElevatedShooter extends SubsystemBase {
                 atTop = true;
                 break;
             case CLIMB_2:
+                endGoalPivotAngle = -132;
+                endGoalElevatorHeight = 0.42;//MAIN_SAFE_TOP - 0.5;
+                atTop = true;
+                break;
+            case CLIMB_3:
                 endGoalPivotAngle = -132;
                 endGoalElevatorHeight = 0.265;//MAIN_SAFE_TOP - 0.5;
                 atTop = true;

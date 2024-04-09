@@ -6,9 +6,11 @@ import org.photonvision.EstimatedRobotPose;
 
 import Team4450.Lib.Util;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Robot;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
@@ -56,7 +58,7 @@ public class UpdateVisionPose extends Command {
     public void execute() {
         if (Robot.isSimulation()) {
             cameraSubsystem.updateSimulationPose(robotDrive.getPose());
-            return; // if simulator don't try updating pose estimator because the
+            // return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
         // if (RobotState.isAutonomous()) return;
@@ -74,9 +76,14 @@ public class UpdateVisionPose extends Command {
             Pose2d pose2d = new Pose2d(
                 estimatedPoseContainer.estimatedPose.getX(),
                 estimatedPoseContainer.estimatedPose.getY(),
-                new Rotation2d(estimatedPoseContainer.estimatedPose.getRotation().getAngle())
+                new Rotation2d(estimatedPoseContainer.estimatedPose.getRotation().getZ())
             );
-
+            // Util.consoleLog("%d %d",
+            //     Math.round(pose2d.getRotation().getDegrees()),
+            //     Math.round(robotDrive.getPose().getRotation().getDegrees())
+            // );
+            
+            AdvantageScope.getInstance().sendPoses("vision_pose", estimatedPoseContainer.estimatedPose);
             robotDrive.updateOdometryVision(pose2d, estimatedPoseContainer.timestampSeconds);
         }
     }

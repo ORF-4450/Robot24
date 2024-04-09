@@ -89,7 +89,7 @@ public class DriveBase extends SubsystemBase {
   private boolean       alternateRotation = false, istracking = false;
   private double        trackingRotation = 0; // this is the value that will store overridden joystick rot
 
-  public Optional<Rotation2d>        pathplannerOverride = Optional.empty();
+  private Optional<Rotation2d>        pathplannerOverride = Optional.empty();
 
   // Field2d object creates the field display on the simulation and gives us an API
   // to control what is displayed (the simulated robot).
@@ -447,6 +447,10 @@ public class DriveBase extends SubsystemBase {
   public ChassisSpeeds getChassisSpeeds() {
     return this.chassisSpeeds;
   }
+  public ChassisSpeeds getChassisSpeedsPP() {
+    return new ChassisSpeeds();
+  }
+  
 
   /**
    * Drives robot by commanding swerve modules from a ChassisSpeeds object.
@@ -470,7 +474,7 @@ public class DriveBase extends SubsystemBase {
    * @param speeds The ChassisSpeeds object.
    */
   public void driveChassisSpeedsPP(ChassisSpeeds speeds) {
-    // if (RobotBase.isSimulation()) this.chassisSpeeds = speeds;
+    if (RobotBase.isSimulation()) this.chassisSpeeds = new ChassisSpeeds(0, 0, -speeds.omegaRadiansPerSecond);
     driveChassisSpeeds(speeds);
   }
   
@@ -868,7 +872,7 @@ public class DriveBase extends SubsystemBase {
     AutoBuilder.configureHolonomic(
       this::getPosePP, // Robot pose supplier
       this::resetOdometryPP, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      this::getChassisSpeedsPP, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       this::driveChassisSpeedsPP, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Translation PID constants
@@ -903,4 +907,14 @@ public class DriveBase extends SubsystemBase {
   public Optional<Rotation2d> getPPRotationTargetOverride() {
     return pathplannerOverride;
   }
+
+  public void setPPRotationOverride(Rotation2d rotation) {
+    pathplannerOverride = Optional.of(rotation);
+  }
+
+  public void setPPRotationOverrideOffset(double degrees) {
+    setPPRotationOverride(new Rotation2d(Math.toRadians(getGyroYaw() - degrees)));
+  }
+
+  public void clearPPRotationOverride() {pathplannerOverride = Optional.empty();}
 }

@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -203,6 +204,7 @@ public class AimSpeaker extends Command {
             //     robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
             // }
             robotDrive.setTrackingRotation(Double.NaN);
+            robotDrive.clearPPRotationOverride();
             return;
         }
         // lastSight = Util.timeStamp();
@@ -231,11 +233,17 @@ public class AimSpeaker extends Command {
         // ============= rotation of robot ==============================
         // points the physical drivebase at the speaker usig yaw offsets
 
-        if (joystickMoving) {robotDrive.setTrackingRotation(Double.NaN);} // if so, just do joystick
+        if (joystickMoving) {
+            robotDrive.setTrackingRotation(Double.NaN);
+            robotDrive.clearPPRotationOverride();
+        } // if so, just do joystick
         else {
             // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
             // at the current distance
             double output = rotationController.calculate(target.getYaw(), yawAngle);
+            if (RobotState.isAutonomous()) {
+                robotDrive.setPPRotationOverrideOffset(target.getYaw());
+            }
             if (Math.abs(output) < 0.02) yawOkay = true; // if within tolerance than the yaw is good
             robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
         }

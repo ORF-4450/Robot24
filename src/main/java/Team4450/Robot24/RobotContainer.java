@@ -429,7 +429,11 @@ public class RobotContainer
 		// 		elevShooter.shooter.lockPosition();
 		// 	}));
 		new Trigger(()-> utilityController.getPOV() == 180) // down POV
-			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB_2));
+			.toggleOnTrue(
+				(new Preset(elevShooter, PresetPosition.CLIMB_2)).andThen(
+					new Preset(elevShooter, PresetPosition.CLIMB_3)
+				)
+			);
 		
 
 		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)

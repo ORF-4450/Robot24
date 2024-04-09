@@ -514,6 +514,7 @@ public class PhotonVision extends SubsystemBase
 
             return Optional.of(estimatedPose);
         } else {
+            AdvantageScope.getInstance().setVisionTargets(new ArrayList<Pose3d>());
             return Optional.empty();
         }
     }

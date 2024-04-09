@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase {
 
         // PID constants, but also the motion profiling constraints
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
-            (1 / -ELEVATOR_WINCH_FACTOR), 4 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
+            (1 / -ELEVATOR_WINCH_FACTOR), 8 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
         ));
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(TOLERANCE_COUNTS);
@@ -112,6 +112,7 @@ public class Elevator extends SubsystemBase {
         mainPID.setGoal(goal);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
         double motorOutput = Util.clampValue(nonclamped, 1);
+        SmartDashboard.putNumber("elevator speed", motorOutput);
         motorMain.set(motorOutput);
 
         // output logging and simulation

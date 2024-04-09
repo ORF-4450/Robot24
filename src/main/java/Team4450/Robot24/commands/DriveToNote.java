@@ -72,12 +72,12 @@ public class DriveToNote extends Command {
         // but it happened once...
         if (target == null) {
             robotDrive.setTrackingRotation(Double.NaN); // temporarily disable tracking
-            robotDrive.pathplannerOverride = Optional.empty();
+            robotDrive.clearPPRotationOverride();
             return;
         }
 
         if (RobotState.isAutonomous()) {
-            robotDrive.pathplannerOverride = Optional.of(new Rotation2d(Math.toRadians(robotDrive.getGyroYaw() - target.getYaw())));
+            robotDrive.setPPRotationOverrideOffset(target.getYaw());
             Util.consoleLog("note align");
         }
 
@@ -104,6 +104,6 @@ public class DriveToNote extends Command {
             robotDrive.toggleFieldRelative(); // restore beginning state
         robotDrive.setTrackingRotation(Double.NaN);
         robotDrive.disableTracking();
-        robotDrive.pathplannerOverride = Optional.empty();
+        robotDrive.clearPPRotationOverride();
     }
 }

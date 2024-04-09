@@ -102,8 +102,8 @@ public class Shooter extends SubsystemBase {
 
         // profiled PID controller allows us to control acceleration and
         // deceleration and max speed of the pivot!
-        pivotPID = new ProfiledPIDController(0.08, 0, 0,
-            new Constraints(angleToEncoderCounts(360), angleToEncoderCounts(4*360)) // max velocity(/s), max accel(/s)
+        pivotPID = new ProfiledPIDController(0.12, 0, 0,
+            new Constraints(angleToEncoderCounts(360 *8), angleToEncoderCounts(11*360)) // max velocity(/s), max accel(/s)
         );
         pivotPID.setTolerance(PIVOT_TOLERANCE); // encoder counts not degrees for this one
 
@@ -286,6 +286,7 @@ public class Shooter extends SubsystemBase {
         if (Double.isNaN(goal)) return;
 
         double motorOutput = pivotPID.calculate(pivotEncoder.getPosition(), angleToEncoderCounts(goal));
+        SmartDashboard.putNumber("PIVOT_SPEED", motorOutput);
         motorPivot.set(motorOutput);
 
         // simulate shooter movement by incrementing position based on speed (not super accurate but

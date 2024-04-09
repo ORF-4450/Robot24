@@ -52,7 +52,7 @@ public class UpdateCandle extends Command {
     }
 
     private void blink(Color color, Color color2) {
-        if (Util.getElaspedTime(time) % 0.5 < 0.2) {
+        if (Util.getElaspedTime(time) % 0.2 < 0.1) {
             candle.setLeds(color);
         } else if (color2 == null) {
             candle.setLedsOff();

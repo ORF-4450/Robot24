@@ -75,7 +75,7 @@ public class AdvantageScope {
         return array;
     }
 
-    private void sendPoses(String key, Pose3d... poses) {
+    public void sendPoses(String key, Pose3d... poses) {
         ArrayList<Double> output = new ArrayList<Double>();
         for (int i=0;i<poses.length;i++) {
             double[] poseArray = poseToArray(poses[i]);
