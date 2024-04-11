@@ -41,7 +41,9 @@ import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
@@ -344,7 +346,8 @@ public class RobotContainer
 		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
 
 
-
+		new Trigger(() -> Timer.getMatchTime() < 30).whileTrue(new InstantCommand(()->driverController.setRumble(RumbleType.kBothRumble, 1)));
+		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new InstantCommand(()->utilityController.setRumble(RumbleType.kBothRumble, 1)));
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
 		new Trigger(() -> driverController.getRightBumper())
