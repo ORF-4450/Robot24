@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -346,8 +347,14 @@ public class RobotContainer
 		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
 
 
-		new Trigger(() -> Timer.getMatchTime() < 30).whileTrue(new InstantCommand(()->driverController.setRumble(RumbleType.kBothRumble, 1)));
-		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new InstantCommand(()->utilityController.setRumble(RumbleType.kBothRumble, 1)));
+		new Trigger(() -> Timer.getMatchTime() < 30 && Timer.getMatchTime() > 25).whileTrue(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 1);
+			utilityController.setRumble(RumbleType.kBothRumble, 1);
+		}));
+		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new RepeatCommand(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 1);
+			utilityController.setRumble(RumbleType.kBothRumble, 1);
+		})).withTimeout(2));
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
 		new Trigger(() -> driverController.getRightBumper())
