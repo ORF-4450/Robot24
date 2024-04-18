@@ -1,5 +1,6 @@
 package Team4450.Robot24.commands;
 
+import static Team4450.Robot24.Constants.SUBWOOFER_ANGLE;
 import static Team4450.Robot24.Constants.alliance;
 
 import java.util.function.DoubleSupplier;
@@ -105,6 +106,7 @@ public class AimSpeaker extends Command {
                 // pitchOffsets.put(11.6,-18.61);
 
                 // EOD thursday
+                pitchOffsets.put(1.68, SUBWOOFER_ANGLE);
                 pitchOffsets.put(1.76, -51.38);
                 pitchOffsets.put(2.13,-46.80);
                 pitchOffsets.put(2.48, -38.71);
@@ -120,6 +122,8 @@ public class AimSpeaker extends Command {
                 //added after first match friday
                 pitchOffsets.put(3.2278, -31.44);
                 pitchOffsets.put(3.59, -27.2);
+
+                pitchOffsets.put(5.72584, -20.21);
                 
                 
 
