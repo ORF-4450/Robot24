@@ -30,15 +30,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CL.3"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "CL.4"
+            "pathName": "CL.3.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

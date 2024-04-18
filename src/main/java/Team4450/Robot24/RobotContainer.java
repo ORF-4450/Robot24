@@ -347,14 +347,19 @@ public class RobotContainer
 		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
 
 
-		new Trigger(() -> Timer.getMatchTime() < 30 && Timer.getMatchTime() > 25).whileTrue(new InstantCommand(()->{
-			driverController.setRumble(RumbleType.kBothRumble, 1);
-			utilityController.setRumble(RumbleType.kBothRumble, 1);
-		}));
-		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new RepeatCommand(new InstantCommand(()->{
-			driverController.setRumble(RumbleType.kBothRumble, 1);
-			utilityController.setRumble(RumbleType.kBothRumble, 1);
-		})).withTimeout(2));
+		new Trigger(() -> Timer.getMatchTime() < 30 && Timer.getMatchTime() > 25).whileTrue(new StartEndCommand(
+			() -> {
+				driverController.setRumble(RumbleType.kBothRumble, 0.5);
+				utilityController.setRumble(RumbleType.kBothRumble, 0.5);},
+			() -> {
+				driverController.setRumble(RumbleType.kBothRumble, 0);
+				utilityController.setRumble(RumbleType.kBothRumble, 0);
+			}));
+		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 0.5);
+		}).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 0);
+		})));
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
 		new Trigger(() -> driverController.getRightBumper())
@@ -465,7 +470,7 @@ public class RobotContainer
 			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
 		));
 		new Trigger(()->utilityController.getRightTrigger()).whileTrue(new StartEndCommand(
-			()->{elevShooter.shooter.startFeeding(-1);elevShooter.shooter.backShoot();},
+			()->{elevShooter.shooter.startFeeding(-1);elevShooter.shooter.backShoot();intake.start(-0.9);},
 			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
 		));
 
@@ -681,6 +686,7 @@ public class RobotContainer
 	public void unlockMechanisms() {
 		elevShooter.elevator.unlockPosition();
 		elevShooter.shooter.unlockPosition();
+		driverController.setRumble(RumbleType.kBothRumble, 0);
 	}
 	
          

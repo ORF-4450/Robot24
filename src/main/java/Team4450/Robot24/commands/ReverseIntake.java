@@ -29,8 +29,8 @@ public class ReverseIntake extends Command {
         // run at speed of movement of drivebase, and it worked pretty well! 
         // we decided it wasn't needed but kind of fun so I left it here:
         //          intake.start((driveBase.getChassisSpeeds().vxMetersPerSecond) / 8.0);
-        elevatedShooter.shooter.startFeeding(-1);
-        elevatedShooter.shooter.startShooting(-1);
+        elevatedShooter.shooter.startFeeding(-0.3);
+        elevatedShooter.shooter.startShooting(-0.3);
         intake.start(-1);
     }
 

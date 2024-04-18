@@ -106,9 +106,14 @@ public class AimSpeaker extends Command {
 
                 // EOD thursday
                 pitchOffsets.put(1.76, -51.38);
+                pitchOffsets.put(2.13,-46.80);
                 pitchOffsets.put(2.48, -38.71);
                 pitchOffsets.put(3.46, -28.97);
                 pitchOffsets.put(3.62, -28.53);
+                pitchOffsets.put(3.81, -26.76);
+                // pitchOffsets.put(4.01, -27.9);
+                pitchOffsets.put(4.03, -26.4);
+                
                 pitchOffsets.put(4.34, -25.33);
                 pitchOffsets.put(4.95, -22.12);
 
