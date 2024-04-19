@@ -107,8 +107,8 @@ public class AimSpeaker extends Command {
 
                 // EOD thursday
                 pitchOffsets.put(1.68, SUBWOOFER_ANGLE);
-                pitchOffsets.put(1.76, -51.38);
-                pitchOffsets.put(2.13,-46.80);
+                pitchOffsets.put(1.76, -51.38 + 0.05);
+                pitchOffsets.put(2.13,-46.80 + 0.05);
                 pitchOffsets.put(2.48, -38.71);
                 pitchOffsets.put(3.46, -28.97);
                 pitchOffsets.put(3.62, -28.53);

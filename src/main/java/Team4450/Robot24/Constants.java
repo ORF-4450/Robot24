@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-03.28.24-1";
+	public static String		PROGRAM_NAME = "CW-04.19.24-1";
 
 	public static Robot			robot;
 
