@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootSpeaker"
+            "name": "ShootVision"
           }
         },
         {
@@ -65,12 +65,6 @@
           "type": "named",
           "data": {
             "name": "ShootVision"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 10.0
           }
         }
       ]

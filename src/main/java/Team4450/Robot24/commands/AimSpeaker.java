@@ -106,13 +106,15 @@ public class AimSpeaker extends Command {
                 // pitchOffsets.put(11.6,-18.61);
 
                 // EOD thursday
-                pitchOffsets.put(1.68, SUBWOOFER_ANGLE);
-                pitchOffsets.put(1.76, -51.38 + 0.05);
-                pitchOffsets.put(2.13,-46.80 + 0.05);
-                pitchOffsets.put(2.48, -38.71);
-                pitchOffsets.put(3.46, -28.97);
-                pitchOffsets.put(3.62, -28.53);
-                pitchOffsets.put(3.81, -26.76);
+                pitchOffsets.put(0.05 + 1.68, SUBWOOFER_ANGLE);
+                pitchOffsets.put(0.05 + 1.76, -51.38 + 0.05);
+                pitchOffsets.put(0.05 + 2.13,-46.80 + 0.05);
+                pitchOffsets.put(0.05 + 2.48, -38.71 - 0.25);
+                pitchOffsets.put(0.05 + 3.2278, -31.44);
+                pitchOffsets.put(0.05 + 3.46, -28.97);
+                pitchOffsets.put(0.05 + 3.59, -27.2);
+                pitchOffsets.put(0.05 + 3.62, -28.53);
+                pitchOffsets.put(0.05 + 3.81, -26.76);
                 // pitchOffsets.put(4.01, -27.9);
                 pitchOffsets.put(4.03, -26.4);
                 
@@ -120,8 +122,7 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(4.95, -22.12);
 
                 //added after first match friday
-                pitchOffsets.put(3.2278, -31.44);
-                pitchOffsets.put(3.59, -27.2);
+
 
                 pitchOffsets.put(5.72584, -20.21);
                 
