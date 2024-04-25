@@ -3,19 +3,13 @@ package Team4450.Robot24;
 
 import static Team4450.Robot24.Constants.*;
 
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import Team4450.Robot24.commands.autonomous.AutoEnd;
-import Team4450.Robot24.commands.autonomous.AutoStart;
-
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
 import Team4450.Robot24.commands.AimSpeaker;
-import Team4450.Robot24.commands.AimTrap;
 import Team4450.Robot24.commands.Preset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
@@ -51,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -558,9 +551,6 @@ public class RobotContainer
 	 	Util.consoleLog();
 		
 		// Register commands called from PathPlanner Autos.
-		
-		NamedCommands.registerCommand("AutoStart", new AutoStart());
-		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
 
 		NamedCommands.registerCommand("IntakeNoteVision", new ParallelDeadlineGroup(
 			new IntakeNote(intake, elevShooter).withTimeout(1),
