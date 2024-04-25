@@ -509,6 +509,7 @@ public class PhotonVision extends SubsystemBase
                 if (tagPose.isPresent())
                     usedTagPoses.add(tagPose.get());
             }
+            // send the tag poses used to AS to show green laser indicators of tag sights
             AdvantageScope.getInstance().setVisionTargets(usedTagPoses);
             // Util.consoleLog("used %d tags for estimation", usedTagPoses.size());
 

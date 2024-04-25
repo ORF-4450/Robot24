@@ -80,7 +80,7 @@ public class UpdateVisionPose extends Command {
             //     Math.round(pose2d.getRotation().getDegrees()),
             //     Math.round(robotDrive.getPose().getRotation().getDegrees())
             // );
-            
+            // send the "green ghost" vision pose to AS
             AdvantageScope.getInstance().sendPoses("vision_pose", estimatedPoseContainer.estimatedPose);
             robotDrive.updateOdometryVision(pose2d, estimatedPoseContainer.timestampSeconds);
         }

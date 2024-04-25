@@ -74,6 +74,7 @@ public class DriveToNote extends Command {
         }
 
         if (RobotState.isAutonomous()) {
+            // attempt to override the rotation of the robot during auton: unclear if it works or not
             robotDrive.setPPRotationOverrideOffset(target.getYaw());
             Util.consoleLog("note align");
         }

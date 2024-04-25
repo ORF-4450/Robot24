@@ -157,8 +157,7 @@ public class AimSpeaker extends Command {
         // mapping of distance (meters) to target yaw offset value within frame
         // Ideally, the yaw offset should be 0 deg because that is
         // perfectly centered within PV frame, but that's only if the camera is on
-        // the center of the robot. If it is on the side we have to "center" a little
-        // bit off to the side:
+        // the center of the robot. CHANGE: it is now so it's just 0 for everything:
         yawOffsets.put(0.0, 0.0);
         yawOffsets.put(15.0, 0.0);
         // yawOffsets.put(20.0, 6.0);
