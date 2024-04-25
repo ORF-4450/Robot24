@@ -1,10 +1,10 @@
 ### Robot24 (Competition Code)
 ----------------------------------------------------------------------------
-FRC Team 4450 2024 Robot Control program (cole's fork).
+FRC Team 4450 2024 Robot Control program (Cole's fork).
 
 ![The USS ProtoStar](resources/bot.png)
 
-This is the 2024 competition robot control program reference implementation created by the Olympia Robotics Federation (FRC Team 4450). 
+This is the 2024 competition robot control program created by the Olympia Robotics Federation (FRC Team 4450). 
 
 Operates the robot USS Protostar for FRC game CRESCENDO.
 
@@ -17,6 +17,12 @@ Operates the robot USS Protostar for FRC game CRESCENDO.
 
 ### If RobotLib gets an update:
 1) download the RobotLib.json file from the RobotLib Github repo and drop it into the vendordeps folder inside the project folder. Build the project.
+********************************************************
+Final Competition Version
+* Final release of the 2024 ProtoStar Control Code
+* Versions are tagged at `glacier_peak`, `auburn`, `pre_dcmp`, `dcmp`, and `cmp`.
+
+C. Wilson, April 24 2024
 ****************************************************************************************************************
 Version 24.0
 
