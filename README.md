@@ -22,7 +22,7 @@ Final Competition Version
 * Final release of the 2024 ProtoStar Control Code
 * Versions are tagged at `glacier_peak`, `auburn`, `pre_dcmp`, `dcmp`, and `cmp`.
 
-C. Wilson, April 24 2024
+C. Wilson, April 25 2024
 ****************************************************************************************************************
 Version 24.0
 
