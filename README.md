@@ -1,10 +1,12 @@
-### Robot24 (Cole's Fork)
+### Robot24 (Competition Code)
 ----------------------------------------------------------------------------
-FRC Team 4450 2024 Robot Control program.
+FRC Team 4450 2024 Robot Control program (cole's fork).
+
+![The USS ProtoStar](resources/bot.png)
 
 This is the 2024 competition robot control program reference implementation created by the Olympia Robotics Federation (FRC Team 4450). 
 
-Operates the robot "USS Protostar" for FRC game "CRESCENDO".
+Operates the robot USS Protostar for FRC game CRESCENDO.
 
 ----------------------------------------------------------------------------
 ## Instructions to setup development environment for VS Code
