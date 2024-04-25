@@ -8,6 +8,8 @@ This is the 2024 competition robot control program created by the Olympia Roboti
 
 Operates the robot USS Protostar for FRC game CRESCENDO.
 
+### [Documentation can be found here](https://docs.google.com/document/d/1zERsIV9IP5XDU3M_6nbmJp7ZdcOXqVgWPSuCti4E938/edit)
+
 ----------------------------------------------------------------------------
 ## Instructions to setup development environment for VS Code
 1) Follow the instructions [here](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/index.html) to setup the JDK, Visual Studio Code, the FRC plugins and tools. Do not install the C++ portion. You do not need the FRC Update Suite to compile code.
