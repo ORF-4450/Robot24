@@ -541,7 +541,6 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's heading in degrees, from 0 to 359.
    */
   public double getHeading() {
-    // TODO: If we change gyros, this will need a solution for 360.
     return RobotContainer.navx.getHeadingInt();
   }
 
@@ -584,8 +583,6 @@ public class DriveBase extends SubsystemBase {
    */
   public Rotation2d getGyroYaw2d()
   {
-    // TODO: This function is not currently used. If we change gyros, and we want to use this, it
-    // will have to be rewritten for new gyro.
     if (navx.isMagnetometerCalibrated())
     {
      // We will only get valid fused headings if the magnetometer is calibrated

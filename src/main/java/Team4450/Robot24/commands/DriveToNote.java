@@ -35,7 +35,7 @@ public class DriveToNote extends Command {
         this.alsoDrive = alsoDrive;
 
         if (alsoDrive)
-            addRequirements(robotDrive); // require if also drive. TODO: may need to change for auto
+            addRequirements(robotDrive);
 
         SendableRegistry.addLW(translationController, "DriveToNote Translation PID");
         SendableRegistry.addLW(rotationController, "DriveToNote Rotation PID");

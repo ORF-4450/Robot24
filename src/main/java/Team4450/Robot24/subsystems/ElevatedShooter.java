@@ -198,7 +198,7 @@ public class ElevatedShooter extends SubsystemBase {
                     // the pivot is at the correct end goal, and so is the elevator
                     // we're done!
                     elevator.setElevatorHeight(endGoalElevatorHeight);
-                    elevator.move(0); // TODO: I don't understand/remember why I put this here -cole 3/23/24
+                    elevator.move(0); // I don't understand/remember why I put this here -cole 3/23/24
                     // this NT data is for debugging, letters kind of arbitrary but in order of line:
                     SmartDashboard.putString("position_step", "A");
                     return true;
