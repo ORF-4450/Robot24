@@ -116,7 +116,7 @@ public class Shooter extends SubsystemBase {
      */
     public boolean hasNote() {
         if (RobotBase.isSimulation())
-            return AdvantageScope.getInstance().hasNoteSim();
+            return AdvantageScope.getInstance().hasAGamepiece();
         else
             return noteSensor.isPressed();
     }

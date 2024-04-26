@@ -25,7 +25,7 @@ public class ShootSpeaker extends Command {
     @Override
     public void initialize() {
         // simulate shoot
-        if (RobotBase.isSimulation()) AdvantageScope.getInstance().dropAllNotes();
+        if (RobotBase.isSimulation()) AdvantageScope.getInstance().clearGamepieceInventory();
         
         // start feeding the Note into the shooter wheels
         elevatedShooter.shooter.startFeeding(1);

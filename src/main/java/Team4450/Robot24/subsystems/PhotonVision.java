@@ -195,7 +195,7 @@ public class PhotonVision extends SubsystemBase
             for (int noteID = 0; noteID < 11; noteID++) { // for each note do this:
                 String name = "note" + Integer.toString(noteID); // get the unique "type"
                 Pose2d fieldPose = visionSim.getDebugField().getObject(name).getPose();
-                if (AdvantageScope.getInstance().isReserved(noteID)) {
+                if (AdvantageScope.getInstance().isReservedGamepiece(noteID)) {
                     // this just means it's picked up by the robot or something else is controlling it
                     // visionSim.removeVisionTargets(name);
                 } else {
@@ -203,7 +203,7 @@ public class PhotonVision extends SubsystemBase
                     if (fieldPose.getX() == 0 && fieldPose.getY() == 0) continue;
                     Pose3d pose3d = new Pose3d(fieldPose);
                     visionSim.getVisionTargets(name).forEach((target)->target.setPose(pose3d));
-                    AdvantageScope.getInstance().setNote(noteID, pose3d);
+                    AdvantageScope.getInstance().setGamepiecePose(noteID, pose3d);
                 }
             }
         }
