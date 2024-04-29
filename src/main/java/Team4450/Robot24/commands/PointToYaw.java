@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import Team4450.Lib.Util;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.subsystems.DriveBase;
 
@@ -17,13 +18,13 @@ public class PointToYaw extends Command {
     private DoubleSupplier  yawSupplier;
     private boolean         wait;
     private DriveBase       robotDrive;
-    private PIDController   pidController = new PIDController(0.5, 0.1, 0);
+    private PIDController   pidController = new PIDController(0.02, 0.0, 0);
 
     private static final double NO_VALUE = Double.NaN;
 
     /**
      * Point to a yaw value
-     * @param yawSupplier a supplier of desired yaw values (IN RADIANS!)
+     * @param yawSupplier a supplier of desired yaw values (IN degrees!)
      * @param robotDrive the drive subsystem
      * @param wait whether or not to wait until it is completed to drive again (whether this command "requires" drivebase)
      */
@@ -35,6 +36,7 @@ public class PointToYaw extends Command {
         this.wait = wait;
 
         SendableRegistry.addLW(pidController, "PointToYaw PID");
+        SmartDashboard.putData("PointToYaw PID", pidController);
 
         // if wait is set to true, then "require" the drive subsystem to ovverride other commands
         if (wait) addRequirements(robotDrive);
@@ -59,7 +61,7 @@ public class PointToYaw extends Command {
             return;
         }
 
-        // calculate needed rotation with robot yaw (in radians) as input
+        // calculate needed rotation with robot yaw (in degrees?) as input
         //
         // getYawR() doesn't wrap around at 2pi (360deg), it just keeps on
         // going: so we take remainder of dividing by 2pi to get the "wrapped" around
@@ -67,7 +69,13 @@ public class PointToYaw extends Command {
         // sure why it is needed but I believe it is because the input from joysticks in the
         // drive() method is expected to be reversed so we have to manually do that. It doesn't
         // work if we remove the negative.
-        double rotation = -pidController.calculate(robotDrive.getYawR() % (Math.PI * 2));
+        double measured = robotDrive.getGyroYaw();
+        double rotation = -pidController.calculate(measured);
+        
+        SmartDashboard.putNumber("PointToWay/setpoint", desiredYaw);
+        SmartDashboard.putNumber("PointToWay/measured", measured);
+        SmartDashboard.putNumber("PointToWay/output", rotation);
+        
 
         if (wait) {
             // if this command is only one running on drivebase (wait) then command it to run
@@ -91,8 +99,9 @@ public class PointToYaw extends Command {
         Util.consoleLog();
 
         pidController.reset();
-        pidController.setTolerance(.05);      // in radians.
-        pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
+        pidController.setTolerance(1);
+        // pidController.enableContinuousInput(0, 2 * Math.PI); // rotation is continuous: full circle repeats
+        pidController.enableContinuousInput(-180, 180);
         robotDrive.enableTracking();
     }
 
@@ -133,12 +142,12 @@ public class PointToYaw extends Command {
             }
 
             radians *= -1;
-            return radians;
+            return Math.toDegrees(radians);
         }
     }
     
     /**
-    * generate a yaw from axis values
+    * helper value to generate a yaw from axis values
     *
     * @param xAxis
     * @param yAxis
@@ -146,11 +155,15 @@ public class PointToYaw extends Command {
     */
     public static double yawFromAxes(double xAxis, double yAxis) {
         double theta = Math.atan2(xAxis, yAxis) + Math.PI;
-        Util.consoleLog("%f", theta);
         double magnitude = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+        if (theta > Math.PI) {
+            theta = -(Math.PI - (theta - Math.PI));
+        }
 
         if (magnitude > 0.2) {
-            return theta;
+            Util.consoleLog("%f", theta);
+            SmartDashboard.putNumber("axis_yaw", Math.toDegrees(theta));
+            return Math.toDegrees(theta);
         } else {
             // this means the driver hasn't moved enough to trigger rotation
             // kind of like deadzone but radius of angle instead of individual

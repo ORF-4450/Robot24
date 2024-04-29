@@ -1,12 +1,17 @@
 // Copyright (c) FIRST and other WPILib contributors.
+// Copyright (c) Olympia Robotics Federation 4450
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
 package Team4450.Robot24.subsystems;
 
+import static Team4450.Robot24.Constants.alliance;
+
+import java.util.Optional;
+
+
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -17,6 +22,7 @@ import Team4450.Robot24.Constants.AutoConstants;
 import Team4450.Robot24.Constants.DriveConstants;
 import Team4450.Robot24.Constants.ModuleConstants;
 import Team4450.Robot24.utility.SwerveUtils;
+import Team4450.Robot24.AdvantageScope;
 import Team4450.Robot24.Constants;
 import Team4450.Robot24.RobotContainer;
 import Team4450.Lib.Util;
@@ -37,10 +43,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-//import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 public class DriveBase extends SubsystemBase {
   // Create MAXSwerveModules
@@ -70,7 +76,6 @@ public class DriveBase extends SubsystemBase {
   // Note: If we switch gyros back to ADS IMU, we will have to create code to
   // drive the 360 degree direction indicator (gyro2) on the  shuffleboard
   // display as it is currently driven directly by the NavX class from RobotLib.
-
   private final AHRS    navx = RobotContainer.navx.getAHRS();
 
   private SimDouble     simAngle; // navx sim.
@@ -79,9 +84,12 @@ public class DriveBase extends SubsystemBase {
 
   private Pose2d        lastPose;
   private double        distanceTraveled, yawAngle, lastYawAngle, startingGyroRotation;
+  private boolean       ppGyroReversed = false;
   private boolean       fieldRelative = true, currentBrakeMode = false;
   private boolean       alternateRotation = false, istracking = false;
-  private double        trackingRotation = 0;
+  private double        trackingRotation = 0; // this is the value that will store overridden joystick rot
+
+  private Optional<Rotation2d>        pathplannerOverride = Optional.empty();
 
   // Field2d object creates the field display on the simulation and gives us an API
   // to control what is displayed (the simulated robot).
@@ -93,9 +101,16 @@ public class DriveBase extends SubsystemBase {
   private double currentTranslationDir = 0.0;
   private double currentTranslationMag = 0.0;
 
+  // multiplied by X,Y translation and rotation outputs for "slow mode" (or boost I guess)
   private double speedLimiter = 1;
+  private double rotSpeedLimiter = 1;
+  
 
-  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate);
+  // we limit magnitude changes in the positive direction (acceleration), but allow crazy high rates in negative direction
+  // (deceleration). this has effect that deceleration is instant but acceleration is limited
+  // this is the solution from 2024 to solve battery sag/stutter issues and it's been working
+  // very well, extending battery life by ~3x, strongly recommend we keep with Rev code - Cole
+  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate,Double.NEGATIVE_INFINITY,0);
   private SlewRateLimiter rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double prevTime = WPIUtilJNI.now() * 1e-6;
 
@@ -168,10 +183,11 @@ public class DriveBase extends SubsystemBase {
     if (ModuleConstants.kDrivingMotorIdleMode == IdleMode.kBrake) currentBrakeMode = true;
 
     // Set tracking of robot field position at starting point.
-
+    // note that this doesn't really do much because PathPlanner redoes this anyway
     resetOdometry(DriveConstants.DEFAULT_STARTING_POSE); 
 
     configureAutoBuilder();
+    updateDS();
   }
 
   // Called on every Scheduler loop.
@@ -179,7 +195,7 @@ public class DriveBase extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry (robot position on field).
-
+    // combined with poseesitmator this merges with vision
     Pose2d currentPose = odometry.update(
         Rotation2d.fromDegrees(getGyroYaw()),   //gyro.getAngle()),
         new SwerveModulePosition[] {
@@ -189,9 +205,11 @@ public class DriveBase extends SubsystemBase {
             rearRight.getPosition()
         });
 
-    SmartDashboard.putNumber("Gyro angle", getGyroYaw());
-    //SmartDashboard.putNumber("Gyro turn rate", getTurnRate());
+    // update 3d simulation: look in AdvantageScope.java for more
+    AdvantageScope.getInstance().setRobotPose(currentPose);
+    AdvantageScope.getInstance().update();
 
+    SmartDashboard.putNumber("Gyro angle", getGyroYaw());
     SmartDashboard.putString("Robot pose", currentPose.toString());
 
     // Following code tracks robot movement distance and yaw so we can reset
@@ -228,8 +246,8 @@ public class DriveBase extends SubsystemBase {
     updateModulePose(rearRight);
 
     // Updates sim display of swerve modules.
-
     setField2dModulePoses();
+    AdvantageScope.getInstance().setSwerveModules(frontLeft, frontRight, rearLeft, rearRight);
   }
 
   /**
@@ -268,6 +286,16 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
+   * Returns the currently-estimated pose of the robot for use in Pathplanner.
+   * Currently acts exact same as getPose() but leaving it here for consistency
+   * in case we need to override it for PathPlanner
+   * @return The pose
+   */
+  public Pose2d getPosePP() {
+    return getPose();
+  }
+
+  /**
    * Resets the odometry to the specified pose.
    *
    * @param pose The pose to which to set the odometry.
@@ -293,11 +321,40 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
+   * Resets the odometry to the given pose, but sets a flag if done on
+   * red alliance. This is because PathPlanner uses a blue origin at all
+   * times, including re-zeroing gyro to be 180 on red. We set the flag to
+   * change it as soon as teleop starts! Other teams simply reverse their joystick
+   * values on Red, but because we are doing such advanced control replicating
+   * joystick inputs that I didn't want to mess with that (-cole)
+   * @param pose the pose
+   */
+  public void resetOdometryPP(Pose2d pose) {
+    ppGyroReversed = alliance == Alliance.Red;
+    resetOdometry(pose);
+  }
+
+  /**
+   * Must be called every teleop init. in Robot.java.
+   * Fixes the issue(/feature?) where red alliance PathPlanner has an
+   * inverted gyro due to blue origin (see resetOdometryPP() doc). This
+   * resets it by subtracting 180 from current gyro value.
+   */
+  public void fixPathPlannerGyro() {
+    if (ppGyroReversed) {
+      startingGyroRotation -= 180;
+      // we don't just set it to 0 because it might nit have started/ended in downfield state
+      ppGyroReversed = false; // set the flag so if re-eneabled twice in teleop it doesn't cycle back and forth
+    }
+  }
+
+  /**
    * Method to drive the robot using joystick info.
    *
-   * @param xSpeed        Speed of the robot in the x direction (forward).
-   * @param ySpeed        Speed of the robot in the y direction (sideways).
-   * @param rot           Angular rate of the robot.
+   * @param xSpeed        Speed of the robot in the x direction (forward). bounded [-1,1]
+   * @param ySpeed        Speed of the robot in the y direction (sideways). bounded [-1,1]
+   * @param rot           Angular rate of the robot. bounded [-1,1]
+   *                      (NOTE: may be overriden by setTrackingRotation()!)
    * @param rateLimit     Whether to enable rate limiting for smoother control.
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean rateLimit)
@@ -305,17 +362,24 @@ public class DriveBase extends SubsystemBase {
     double xSpeedCommanded;
     double ySpeedCommanded;
 
-    // override joystick value if tracking AND trackingRotation is real
+    // override joystick value if tracking AND trackingRotation is not NaN
     if (istracking && !Double.isNaN(trackingRotation)) rot = trackingRotation;
+
 
     if (rateLimit)
     {
       // Convert XY to polar for rate limiting
-      double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
       double inputTranslationMag = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+      double inputTranslationDir = Math.atan2(ySpeed, xSpeed);
 
       // Calculate the direction slew rate based on an estimate of the lateral acceleration
+      // cole note: basically this stuff (from Rev's starter code) limits how fast you can change path
+      // direction. it has effect of rounding out sharp turns but can be quite disorienting for drivers
+      // so we put the slew rate to infinity so it doesn't affect anything. we only use rotation and magnitude
+      // slew rate limiting - cole 2024
       double directionSlewRate;
+
+      // BEGIN REV CODE THAT IS KIND OF WEIRD BUT WORKS ============================================
 
       if (currentTranslationMag != 0.0) {
         directionSlewRate = Math.abs(DriveConstants.kDirectionSlewRate / currentTranslationMag);
@@ -352,17 +416,21 @@ public class DriveBase extends SubsystemBase {
       ySpeedCommanded = currentTranslationMag * Math.sin(currentTranslationDir);
 
       currentRotation = rotLimiter.calculate(rot);
-    } else {
+      // END STRANGE MAGICAL REV CODE ===========================
+    }
+    else { // if not ratelimited (do not suggets because of battery sage/stutter issues)
       xSpeedCommanded = xSpeed;
       ySpeedCommanded = ySpeed;
       currentRotation = rot;
     }
 
     // Convert the commanded speeds into the correct units for the drivetrain
+    // (also multiply by speedLimiter to use slow mode/boost)
     double xSpeedDelivered = xSpeedCommanded * speedLimiter * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeedCommanded * speedLimiter * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = currentRotation * speedLimiter * DriveConstants.kMaxAngularSpeed;
+    double rotDelivered = currentRotation * rotSpeedLimiter * DriveConstants.kMaxAngularSpeed;
 
+    // convert chassis speeds from field relative to robot relative if fieldrelative
     chassisSpeeds =
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getGyroYaw()))
@@ -373,12 +441,16 @@ public class DriveBase extends SubsystemBase {
 
   /**
    * Get the current ChassisSpeeds object used to drive robot. Primarily for
-   * PathPlanner.
+   * PathPlanner, but also if other commands need to see state of robot motion.
    * @return Current ChassisSpeeds object.
    */
   public ChassisSpeeds getChassisSpeeds() {
     return this.chassisSpeeds;
   }
+  public ChassisSpeeds getChassisSpeedsPP() {
+    return new ChassisSpeeds();
+  }
+  
 
   /**
    * Drives robot by commanding swerve modules from a ChassisSpeeds object.
@@ -394,12 +466,23 @@ public class DriveBase extends SubsystemBase {
     rearLeft.setDesiredState(swerveModuleStates[2]);
     rearRight.setDesiredState(swerveModuleStates[3]);
   }
+
+  /**
+   * Drives robot by commanding swerve modules from a ChassisSpeeds object.
+   * Identical to driveChassisSpeeds() but reserved for PathPlanner to enable
+   * simulation overrides and other changes we may want to make.
+   * @param speeds The ChassisSpeeds object.
+   */
+  public void driveChassisSpeedsPP(ChassisSpeeds speeds) {
+    if (RobotBase.isSimulation()) this.chassisSpeeds = new ChassisSpeeds(0, 0, -speeds.omegaRadiansPerSecond);
+    driveChassisSpeeds(speeds);
+  }
   
   /**
    * Method to drive the robot using robot-relative speeds all the time.
    * This is useful for targeting objects like game elements because the code
    * can use this to drive camera-relative rather than field-relative.
-   * (this method wraps the regular {@code drive(...)} method)
+   * (this method wraps the regular {@code drive()} method)
    * @param xSpeed        Speed of the robot in the x direction (forward).
    * @param ySpeed        Speed of the robot in the y direction (sideways).
    * @param rot           Angular rate of the robot.
@@ -458,7 +541,6 @@ public class DriveBase extends SubsystemBase {
    * @return the robot's heading in degrees, from 0 to 359.
    */
   public double getHeading() {
-    // TODO: If we change gyros, this will need a solution for 360.
     return RobotContainer.navx.getHeadingInt();
   }
 
@@ -501,8 +583,6 @@ public class DriveBase extends SubsystemBase {
    */
   public Rotation2d getGyroYaw2d()
   {
-    // TODO: This function is not currently used. If we change gyros, and we want to use this, it
-    // will have to be rewritten for new gyro.
     if (navx.isMagnetometerCalibrated())
     {
      // We will only get valid fused headings if the magnetometer is calibrated
@@ -575,6 +655,7 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putBoolean("Alternate Drive", alternateRotation);
       SmartDashboard.putBoolean("Tracking", istracking);
       SmartDashboard.putNumber("Speed Factor", speedLimiter);
+      SmartDashboard.putNumber("Rot Speed Factor", rotSpeedLimiter);
   }
 
   /**
@@ -673,7 +754,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Enables the alternate field-centric rotation method
+   * Enables the alternate field-centric rotation method (see PointToYaw and RobotContainer)
    */
   public void enableAlternateRotation() {
     Util.consoleLog();
@@ -684,7 +765,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Disables the alternate field-centric rotation method
+   * Disables the alternate field-centric rotation method (see corresponding enable method for details)
    */
   public void disableAlternateRotation() {
     Util.consoleLog();
@@ -695,7 +776,8 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Enables tracking of a pre-specified Pose2d
+   * Enables tracking: overrides the drive command's joystick rotation input
+   * and instead uses user provided values as emulated joystick input (to track to game peices or tags)
    */
   public void enableTracking() {
     Util.consoleLog();
@@ -706,7 +788,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   /**
-   * Disables tracking of a pre-specified Pose2d
+   * Disables tracking
    */
   public void disableTracking() {
     Util.consoleLog();
@@ -716,37 +798,48 @@ public class DriveBase extends SubsystemBase {
     updateDS();
   }
 
+  /**
+   * Enables Slow Mode, see DriveConstants.kSlowModeFactor and DriveConstants.kRotSlowModeFactor
+   * for the values, it slows down rotation and translation.
+   */
   public void enableSlowMode()
   {
     speedLimiter = DriveConstants.kSlowModeFactor;
+    rotSpeedLimiter = DriveConstants.kRotSlowModeFactor;
 
-    Util.consoleLog("%.2f", speedLimiter);
-
-    updateDS();
-  }
-
-  public void disableSlowMode()
-  {
-    Util.consoleLog();
-
-    speedLimiter = 1;
+    Util.consoleLog("%.2f %.2f", speedLimiter, rotSpeedLimiter);
 
     updateDS();
   }
 
   /**
-   * set an override right joystick value for tracking
-   * @param commandedRotation the "joystick value"
+   * Disables Slow Mode, setting multipliers back to 1
+   */
+  public void disableSlowMode()
+  {
+    Util.consoleLog();
+
+    speedLimiter = 1;
+    rotSpeedLimiter = 1;
+
+    updateDS();
+  }
+
+  /**
+   * Sets an override rotation joystick value for tracking to objects or tags. Must call enableTracking first!
+   * Setting commandedRotation as NaN temporarily disables tracking without a call to disableTrackiing.
+   * @param commandedRotation the emulated rotation joystick value (should be bounded [-1,1])
    */
   public void setTrackingRotation(double commandedRotation) {
     this.trackingRotation = commandedRotation;
   }
 
   /**
-   * Stop robot motion.
+   * Stop all robot motion.
    */
   public void stop()
   {
+    disableTracking();
     drive(0, 0, 0, false);
   }
 
@@ -755,8 +848,8 @@ public class DriveBase extends SubsystemBase {
    * class with vision estimates of robot position. It is expected 
    * the vision code will use this method to regularly update the
    * odometry object to enhance position tracking accuracy.
-   * @param pose The vision esitmated current pose of the robot.
-   * @param timestamp The time at which the vision measurement was taken.
+   * @param pose The vision estimated current pose of the robot.
+   * @param timestamp The exact timestamp at which the vision measurement was taken.
    */
   public void updateOdometryVision(Pose2d pose, double timestamp) {
     odometry.addVisionMeasurement(pose, timestamp);
@@ -769,19 +862,24 @@ public class DriveBase extends SubsystemBase {
   private void configureAutoBuilder() {
     Util.consoleLog();
 
+    // different PID values for real/simulation because they are quite different.
+    PIDConstants rotPID = new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0);
+    if (RobotBase.isSimulation()) rotPID = new PIDConstants(0.5, 0.0, 0.0);
+
     AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::driveChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+      this::getPosePP, // Robot pose supplier
+      this::resetOdometryPP, // Method to reset odometry (will be called if your auto has a starting pose)
+      this::getChassisSpeedsPP, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+      this::driveChassisSpeedsPP, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
               new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(AutoConstants.kHolonomicPathFollowerP, 0.0, 0.0), // Rotation PID constants
+              rotPID, // Rotation PID constants
               DriveConstants.kMaxSpeedMetersPerSecond, // Max module speed, in m/s
               DriveConstants.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
 
               // below tells PP "don't do any random moving without explicit instructions": will probably change in future
-              new ReplanningConfig(false, false)
+              // new ReplanningConfig(false, false)
+              new ReplanningConfig(true, false)
       ),
       () -> {
           // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -794,5 +892,26 @@ public class DriveBase extends SubsystemBase {
       },
       this // Reference to this subsystem to set requirements
     );
+    // PPHolonomicDriveController.setRotationTargetOverride(this::getPPRotationTargetOverride);
   }
+
+  /**
+   * Returns an Optional value of the desired rotation (yaw) to override PathPlanner,
+   * useful for tracking to a gamepiece. Note that this is the desired robot yaw, NOT rotation speed
+   * as used by enableTracking.
+   * @return the desired yaw value (or Optional.empty() to just use the values in drawn path)
+   */
+  public Optional<Rotation2d> getPPRotationTargetOverride() {
+    return pathplannerOverride;
+  }
+
+  public void setPPRotationOverride(Rotation2d rotation) {
+    pathplannerOverride = Optional.of(rotation);
+  }
+
+  public void setPPRotationOverrideOffset(double degrees) {
+    setPPRotationOverride(new Rotation2d(Math.toRadians(getGyroYaw() - degrees)));
+  }
+
+  public void clearPPRotationOverride() {pathplannerOverride = Optional.empty();}
 }

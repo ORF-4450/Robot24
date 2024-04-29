@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "ORF24-02.20.24-1";
+	public static String		PROGRAM_NAME = "ORF24-04.29.24-1";
 
 	public static Robot			robot;
 
@@ -43,7 +43,7 @@ public final class Constants
     // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
-    public static final double  INTAKE_SPEED = 1;
+    public static final double  INTAKE_SPEED = 0.90;
 
     // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
@@ -51,50 +51,69 @@ public final class Constants
     public static final int     SHOOTER_MOTOR_FEEDER = 13;
     public static final int     SHOOTER_MOTOR_PIVOT = 14;
     // public static final int     SHOOTER_MOTOR_PIVOT_2 = 15; // if we have to add one
+
     public static final double  SHOOTER_SPEED = 1;
     public static final double  SHOOTER_FEED_SPEED = 1;
 
-    // multiplied by motor rotations to get degrees of shooter angle
+    // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
+    public static final double  SHOOTER_PRECISE_PIVOT_FACTOR = (1.0 / 3.0) * 360;
+    // public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (18.0 / 54.0)) * 360;
     
-    // ELEVATOR
+
+    public static final double  OUTER_ANGLE = -15;
+    public static final double  PODIUM_ANGLE = -26;
+    public static final double  SUBWOOFER_ANGLE = -55;
+    public static final double  TRAP_ANGLE = -47;
+    
+    // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
     public static final int     ELEVATOR_MOTOR_INNER = 18;
 
-    // CAMERAS
-    public static Transform3d   CAMERA_POSE_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 0),
-        new Rotation3d(0, 0, 0)
-    );
+    // ELEVATOR_WINCH_FACTOR is multiplied by native rotations of motor shaft
+    // to get height change in MAXSpline shaft since startup or last encoder reset
+    // math explanation
+    // ratio is (1.0 / (1014.0 / 55.0)) spool rots for every turn of shaft
+    // *2pi for radians traveled/angular displacement * spool radius in meters to get linear displacement
+    // 1.25 inch radius is 0.03175 meters (source: looked it up)
+    // idk why it has to be negative, probably the gears swap rotation, not a big deal tho
+    public static final double  ELEVATOR_WINCH_FACTOR = (-1.0 / (1014.0 / 55.0)) * (2*Math.PI) * 0.03175;
     
-    public static Transform3d   CAMERA_BACK_TRANSFORM = new Transform3d(
-        new Translation3d(0, 0, 1),
-        new Rotation3d(0, Math.toRadians(-15), 0)
-    );
-    
+    // same deal as above but different gear ratio and pulley size (0.451 in = 0.0114554 m)
+    public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
+
+    // CAMERAS ======
+    public static final double    PV_TARGET_PITCH = -20;
+
     public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
+        new Translation3d(0, 0.2794, 0.5715),
+        new Rotation3d(0, 0, Math.toRadians(180))
+    );
+
+    public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
+        new Translation3d(0, 0, 0.5207), // change last value to height in METERS of lens
+        new Rotation3d(0, Math.toRadians(-10), Math.toRadians(180)) // keep the 180, the -10 is the camera angle (negative!)
+    );
+    
+    public static Transform3d   CAMERA_NOTE_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 1.5),
-        new Rotation3d(0, Math.toRadians(45), 0)
+        new Rotation3d(0, Math.toRadians(70), 0)
     );
 
     // the names of the cameras in the PhotonVision software
-    public static String        CAMERA_POSE_ESTIMATOR = "";
-    public static String        CAMERA_FRONT = "4450-LL";
-    public static String        CAMERA_BACK = "back";
+    public static String        CAMERA_NOTE = "HD_USB_Camera";
+    public static String        CAMERA_SHOOTER = "Arducam_OV9281_USB_Camera (1)";
 
     public static final int     REV_PDB = 20;
+    public static final int     CTRE_CANDLE = 21;
 	
 	// GamePad port assignments.
 	public static final int		DRIVER_PAD = 0, UTILITY_PAD = 1;
-    public static final double  DRIVE_DEADBAND = 0.05, ROTATION_DEADBAND = .05;
+    public static final double  DRIVE_DEADBAND = 0.1, ROTATION_DEADBAND = .1;
 
 	// Pneumatic valve controller port assignments.
 	//public static final int		COMPRESSOR = 0;
-
-	// Digital Input port assignments. Encoder takes 2 ports.
-    public static final int     NOTE_SENSOR_INTAKE = 0;
-    public static final int     NOTE_SENSOR_SHOOTER = 1;
 	  
 	// Analog Input port assignments.
 	
@@ -112,14 +131,18 @@ public final class Constants
 
     public static final class DriveConstants {
         // Driving Parameters - Note that these are not the maximum capable speeds of
-        // the robot, rather the allowed maximum speeds.
-        public static final double kMaxSpeedMetersPerSecond = 2.0;
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second.
-        public static final double kSlowModeFactor = .15; // 15% of normal.
+        // the robot, but instead they are the allowed maximum speeds
 
-        public static final double kDirectionSlewRate = 1.2; // radians per second.
-        public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%).
-        public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%).
+        // public static final double kMaxSpeedMetersPerSecond = 4.0;
+        public static final double kMaxSpeedMetersPerSecond = ModuleConstants.kDriveWheelFreeSpeedRps; // max speed
+        public static final double kMaxAngularSpeed = 1.5 * (2*Math.PI); // radians per second (1.5 rots / sec)
+        public static final double kSlowModeFactor = .50; // 15% of normal.
+        public static final double kRotSlowModeFactor = .20; // 15% of normal.
+
+        // these were 1.2, 1.8, 2.0 in REV base code
+        public static final double kDirectionSlewRate = Double.POSITIVE_INFINITY; // radians per second.
+        public static final double kMagnitudeSlewRate = 1; // percent per second (1 = 100%).
+        public static final double kRotationalSlewRate = Double.POSITIVE_INFINITY; // percent per second (1 = 100%).
 
         // Chassis configuration
 
@@ -130,7 +153,7 @@ public final class Constants
         public static final double kWheelBase = Units.inchesToMeters(29);
 
         // Drive base radius in meters. Distance from robot center to furthest module.
-        public static final double kDriveBaseRadius = .54;
+        public static final double kDriveBaseRadius = .45;
 
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
             new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -161,8 +184,8 @@ public final class Constants
         public static final boolean kGyroReversed = false;
 
         // Default starting field position in meters for pose tracking. 2024 field. 
-        // TODO: This likely will need futher definition as to how we will manage starting points.
-        public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(.697, 7.153, Rotation2d.fromDegrees(0));
+        // public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(.697, 7.153, Rotation2d.fromDegrees(0));
+        public static final Pose2d	DEFAULT_STARTING_POSE = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
     }
 
     public static final class ModuleConstants {
@@ -219,7 +242,7 @@ public final class Constants
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxSpeedMetersPerSecond = 4.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;

@@ -5,7 +5,6 @@ import static Team4450.Robot24.Constants.*;
 
 import Team4450.Lib.*;
 import Team4450.Robot24.wpilib.TimedRobot;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -194,7 +193,7 @@ public class Robot extends TimedRobot
     // {
     //   FunctionTracer.INSTANCE.printFunctions(Util.logPrintStream);
     // }
-
+    robotContainer.unlockMechanisms();
     Util.consoleLog("end -------------------------------------------------------------------------");
   }
 
@@ -271,6 +270,7 @@ public class Robot extends TimedRobot
     SmartDashboard.putBoolean("Teleop Mode", true);
 
     robotContainer.resetFaults();
+    robotContainer.fixPathPlannerGyro();
 
     // Driving handled by DriveCommand which is default command for the DriveBase.
     // Other commands scheduled by joystick buttons.
@@ -288,6 +288,11 @@ public class Robot extends TimedRobot
   public void teleopPeriodic() 
   {
     if (tracing) FunctionTracer.INSTANCE.printFunctions(Util.logPrintStream);
+  }
+
+  @Override
+  public void disabledExit() {
+      robotContainer.lockMechanisms();
   }
 
   /**
