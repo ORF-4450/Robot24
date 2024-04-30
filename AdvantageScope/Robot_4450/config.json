@@ -1,0 +1,25 @@
+{
+	"name": "ORF 4450",
+	"rotations": [
+		{"axis":"x", "degrees": 90},
+		{"axis":"z", "degrees": -90}
+	],
+	"position": [-0.04,0.06,0.0935],
+	"cameras": [],
+	"components": [
+		{
+			"zeroedRotations": [{"axis":"x", "degrees": 90}, {"axis":"z", "degrees": -90}],
+			"zeroedPosition": [-0.04,0.06,-0.22]
+		},
+		{
+			"zeroedRotations": [{"axis":"x", "degrees": 90},{"axis":"z", "degrees": -90}],
+			"zeroedPosition": [-0.13,0.06,-0.830]
+		},
+		{
+			"zeroedRotations": [{"axis":"x", "degrees": 90}, {"axis":"z", "degrees": -90}],
+			"zeroedPosition": [-0.04,0.06,-0.57]
+		}
+
+
+	]
+}

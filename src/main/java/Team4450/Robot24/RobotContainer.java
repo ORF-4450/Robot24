@@ -7,16 +7,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import Team4450.Robot24.commands.autonomous.AutoEnd;
-import Team4450.Robot24.commands.autonomous.AutoStart;
-
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
-import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.PointToYaw;
+import Team4450.Robot24.commands.UpdateCandle;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 import Team4450.Robot24.subsystems.Intake;
@@ -27,16 +25,19 @@ import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -51,10 +52,10 @@ public class RobotContainer
 
 	public static ShuffleBoard	shuffleBoard;
 	public static DriveBase 	driveBase;
-	public static PhotonVision	pvPoseCamera;
-	public static PhotonVision	pvBackCamera;
-	public static PhotonVision	pvFrontCamera;
+	public static PhotonVision	pvShooterCamera;
+	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
+	private final Candle        candle;
 	
 	// Subsystem Default Commands.
 
@@ -83,7 +84,7 @@ public class RobotContainer
 
 	//private AnalogInput			pressureSensor = new AnalogInput(PRESSURE_SENSOR);
 	  
-	//private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kCTRE);
+	// private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kCTRE);
 	private PowerDistribution	pdp = new PowerDistribution(REV_PDB, PowerDistribution.ModuleType.kRev);
 
 	// PneumaticsControlModule class controls the PCM. New for 2022.
@@ -109,6 +110,10 @@ public class RobotContainer
 	public RobotContainer() throws Exception
 	{
 		Util.consoleLog();
+
+		SmartDashboard.putData("PDH", pdp);
+		// Use below for production to reduce NT traffic.           
+	    // SendableRegistry.addLW(pdp, "PDH");
 
 		// Get information about the match environment from the Field Control System.
       
@@ -167,10 +172,10 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.APRILTAG_TRACKING, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
+		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.POSE_ESTIMATION, CAMERA_SHOOTER_TRANSFORM);
+		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
+		candle = new Candle(CTRE_CANDLE, 8+26); // 8+26 LEDs
 
 		// Create any persistent commands.
 
@@ -178,9 +183,11 @@ public class RobotContainer
 
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
-    	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
-		pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
-		pvBackCamera.setDefaultCommand(new UpdateVisionPose(pvBackCamera, driveBase));
+    	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
+		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
+
+		candle.setDefaultCommand(new UpdateCandle(candle));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -206,15 +213,7 @@ public class RobotContainer
 									driverController.getLeftXDS(), 
 									driverController.getRightXDS(),
 									driverController));
-
-			// new RunCommand(
-			// 	() -> driveBase.drive(
-			// 		-MathUtil.applyDeadband(driverController.getLeftY(), DRIVE_DEADBAND),
-			// 		-MathUtil.applyDeadband(driverController.getLeftX(), DRIVE_DEADBAND),
-			// 		-MathUtil.applyDeadband(driverController.getRightX(), DRIVE_DEADBAND),
-			// 		false),
-			// 	driveBase));
-
+		
 		// Start the compressor, PDP and camera feed monitoring Tasks.
 
    		// monitorCompressorThread = MonitorCompressor.getInstance(pressureSensor);
@@ -226,7 +225,7 @@ public class RobotContainer
    		monitorPDPThread.start();
 		
 		// Start camera server thread using our class for usb cameras.
-    
+		// potentially unneccesary now with the Orange Pi? - Cole
 		cameraFeed = CameraFeed.getInstance(); 
 		cameraFeed.start();
  		
@@ -268,6 +267,7 @@ public class RobotContainer
         // CommandScheduler.getInstance().schedule(loadTrajectory);
 
 		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
+		Util.consoleLog("End robot container @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	}
 
 	/**
@@ -286,9 +286,11 @@ public class RobotContainer
 		// the target subsystem from an InstantCommand. It can be tricky deciding what functions
 		// should be an aspect of the subsystem and what functions should be in Commands...
 
-		// Holding Left bumper brakes and sets X pattern to stop movement.
-		new Trigger(() -> driverController.getLeftBumper())
-			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
+		// POV buttons do same as alternate driving mode but without any lateral
+		// movement and increments of 45deg.
+		// new Trigger(()-> driverController.getPOV() != -1)
+		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+
 
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
@@ -298,16 +300,11 @@ public class RobotContainer
 					-MathUtil.applyDeadband(driverController.getRightX(), Constants.DRIVE_DEADBAND),
 					-MathUtil.applyDeadband(driverController.getRightY(), Constants.DRIVE_DEADBAND)
 				), driveBase, false
-			));
+		));
 
-		// the "A" button (or cross on PS4 controller) toggles tracking mode.
-		new Trigger(() -> driverController.getAButton())
-			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
-
-		// POV buttons do same as alternate driving mode but without any lateral
-		// movement and increments of 45deg.
-		new Trigger(()-> driverController.getPOV() != -1)
-			.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, true));
+		// toggle slow-mode
+		new Trigger(() -> driverController.getLeftBumper())
+			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 
 		// reset field orientation
 		new Trigger(() -> driverController.getStartButton())
@@ -317,61 +314,21 @@ public class RobotContainer
 		new Trigger(() -> driverController.getBackButton())
 			.onTrue(new InstantCommand(driveBase::toggleFieldRelative));
 
-		// toggle slow-mode
+		// Holding x button sets X pattern to stop movement.
+		new Trigger(() -> driverController.getXButton())
+			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
+
+		// toggle brake mode
+		new Trigger(() -> driverController.getAButton())
+    		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
+		
+		// hold face note
+		new Trigger(() -> driverController.getRightTrigger())
+    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
 		new Trigger(() -> driverController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
+			.whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
 
-		// toggle Note tracking.
-	    new Trigger(() -> driverController.getBButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera));
-
-		// Advance DS tab display.
-		//new Trigger(() -> driverPad.getPOVAngle(90))
-		//	.onTrue(new InstantCommand(shuffleBoard::switchTab));
-        
-		// Change camera feed. 
-		//new Trigger(() -> driverPad.getRightBumper())
-    	//	.onTrue(new InstantCommand(cameraFeed::ChangeCamera));
-
-		// Reset yaw angle to zero.
-		//new Trigger(() -> driverPad.getPOVAngle(180))
-    	//	.onTrue(new InstantCommand(driveBase::resetYaw));
-
-		// Toggle drive motors between brake and coast.
-		//new Trigger(() -> driverController.getBButton())
-    	//	.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
-
-		// Reset drive wheel distance traveled.
-		//new Trigger(() -> driverPad.getPOVAngle(270))
-    	//	.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
-		
 		// -------- Utility pad buttons ----------
-		// What follows is an example from 2022 robot:
-		// Toggle extend Pickup.
-		// So we show 3 ways to control the pickup. A regular command that toggles pickup state,
-		// an instant command that calls a method on Pickup class that toggles state and finally
-		// our special notifier variant that runs the Pickup class toggle method in a separate
-		// thread. So we show all 3 methods as illustration but the reason we tried 3 methods is
-		// that the pickup retraction action takes almost 1 second (due apparently to some big
-		// overhead in disabling the electric eye interrupt) and triggers the global and drivebase
-		// watchdogs (20ms). Threading does not as the toggle method is not run on the scheduler thread.
-		// Also, any action that operates air valves, there is a 50ms delay in the ValveDA and SA
-		// classes to apply power long enough so that the valve slides move far enough to open/close.
-		// So any function that operates valves will trigger the watchdogs. Again, the watchdog 
-		// notifications are only a warning (though too much delay on main thread can effect robot
-		// operation) they can fill the Riolog to the point it is not useful.
-		// Note: the threaded command can only execute a runable (function on a class) not a Command.
-		
-		// Toggle pickup deployment
-		//new Trigger(() -> utilityPad.getLeftBumper())
-        	//.onTrue(new PickupDeploy(pickup));		
-			//.onTrue(new InstantCommand(pickup::toggleDeploy, pickup));
-		//	.onTrue(new NotifierCommand(pickup::toggleDeploy, 0.0, "DeployPickup", pickup));
-
-		// run shooter (manupulator controller)
-		new Trigger(() -> utilityController.getBButton())
-			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
-
 	}
 
 	/**
@@ -381,7 +338,7 @@ public class RobotContainer
 	 * @return The Command to run in autonomous.
 	 */
 	public Command getAutonomousCommand() {
-		PathPlannerAuto  	ppAutoCommand;
+		// PathPlannerAuto  	ppAutoCommand;
 		Command				autoCommand;
 
 		autoCommand = autoChooser.getSelected();
@@ -399,12 +356,13 @@ public class RobotContainer
 
 		if (autoCommand instanceof PathPlannerAuto)
 		{
-			ppAutoCommand = (PathPlannerAuto) autoCommand;
+			// ppAutoCommand = (PathPlannerAuto) autoCommand;
 	
-			Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
+			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
 		}
 
 		return autoCommand;
+		// return new WaitCommand(1);
 
 		//return autoChooser.getSelected();
   	}
@@ -422,11 +380,9 @@ public class RobotContainer
 	 	Util.consoleLog();
 		
 		// Register commands called from PathPlanner Autos.
-		
-		NamedCommands.registerCommand("AutoStart", new AutoStart());
-		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
-		NamedCommands.registerCommand("StartIntake", new InstantCommand(intake::start));
-		NamedCommands.registerCommand("StopIntake", new InstantCommand(intake::stop));
+
+		// for example:
+		// NamedCommands.registerCommand("Shoot", new ShootCommand());
 
 		// Create a chooser with the PathPlanner Autos located in the PP
 		// folders.
@@ -470,6 +426,29 @@ public class RobotContainer
 		
 		if (monitorPDPThread != null) monitorPDPThread.reset();
     }
+
+	/**
+	 * passthrough to driveBase.fixPathPlannerGyro()
+	 */
+	public void fixPathPlannerGyro() {
+		driveBase.fixPathPlannerGyro();
+	}
+
+	/**
+	 * Run on robot enable to lock any PID control
+	 */
+	public void lockMechanisms() {
+		// ...
+	}
+
+	/**
+	 * Run on robot disable to reset any PID control or controller vibrations
+	 */
+	public void unlockMechanisms() {
+		driverController.setRumble(RumbleType.kBothRumble, 0);
+		utilityController.setRumble(RumbleType.kBothRumble, 0);
+	}
+	
          
 	/**
      * Loads a PathPlanner path file into a path planner trajectory.

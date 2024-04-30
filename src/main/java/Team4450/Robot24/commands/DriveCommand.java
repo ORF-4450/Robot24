@@ -1,6 +1,5 @@
 package Team4450.Robot24.commands;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -80,10 +79,15 @@ public class DriveCommand extends Command
         double strafe = deadband(strafeSupplier.getAsDouble(), DRIVE_DEADBAND);
         double rotation = deadband(rotationSupplier.getAsDouble(), ROTATION_DEADBAND);
 
+        // throttle = Util.squareInput(throttle);
+        // strafe = Util.squareInput(strafe);
+        // rotation = Util.squareInput(rotation);
+        // rotation = Math.pow(rotation, 5);
+
         // Have to invert for sim...not sure why.
         if (RobotBase.isSimulation()) rotation *= -1;
         
-        driveBase.drive(throttle, strafe, rotation, false);
+        driveBase.drive(throttle, strafe, rotation, true);
     }
 
     @Override
@@ -99,8 +103,9 @@ public class DriveCommand extends Command
         return Math.abs(value) > deadband ? value : 0.0;
     }
 
-    private static double squareTheInput(double value) 
-    {
-        return Math.copySign(value * value, value);
-    }
+    // commented out because Util.squareInput does this already and it was giving an error
+    // private static double squareTheInput(double value) 
+    // {
+    //     return Math.copySign(value * value, value);
+    // }
 }

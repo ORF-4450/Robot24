@@ -3,7 +3,7 @@ Port and Button Assignments.
 CTRE CAN Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-
+21      CANdle          The CTRE CANdle LED controller
 
 SparkMax CAN Ports
 Port	Device			Description
@@ -16,17 +16,24 @@ Port	Device			Description
 6       SparkMax        RL steer motor.
 7       SparkMax        RR drive motor.
 8       SparkMax        RR steer motor.
-9       SparkMax        Intake motor 1.
-10      SparkMax        Intake motor 2.
+9       SparkMax        Intake motor 1 right
+10      SparkMax        Intake motor 2 left
 11      SparkMax        Shooter motor 1.
 12      SparkMax        Shooter motor 2.
 13      SparkMax        Shooter feeder motor.
 14      SparkMax        Shooter pivot motor.
-15(?)   SparkMax        [RESERVED] for potential extra pivot motor.
+15      [UNUSED]        (reserved for second pivot?)
 16      SparkMax        Elevator motor 1.
 17      SparkMax        Elevator motor 2.
-18      SparkMax        Elevator motor 3 (inner carriage).
-19(?)   SparkMax        Potential extra motor for "roller"? (ask Gabe)
+18      [UNUSED]        (previously for centerstage gearbox.)
+19      [UNUSED]        (reserved for second intake?)
+
+
+SparkMax CAN Limit Switches (Plugged into the controllers)
+Port    Type            Description
+-----------------------------------------------------------------------------------
+13      Forward         QMRN Beam Break note sensor for shooter.
+
 
 PWM Ports
 Port	Device			Description
@@ -53,14 +60,14 @@ Port	Device blk-pos	Description
 Digital I/O Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
-0       QMRN Beam Break note sensor for intake.
-1       QMRN Beam Break note sensor for shooter.
 
 
 Analog I/O Ports
 Port	Device			Description
 -----------------------------------------------------------------------------------
 
+
+BUTTONS: See this link for a diagram https://cole.ws/+2024buttons
 
 Driver GamePad - Left Joystick
 Button Name				Function
@@ -78,20 +85,23 @@ X Axis                  Rotate.
 Driver GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
-LEFT_TRIGGER            Slow mode (Hold down).
-RIGHT_TRIGGER           
-BACK                    Toggle field/robot orientation driving.
-START                   Reset Navx to reorient field direction.
-LEFT_BUMPER             Park Mode (hold down).
-RIGHT_BUMPER       		Alternate Drive Mode (hold down).
-POV_?                   Auto rotate to the POV direction.
-?                       Reset simulated yaw.
-?                       Reset simulated distance traveled.
-?                       Switch Shuffleboard tab.
-?                       Switch Camera.
-B                       Toggle Drive To Note command
-X                       
-A                       Toggle April Tag Tracking mode.
+LEFT_TRIGGER            Align to Note
+RIGHT_TRIGGER           Align to Note
+LEFT_BUMPER             Slow Mode (hold)
+RIGHT_BUMPER            Alternate Rotation (hold + R Stick)
+POV_0                   Podium Shot
+POV_180                 Amp Zone Shot
+BACK                    Toggle Field Relative
+START                   Reset Gyro
+A                       Toggle Brake Mode
+B                       [reserved]
+X                       Park Wheels
+Y                       [reserved]Drive to Note
+
+
+
+
+
 
 
 Utility GamePad - Left Joystick
@@ -109,12 +119,20 @@ Y_AXIS                  Move climber/elevator
 Utility GamePad - Buttons
 Button Name				Function
 -----------------------------------------------------------------------------------
-B                       Toggles Intake Motors.
-Y                       Intake then immediately shoot
-LEFT_TRIGGER            Reverse shooter sushi-rollers (hold)
-RIGHT_TRIGGER           Feed shooter sushi-rollers (hold)
+A                       Subwoofer Preset shot spinup
+B                       Vision shot spinup
+X                       Spin up in place
+Y                       High Vision shot spinup
+LEFT_TRIGGER            Hold manual intake
+RIGHT_TRIGGER           Hold manual outtake
 LEFT_BUMPER             Intake note
-RIGHT_BUMPER            Shoot Note
+RIGHT_BUMPER            Shoot Note (into amp or speaker depending on mode)
+BACK                    Auto-outtake (doesn't really work use RIGHT_TRIGGER instead)
+POV_0                   Climb position
+POV_180                 Climb down
+POV_90                  Amp
+POV_270                 Amp
+
 
 
 Dashboard Indicators/Controls

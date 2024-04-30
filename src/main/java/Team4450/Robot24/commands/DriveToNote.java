@@ -6,24 +6,36 @@ import Team4450.Lib.Util;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.SendableRegistry;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import Team4450.Robot24.subsystems.DriveBase;
 import Team4450.Robot24.subsystems.PhotonVision;
 
+/**
+ * Faces the "closest" note and optionally drives towards it, also enables robot oriented controls
+ */
 public class DriveToNote extends Command {
-    PIDController rotationController = new PIDController(0.05, 0.5, 0); // for rotating drivebase
-    PIDController translationController = new PIDController(0.3, 0, 0); // for moving drivebase in X,Y plane
+    PIDController rotationController = new PIDController(0.008, 0, 0); // for rotating drivebase
+    PIDController translationController = new PIDController(0.02, 0, 0); // for moving drivebase in X,Y plane
     DriveBase robotDrive;
     PhotonVision photonVision;
+    private boolean alsoDrive;
+    private boolean initialFieldRel;
 
     /**
-     * Track to a note using getArea() and getYaw()
-     * @param robotDrive the robot drive base
-     * @param photonVision the photonvision subsystem
+     * Track to a note using getPitch() and getYaw(), while turning on
+     * robot relative controls for ease of driving
+     * @param robotDrive the drivebase
+     * @param photonVision the camera
+     * @param alsoDrive whether to drive to the note or just face it
      */
-    public DriveToNote(DriveBase robotDrive, PhotonVision photonVision) {
+    public DriveToNote(DriveBase robotDrive, PhotonVision photonVision, boolean alsoDrive) {
         this.robotDrive = robotDrive;
         this.photonVision = photonVision;
+        this.alsoDrive = alsoDrive;
+
+        if (alsoDrive)
+            addRequirements(robotDrive);
 
         SendableRegistry.addLW(translationController, "DriveToNote Translation PID");
         SendableRegistry.addLW(rotationController, "DriveToNote Rotation PID");
@@ -33,32 +45,50 @@ public class DriveToNote extends Command {
     public void initialize() {
         Util.consoleLog();
 
-        rotationController.setSetpoint(0); // target should be at yaw=0 degrees
-        rotationController.setTolerance(0.5); // withing 0.5 degrees of 0
+        // store the initial field relative state to reset it later.
+        initialFieldRel = robotDrive.getFieldRelative();
+        if (initialFieldRel)
+            robotDrive.toggleFieldRelative(); // turn field relative off (to robot oriented) if it's on
 
-        translationController.setSetpoint(-15); // target should be at -15 pitch
+        robotDrive.enableTracking(); // allow rotation control
+
+        rotationController.setSetpoint(0); // target should be at yaw=0 degrees
+        rotationController.setTolerance(1.5); // withing 1.5 degrees of 0
+
+        translationController.setSetpoint(-19); // target should be at -19 pitch
         translationController.setTolerance(0.5);
     }
 
     @Override
     public void execute() {
-        if (!photonVision.hasTargets()) return;
-
+        // logic for chosing "closest" target in PV subsystem
         PhotonTrackedTarget target = photonVision.getClosestTarget();
 
-        // Util.consoleLog("yaw=%f", target.getYaw());
-        // Util.consoleLog("pitch=%f", target.getPitch());
-
-        double rotation = rotationController.calculate(target.getYaw());
-        double movement = translationController.calculate(target.getPitch());
-
-        // make sure target centered before we move
-        if (!rotationController.atSetpoint()) {
-            robotDrive.driveRobotRelative(0, 0, rotation);
+        // better to check if target == null than using hasTargets() because tgere is a rare
+        // race condition where the target disappears between getTarget and hasTargets which is crazy
+        // but it happened once...
+        if (target == null) {
+            robotDrive.setTrackingRotation(Double.NaN); // temporarily disable tracking
+            robotDrive.clearPPRotationOverride();
+            return;
         }
-        // otherwise drive to the target (only forwards backwards)
-        else if (!translationController.atSetpoint()) {
-            robotDrive.driveRobotRelative(-movement, 0, 0); // negative because camera backwards.
+
+        if (RobotState.isAutonomous()) {
+            // attempt to override the rotation of the robot during auton: unclear if it works or not
+            robotDrive.setPPRotationOverrideOffset(target.getYaw());
+            Util.consoleLog("note align");
+        }
+
+        double rotation = rotationController.calculate(target.getYaw()); // attempt to minimize
+        double movement = translationController.calculate(target.getPitch()); // attempt to minimize
+
+        Util.consoleLog("in[yaw=%f, pitch=%f] out[rot=%f, mov=%f]", target.getYaw(), target.getPitch(), rotation, movement);
+
+        if (alsoDrive) {
+            // robotDrive.driveRobotRelative(-movement, 0, rotation);
+            robotDrive.driveRobotRelative((-movement), 0, rotation);
+        } else {
+            robotDrive.setTrackingRotation(rotation);
         }
     }
     
@@ -66,5 +96,12 @@ public class DriveToNote extends Command {
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
+        if (alsoDrive)
+            robotDrive.drive(0, 0, 0, false);
+        if (initialFieldRel)
+            robotDrive.toggleFieldRelative(); // restore beginning state
+        robotDrive.setTrackingRotation(Double.NaN);
+        robotDrive.disableTracking();
+        robotDrive.clearPPRotationOverride();
     }
 }
