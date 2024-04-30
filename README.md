@@ -1,6 +1,6 @@
 ### Robot24 (Competition Code)
 ----------------------------------------------------------------------------
-FRC Team 4450 2024 Robot Control program (Cole's fork).
+FRC Team 4450 2024 Robot Control program used in competition.
 
 ![The USS ProtoStar](resources/bot.png)
 
