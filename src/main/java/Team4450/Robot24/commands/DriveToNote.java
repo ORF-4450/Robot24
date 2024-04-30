@@ -55,7 +55,7 @@ public class DriveToNote extends Command {
         rotationController.setSetpoint(0); // target should be at yaw=0 degrees
         rotationController.setTolerance(1.5); // withing 1.5 degrees of 0
 
-        translationController.setSetpoint(-19); // target should be at -19 pitch
+        translationController.setSetpoint(-19); // target should be at -15 pitch
         translationController.setTolerance(0.5);
     }
 

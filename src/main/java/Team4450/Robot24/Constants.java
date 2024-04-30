@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "ORF24-04.29.24-1";
+	public static String		PROGRAM_NAME = "CW-04.19.24-CMP";
 
 	public static Robot			robot;
 
@@ -262,6 +262,6 @@ public final class Constants
         public static final double kFreeSpeedRpm = 5676;
     }
 
-  //-------------------- No student code above this line ------------------------------------------------------
+  //-------------------- No student code above this line (whoops -cole) ------------------------------------------------------
 
 }

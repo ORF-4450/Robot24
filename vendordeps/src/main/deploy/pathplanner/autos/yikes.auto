@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.3.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

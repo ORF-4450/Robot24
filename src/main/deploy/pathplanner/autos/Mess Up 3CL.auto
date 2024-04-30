@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7147153087088912,
+      "y": 6.67097950174323
+    },
+    "rotation": 61.16129282850756
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "avoid"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "avoid2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DropNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "avoid3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

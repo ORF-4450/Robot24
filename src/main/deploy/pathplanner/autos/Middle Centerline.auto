@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MCL.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MCL.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MCL.3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MCL.4"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.866264622038173,
+        "y": 6.862025350724808
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 0.9323941220427086,
+        "y": 5.344715565733213
+      },
+      "isLocked": false,
+      "linkedName": "4Note-B-End"
+    },
+    {
+      "anchor": {
+        "x": 3.3833479515917366,
+        "y": 5.586822900497653
+      },
+      "prevControl": {
+        "x": 1.1357469004000509,
+        "y": 5.5816720301595355
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "middleWingNote"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 4.8,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

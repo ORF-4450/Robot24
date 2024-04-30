@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.866264622038173,
+        "y": 6.862025350724808
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0993410113680353,
+        "y": 5.1773701705885555
+      },
+      "isLocked": false,
+      "linkedName": "4Note-B-End"
+    },
+    {
+      "anchor": {
+        "x": 2.7133414097557367,
+        "y": 4.119262687930138
+      },
+      "prevControl": {
+        "x": -0.4366075491823602,
+        "y": 3.8233675695401987
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "4Note-C-End"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -35.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 4.8,
+    "maxAngularVelocity": 1440.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -35.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}
