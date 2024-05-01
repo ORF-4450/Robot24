@@ -7,38 +7,44 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import Team4450.Robot24.commands.autonomous.AutoEnd;
-import Team4450.Robot24.commands.autonomous.AutoStart;
-
 import Team4450.Lib.CameraFeed;
 import Team4450.Lib.XboxController;
+import Team4450.Robot24.commands.AimSpeaker;
+import Team4450.Robot24.commands.Preset;
 import Team4450.Robot24.commands.DriveCommand;
 import Team4450.Robot24.commands.DriveToNote;
-import Team4450.Robot24.commands.FaceAprilTag;
 import Team4450.Robot24.commands.IntakeNote;
 import Team4450.Robot24.commands.PointToYaw;
+import Team4450.Robot24.commands.ReverseIntake;
+import Team4450.Robot24.commands.ShootAmp;
 import Team4450.Robot24.commands.ShootSpeaker;
+import Team4450.Robot24.commands.SpinUpShooter;
+import Team4450.Robot24.commands.UpdateCandle;
 import Team4450.Robot24.commands.UpdateVisionPose;
+import Team4450.Robot24.commands.AimSpeaker.Position;
 import Team4450.Robot24.subsystems.Candle;
 import Team4450.Robot24.subsystems.DriveBase;
-import Team4450.Robot24.subsystems.Elevator;
+import Team4450.Robot24.subsystems.ElevatedShooter;
 import Team4450.Robot24.subsystems.PhotonVision;
-import Team4450.Robot24.subsystems.Shooter;
 import Team4450.Robot24.subsystems.Intake;
 import Team4450.Robot24.subsystems.ShuffleBoard;
+import Team4450.Robot24.subsystems.ElevatedShooter.PresetPosition;
 import Team4450.Robot24.subsystems.PhotonVision.PipelineType;
 import Team4450.Lib.MonitorPDP;
 import Team4450.Lib.NavX;
 import Team4450.Lib.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -56,12 +62,11 @@ public class RobotContainer
 
 	public static ShuffleBoard	shuffleBoard;
 	public static DriveBase 	driveBase;
-	public static PhotonVision	pvPoseCamera;
-	public static PhotonVision	pvBackCamera;
-	public static PhotonVision	pvFrontCamera;
+	// public static PhotonVision	pvFrontCamera;
+	public static PhotonVision	pvShooterCamera;
+	public static PhotonVision	pvNoteCamera;
 	private final Intake       	intake;
-	private final Shooter       shooter;
-	private final Elevator      elevator;
+	private final ElevatedShooter elevShooter;
 	private final Candle        candle;
 	
 	// Subsystem Default Commands.
@@ -179,13 +184,11 @@ public class RobotContainer
 
 		shuffleBoard = new ShuffleBoard();
 		driveBase = new DriveBase();
-		pvPoseCamera = new PhotonVision(CAMERA_POSE_ESTIMATOR, PipelineType.POSE_ESTIMATION, CAMERA_POSE_TRANSFORM);
-		pvBackCamera = new PhotonVision(CAMERA_BACK, PipelineType.APRILTAG_TRACKING, CAMERA_BACK_TRANSFORM);
-		pvFrontCamera = new PhotonVision(CAMERA_FRONT, PipelineType.OBJECT_TRACKING, CAMERA_FRONT_TRANSFORM);
+		pvShooterCamera = new PhotonVision(CAMERA_SHOOTER, PipelineType.POSE_ESTIMATION, CAMERA_SHOOTER_TRANSFORM);
+		pvNoteCamera = new PhotonVision(CAMERA_NOTE, PipelineType.OBJECT_TRACKING, CAMERA_NOTE_TRANSFORM);
 		intake = new Intake();
-		shooter = new Shooter();
-		elevator = new Elevator();
-		candle = new Candle();
+		elevShooter = new ElevatedShooter();
+		candle = new Candle(CTRE_CANDLE, 8+26);
 
 		// Create any persistent commands.
 
@@ -193,9 +196,11 @@ public class RobotContainer
 
 		// This sets up the photonVision subsystem to constantly update the robotDrive odometry
 	    // with AprilTags (if it sees them). (As well as vision simulator)
-    	pvPoseCamera.setDefaultCommand(new UpdateVisionPose(pvPoseCamera, driveBase));
-		pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
-		pvBackCamera.setDefaultCommand(new UpdateVisionPose(pvBackCamera, driveBase));
+    	// pvFrontCamera.setDefaultCommand(new UpdateVisionPose(pvFrontCamera, driveBase));
+		pvNoteCamera.setDefaultCommand(new UpdateVisionPose(pvNoteCamera, driveBase));
+		pvShooterCamera.setDefaultCommand(new UpdateVisionPose(pvShooterCamera, driveBase));
+
+		candle.setDefaultCommand(new UpdateCandle(candle));
 
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
@@ -223,18 +228,16 @@ public class RobotContainer
 									driverController));
 
 		// up and down on left operator controller joystick pivots shooter assembly
-		shooter.setDefaultCommand(new RunCommand(
-			()->shooter.movePivotRelative(
-				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND)
-			), shooter));
-		
 		// up and down on right operator controller joystick moves elevator assembly
-		elevator.setDefaultCommand(new RunCommand(
-			()->{
-				elevator.move(-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND));
-				elevator.moveInner(-MathUtil.applyDeadband(utilityController.getRightX(), DRIVE_DEADBAND));
-			}
-			, elevator));
+		elevShooter.setDefaultCommand(new RunCommand(
+			()->{elevShooter.moveRelative(
+				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
+				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)); // elevator
+			},
+		elevShooter, intake));
+		
+		
+		// intake.setDefaultCommand(new ReverseIntake(intake));
 		
 		
 
@@ -319,9 +322,28 @@ public class RobotContainer
 		// the target subsystem from an InstantCommand. It can be tricky deciding what functions
 		// should be an aspect of the subsystem and what functions should be in Commands...
 
-		// Holding Left bumper brakes and sets X pattern to stop movement.
-		new Trigger(() -> driverController.getXButton())
-			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
+		// POV buttons do same as alternate driving mode but without any lateral
+		// movement and increments of 45deg.
+		// new Trigger(()-> driverController.getPOV() != -1)
+		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+
+
+		// vibrate between 30 and 25 sec left in match
+		new Trigger(() -> Timer.getMatchTime() < 30 && Timer.getMatchTime() > 25).whileTrue(new StartEndCommand(
+			() -> {
+				driverController.setRumble(RumbleType.kBothRumble, 0.5);
+				utilityController.setRumble(RumbleType.kBothRumble, 0.5);},
+			() -> {
+				driverController.setRumble(RumbleType.kBothRumble, 0);
+				utilityController.setRumble(RumbleType.kBothRumble, 0);
+		}));
+
+		// vibrate on note pickup
+		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 0.5);
+		}).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->{
+			driverController.setRumble(RumbleType.kBothRumble, 0);
+		})));
 
 		// holding top right bumper enables the alternate rotation mode in
 		// which the driver points stick to desired heading.
@@ -331,16 +353,19 @@ public class RobotContainer
 					-MathUtil.applyDeadband(driverController.getRightX(), Constants.DRIVE_DEADBAND),
 					-MathUtil.applyDeadband(driverController.getRightY(), Constants.DRIVE_DEADBAND)
 				), driveBase, false
-			));
+		));
 
-		// the "B" button (or cross on PS4 controller) toggles tracking mode.
-		new Trigger(() -> driverController.getBButton())
-			.toggleOnTrue(new FaceAprilTag(driveBase, pvPoseCamera));
+		// toggle slow-mode
+		new Trigger(() -> driverController.getLeftBumper())
+			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
 
-		// POV buttons do same as alternate driving mode but without any lateral
-		// movement and increments of 45deg.
-		new Trigger(()-> driverController.getPOV() != -1)
-			.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, true));
+		// aim trap 		SmartDashboard.putNumber("trap/speed", 0.7);
+		// .whileTrue(
+		// 		new Preset(elevShooter, PresetPosition.TRAP).andThen(
+		// 		new SpinUpShooter(elevShooter, driveBase, Double.NaN, SmartDashboard.getNumber("trap/speed", 0.7), false)
+		// 	).alongWith(new AimTrap(driveBase, pvShooterCamera)
+		// ));
+
 
 		// reset field orientation
 		new Trigger(() -> driverController.getStartButton())
@@ -350,83 +375,119 @@ public class RobotContainer
 		new Trigger(() -> driverController.getBackButton())
 			.onTrue(new InstantCommand(driveBase::toggleFieldRelative));
 
-		// toggle slow-mode
-		new Trigger(() -> driverController.getLeftBumper())
-			.whileTrue(new StartEndCommand(driveBase::enableSlowMode, driveBase::disableSlowMode));
-		
-		// toggle face note/apriltag
-		new Trigger(() -> driverController.getRightTrigger() && !shooter.hasNote())
-    	    .whileTrue(new DriveToNote(driveBase, pvFrontCamera, false));
-		new Trigger(() -> driverController.getRightTrigger() && shooter.hasNote())
-    	    .whileTrue(new FaceAprilTag(driveBase, pvBackCamera));
-		
+		// Holding x button sets X pattern to stop movement.
+		new Trigger(() -> driverController.getXButton())
+			.whileTrue(new RunCommand(() -> driveBase.setX(), driveBase));
 
-		// toggle Note tracking.
-	    new Trigger(() -> driverController.getYButton())
-    	    .toggleOnTrue(new DriveToNote(driveBase, pvFrontCamera, true));
-
-		// Advance DS tab display.
-		new Trigger(() -> driverController.getLeftTrigger())
-			.onTrue(new InstantCommand(shuffleBoard::switchTab));
-        
-		// Change camera feed. 
-		//new Trigger(() -> driverPad.getRightBumper())
-    	//	.onTrue(new InstantCommand(cameraFeed::ChangeCamera));
-
-		// Reset yaw angle to zero.
-		//new Trigger(() -> driverPad.getPOVAngle(180))
-    	//	.onTrue(new InstantCommand(driveBase::resetYaw));
-
-		// Toggle drive motors between brake and coast.
+		// toggle brake mode
 		new Trigger(() -> driverController.getAButton())
     		.onTrue(new InstantCommand(driveBase::toggleBrakeMode));
-
-		// Reset drive wheel distance traveled.
-		//new Trigger(() -> driverPad.getPOVAngle(270))
-    	//	.onTrue(new InstantCommand(driveBase::resetDistanceTraveled));
+		
+		// hold face note
+		new Trigger(() -> driverController.getRightTrigger())// && !elevShooter.hasNote())
+    	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		new Trigger(() -> driverController.getLeftTrigger())
+			.whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		// new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
+    	//     .whileTrue(new FaceAprilTag(driveBase, pvShooterCamera));
 		
 		// -------- Utility pad buttons ----------
-		// What follows is an example from 2022 robot:
-		// Toggle extend Pickup.
-		// So we show 3 ways to control the pickup. A regular command that toggles pickup state,
-		// an instant command that calls a method on Pickup class that toggles state and finally
-		// our special notifier variant that runs the Pickup class toggle method in a separate
-		// thread. So we show all 3 methods as illustration but the reason we tried 3 methods is
-		// that the pickup retraction action takes almost 1 second (due apparently to some big
-		// overhead in disabling the electric eye interrupt) and triggers the global and drivebase
-		// watchdogs (20ms). Threading does not as the toggle method is not run on the scheduler thread.
-		// Also, any action that operates air valves, there is a 50ms delay in the ValveDA and SA
-		// classes to apply power long enough so that the valve slides move far enough to open/close.
-		// So any function that operates valves will trigger the watchdogs. Again, the watchdog 
-		// notifications are only a warning (though too much delay on main thread can effect robot
-		// operation) they can fill the Riolog to the point it is not useful.
-		// Note: the threaded command can only execute a runable (function on a class) not a Command.
-		
-		// Toggle pickup deployment
-		//new Trigger(() -> utilityPad.getLeftBumper())
-        	//.onTrue(new PickupDeploy(pickup));		
-			//.onTrue(new InstantCommand(pickup::toggleDeploy, pickup));
-		//	.onTrue(new NotifierCommand(pickup::toggleDeploy, 0.0, "DeployPickup", pickup));
+		// climb position
+		new Trigger(()-> utilityController.getPOV() == 0) // up POV
+			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB));
+		// shoot amp
+		new Trigger(()-> utilityController.getPOV() == 90) // right POV
+			.toggleOnTrue(new ParallelCommandGroup(
+				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
+				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
+			));
+		// shoot amp (same as above just the other button)
+		new Trigger(()-> utilityController.getPOV() == 270) // left POV
+			.toggleOnTrue(new ParallelCommandGroup(
+				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
+				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
+			));
 
-		// run intake (manupulator controller)
-		new Trigger(() -> utilityController.getBButton())
-			.toggleOnTrue(new StartEndCommand(intake::start, intake::stop, intake));
+		// DRIVER emergency overrides for preset positions: never used
+		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue( // podium
+			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
+		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue( // amp
+			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
+
+		// Climb functionality
+		new Trigger(()-> utilityController.getPOV() == 180) // down POV
+			.toggleOnTrue(
+				(new Preset(elevShooter, PresetPosition.CLIMB_2)).andThen(
+					new Preset(elevShooter, PresetPosition.CLIMB_3)
+				)
+			);
+		
+		// shoot/score button if in speaker shot mode
+		new Trigger(() -> utilityController.getRightBumper() && elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
+			.toggleOnTrue(new ShootSpeaker(elevShooter));
+		
+		// shoot/score button if in amp shot mode
+		new Trigger(() -> utilityController.getRightBumper() && !elevShooter.shootDoesTheSpeakerInsteadOfTheAmp)
+			.toggleOnTrue(new ShootAmp(elevShooter));
+
+		// start intake
 		new Trigger(() -> utilityController.getLeftBumper())
-			.onTrue(new IntakeNote(intake, shooter, elevator));
+			.toggleOnTrue(
+				new IntakeNote(intake, elevShooter));
+				//.andThen(
+			// 	new SpinUpShooter(elevShooter, driveBase, true).andThen(
+			// 	new AimSpeaker(driveBase, elevShooter, pvShooterCamera, pvFrontCamera, driverController.getRightXDS())
+			// )));
 
-		// shoot then intake
-		new Trigger(() -> utilityController.getYButton())
-			.onTrue(new IntakeNote(intake, shooter, elevator).andThen(new ShootSpeaker(shooter, elevator, driveBase)));
+		// hold manual feed/intake
+		new Trigger(()->utilityController.getLeftTrigger()).whileTrue(new StartEndCommand(
+			()->{elevShooter.shooter.startFeeding(1);elevShooter.shooter.backShoot();intake.start();},
+			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
+		));
+
+		// hold manual outtake
+		new Trigger(()->utilityController.getRightTrigger()).whileTrue(new StartEndCommand(
+			()->{elevShooter.shooter.startFeeding(-1);elevShooter.shooter.backShoot();intake.start(-0.9);},
+			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
+		));
+
+
+		// outtake: doesn't really work use manual hold
+		new Trigger(() -> utilityController.getBackButton())
+			.toggleOnTrue(new ReverseIntake(intake, elevShooter));
+
+		// lob shot
+		new Trigger(() -> utilityController.getStartButton())
+			.onTrue(new SpinUpShooter(elevShooter, driveBase, -45, 0.65, false));
 		
-		// shooter commands
-		new Trigger(() -> utilityController.getRightBumper())
-			.toggleOnTrue(new ShootSpeaker(shooter, elevator, driveBase));
-			
-		new Trigger(() -> utilityController.getLeftTrigger())
-			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(-0.3), shooter::stopFeeding));
-		new Trigger(() -> utilityController.getRightTrigger())
-			.whileTrue(new StartEndCommand(() -> shooter.startFeeding(1), shooter::stopFeeding));
+		// high shot vision
+		new Trigger(() -> utilityController.getYButton()) // HIGH VISION TRACKING
+			.toggleOnTrue(
+				new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(//-20
+				new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.HIGH)
+			)));
+		
+		// spin up in place
+		new Trigger(() -> utilityController.getXButton()) // manual
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
 
+		// subwoofer preset
+		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
+			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, false));
+		// new Trigger(() -> utilityController.getBButton()) // OUTER RING
+		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
+
+		// vision shot
+		new Trigger(() -> utilityController.getBButton()) // VISION TRACKING
+			.toggleOnTrue(
+				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL)
+			)));
+		
 	}
 
 	/**
@@ -436,7 +497,7 @@ public class RobotContainer
 	 * @return The Command to run in autonomous.
 	 */
 	public Command getAutonomousCommand() {
-		PathPlannerAuto  	ppAutoCommand;
+		// PathPlannerAuto  	ppAutoCommand;
 		Command				autoCommand;
 
 		autoCommand = autoChooser.getSelected();
@@ -454,7 +515,7 @@ public class RobotContainer
 
 		if (autoCommand instanceof PathPlannerAuto)
 		{
-			ppAutoCommand = (PathPlannerAuto) autoCommand;
+			// ppAutoCommand = (PathPlannerAuto) autoCommand;
 	
 			// Util.consoleLog("pp starting pose=%s", PathPlannerAuto.getStaringPoseFromAutoFile(autoCommand.getName().toString()));
 		}
@@ -478,19 +539,75 @@ public class RobotContainer
 	 	Util.consoleLog();
 		
 		// Register commands called from PathPlanner Autos.
+
+		NamedCommands.registerCommand("IntakeNoteVision", new ParallelDeadlineGroup(
+			new IntakeNote(intake, elevShooter).withTimeout(1),
+			new DriveToNote(driveBase, pvNoteCamera, true)
+		));
+
+		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
+		NamedCommands.registerCommand("IntakeNoteShooting", new StartEndCommand(()->{
+			intake.start();
+			elevShooter.shooter.startShooting();
+			elevShooter.shooter.startFeeding(1);
+		}, () -> {
+			intake.stop();
+			elevShooter.shooter.stopFeeding();
+			elevShooter.shooter.stopShooting();
+		}, intake));
+
+		NamedCommands.registerCommand("DropNote",
+			new SpinUpShooter(elevShooter, driveBase, 0, 0.1, true).andThen(
+			new WaitCommand(0).andThen(new ShootSpeaker(elevShooter))
+		));
+		NamedCommands.registerCommand("ShootSpeaker",
+			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
+			new WaitCommand(0.3).andThen(new ShootSpeaker(elevShooter))
+		));
+		NamedCommands.registerCommand("ShootPodium",
+			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true).andThen(
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
+		));
+
+		NamedCommands.registerCommand("SpinUpCenterline",new SpinUpShooter(elevShooter, driveBase, -28.5, 1, true));
 		
-		NamedCommands.registerCommand("AutoStart", new AutoStart());
-		NamedCommands.registerCommand("AutoEnd", new AutoEnd());
+		NamedCommands.registerCommand("ShootWing",
+			new Preset(elevShooter, PresetPosition.WING_SHOT).andThen(
+			new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
+		)));
+		NamedCommands.registerCommand("ShootVision",
+			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+			new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+			new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL))).alongWith(
+			// with
+			new WaitCommand(1).andThen(new ShootSpeaker(elevShooter))
+		));
+		
+		
 
-		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, shooter, elevator));
-		NamedCommands.registerCommand("ShootSpeaker", new ShootSpeaker(shooter, elevator, driveBase));
+		NamedCommands.registerCommand("ShootFar",
+			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true).andThen(
+			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
+		));
+		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
+		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
+		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true));
+		NamedCommands.registerCommand("SpinUpFar",new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true));
+		NamedCommands.registerCommand("StartShooterWheels",new InstantCommand(()->{elevShooter.shooter.startShooting();}));
+		NamedCommands.registerCommand("WingPreset", new Preset(elevShooter, PresetPosition.WING_SHOT));
+		NamedCommands.registerCommand("Shoot", new ShootSpeaker(elevShooter));
 
-		NamedCommands.registerCommand("StartIntake", new InstantCommand(()->intake.start(),intake));
-		NamedCommands.registerCommand("StopIntake", new InstantCommand(()->intake.stop(),intake));
-
-
-		NamedCommands.registerCommand("FaceAprilTag", new FaceAprilTag(driveBase, pvFrontCamera));
-		NamedCommands.registerCommand("DriveToNote", new DriveToNote(driveBase, pvFrontCamera, true));
+		NamedCommands.registerCommand("AimSpeaker", 
+				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
+				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
+				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL)
+			)));
+		NamedCommands.registerCommand("AmpReady", new ParallelCommandGroup(
+			new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
+			new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
+		));
+		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
 		
 
 		// Create a chooser with the PathPlanner Autos located in the PP
@@ -535,6 +652,21 @@ public class RobotContainer
 		
 		if (monitorPDPThread != null) monitorPDPThread.reset();
     }
+
+	public void fixPathPlannerGyro() {
+		driveBase.fixPathPlannerGyro();
+	}
+
+	public void lockMechanisms() {
+		elevShooter.elevator.lockPosition();
+		elevShooter.shooter.lockPosition();
+	}
+	public void unlockMechanisms() {
+		elevShooter.elevator.unlockPosition();
+		elevShooter.shooter.unlockPosition();
+		driverController.setRumble(RumbleType.kBothRumble, 0);
+	}
+	
          
 	/**
      * Loads a PathPlanner path file into a path planner trajectory.

@@ -1,0 +1,1 @@
+The properties file in this directory is read by the RobotLib readProperties() function during simulation.

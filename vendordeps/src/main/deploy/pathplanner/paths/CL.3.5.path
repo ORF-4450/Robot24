@@ -1,0 +1,67 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.264487667368192,
+        "y": 2.449798873742093
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.927475936446207,
+        "y": 1.4491492690467231
+      },
+      "isLocked": false,
+      "linkedName": "CL3-3.5"
+    },
+    {
+      "anchor": {
+        "x": 2.2492355652494043,
+        "y": 3.5413177466979935
+      },
+      "prevControl": {
+        "x": 3.6730896052937956,
+        "y": 2.0765527812677655
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "CL.2-3"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpinUpCenterline"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -43.18000000000001,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

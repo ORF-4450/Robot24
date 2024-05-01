@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.2492355652494043,
+        "y": 3.5413177466979935
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.473795283528068,
+        "y": 1.1635324582033089
+      },
+      "isLocked": false,
+      "linkedName": "CL.2-3"
+    },
+    {
+      "anchor": {
+        "x": 8.264487667368192,
+        "y": 2.449798873742093
+      },
+      "prevControl": {
+        "x": 6.059960868991679,
+        "y": 1.2908803328767364
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "CL3-3.5"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7,
+      "rotationDegrees": 24.04510183870551,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "intake",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "IntakeNote"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.8,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 720.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": 29.544502412856918,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

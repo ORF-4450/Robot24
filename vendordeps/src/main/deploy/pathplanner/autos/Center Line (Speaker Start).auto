@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.683611467669364,
+      "y": 4.417657651349529
+    },
+    "rotation": -58.814230497543726
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CL.3.5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -1,0 +1,93 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7289451957996178,
+      "y": 6.666364403227319
+    },
+    "rotation": 59.50626095206533
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootVision"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp0"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAmp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeNoteVision"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AmpReady"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Amp3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAmp"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
