@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public final class Constants
 {
-	public static String		PROGRAM_NAME = "CW-04.19.24-CMP";
+	public static String		PROGRAM_NAME = "ORF-04.19.24-CMP";
 
 	public static Robot			robot;
 
@@ -40,12 +40,12 @@ public final class Constants
 	    
 	// Non-drive base motor controller port assignments
 
-    // INTAKE ======
+    // INTAKE 
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
     public static final double  INTAKE_SPEED = 0.90;
 
-    // SHOOTER ======
+    // SHOOTER 
     public static final int     SHOOTER_MOTOR_TOP = 11;
     public static final int     SHOOTER_MOTOR_BOTTOM = 12;
     public static final int     SHOOTER_MOTOR_FEEDER = 13;
@@ -66,7 +66,7 @@ public final class Constants
     public static final double  SUBWOOFER_ANGLE = -55;
     public static final double  TRAP_ANGLE = -47;
     
-    // ELEVATOR ======
+    // ELEVATOR 
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
     public static final int     ELEVATOR_MOTOR_INNER = 18;
@@ -83,7 +83,7 @@ public final class Constants
     // same deal as above but different gear ratio and pulley size (0.451 in = 0.0114554 m)
     public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
 
-    // CAMERAS ======
+    // CAMERAS 
     public static final double    PV_TARGET_PITCH = -20;
 
     public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
@@ -262,6 +262,6 @@ public final class Constants
         public static final double kFreeSpeedRpm = 5676;
     }
 
-  //-------------------- No student code above this line (whoops -cole) ------------------------------------------------------
+  //-------------------- No student code above this line ------------------------------------------------------
 
 }
