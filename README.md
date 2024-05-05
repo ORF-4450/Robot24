@@ -8,7 +8,7 @@ This is the 2024 competition robot control program created by the Olympia Roboti
 
 Operates the robot **USS Protostar** for FRC game **CRESCENDO**.
 
-### [Documentation can be found here](https://docs.google.com/document/d/1zERsIV9IP5XDU3M_6nbmJp7ZdcOXqVgWPSuCti4E938/edit?target=_blank)
+### [Documentation can be found here](https://docs.google.com/document/d/1zERsIV9IP5XDU3M_6nbmJp7ZdcOXqVgWPSuCti4E938/edit)
 
 ----------------------------------------------------------------------------
 ## Instructions to setup development environment for VS Code
