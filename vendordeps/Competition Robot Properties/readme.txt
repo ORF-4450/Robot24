@@ -1,1 +1,0 @@
-Copy this properties file to /home/lvuser on the RoboRio on the competition robot.

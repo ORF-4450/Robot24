@@ -1,1 +1,0 @@
-This directory contains log files created when running the simulation.
