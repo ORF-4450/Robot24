@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- * A combination subsyetsm that controls the Shooter and Elevator. This is used
+ * A combination subsystem that controls the Shooter and Elevator. This is used
  * because of the close relation between where it's safe to pivot and extend.
  * This class basically does all that checking and moving for you so you can just give
  * it values and it moves SAFELY (theoretically)
@@ -50,8 +50,8 @@ public class ElevatedShooter extends SubsystemBase {
     private double endGoalPivotAngle;
 
     /** whether the end goal is at the top half or bottom half (crosses the crossbar) */
-    private boolean atTop;
-    private PresetPosition position = PresetPosition.NONE;
+    private boolean         atTop;
+    private PresetPosition  position = PresetPosition.NONE;
 
     // in meters and degrees
     /** the safe extension height to pivot at top half */
@@ -63,7 +63,19 @@ public class ElevatedShooter extends SubsystemBase {
     /** the safe pivot angle to extend at */
     private final double PIVOT_SAFE = -90; // angle okay to move up/down
     
-
+    /**
+     * A combination subsystem that controls the Shooter and Elevator. This is used
+     * because of the close relation between where it's safe to pivot and extend.
+     * This class basically does all that checking and moving for you so you can just give
+     * it values and it moves SAFELY (theoretically)
+     */
+    public ElevatedShooter() {
+        shooter = new Shooter();
+		elevator = new Elevator();
+        SmartDashboard.putNumber("trap/angle", TRAP_ANGLE);
+        SmartDashboard.putString("position_step", "_");
+    }
+    
     /**
      * Sets the end goal state via a PresetPosition. Unless you are calling execute()
      * seperately, this MUST be called in the command scheduler loop regularly
@@ -72,84 +84,99 @@ public class ElevatedShooter extends SubsystemBase {
      */
     public boolean executeSetPosition(PresetPosition position) {
         this.position = position;
-        switch (position) {
-            
+
+        switch (position) {           
             // set target position/rotation values for each position
             case INTAKE:
                 endGoalPivotAngle = -39;
                 endGoalElevatorHeight = 0.09;
                 atTop = false;
                 break;
+            
             case CLIMB:
                 endGoalPivotAngle = -160;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case CLIMB_2:
                 endGoalPivotAngle = -132;
                 endGoalElevatorHeight = 0.42;//MAIN_SAFE_TOP - 0.5;
                 atTop = true;
                 break;
+
             case CLIMB_3:
                 endGoalPivotAngle = -132;
                 endGoalElevatorHeight = 0.265;//MAIN_SAFE_TOP - 0.5;
                 atTop = true;
                 break;
+
             case WING_SHOT:
                 endGoalPivotAngle = -33.3;
                 endGoalElevatorHeight = 0.108;
                 atTop = false;
                 break;
+
             case SHOOT:
                 endGoalPivotAngle = -39;
                 endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
+
             case SHOOT_VISION_START:
                 endGoalPivotAngle = -39;
                 endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
+
             case TRAP:
                 endGoalPivotAngle = SmartDashboard.getNumber("trap/angle", TRAP_ANGLE);
                 endGoalElevatorHeight = 0.15;
                 atTop = false;
                 break;
+
             case SHOOT_AMP_FRONT:
                 endGoalPivotAngle = -6;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case HIGH_SHOT:
                 endGoalPivotAngle = -20;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case SHOOT_AMP_FRONT_TWO:
                 endGoalPivotAngle = 15;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case SHOOT_AMP_BACK: // not using
                 endGoalPivotAngle = -150;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case VERTICAL_BOTTOM:
                 endGoalPivotAngle = PIVOT_SAFE;
                 endGoalElevatorHeight = MAIN_SAFE_BOTTOM;
                 atTop = false;
                 break;
+
             case VERTICAL_TOP:
                 endGoalPivotAngle = PIVOT_SAFE;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case SOURCE:
                 endGoalPivotAngle = -120;
                 endGoalElevatorHeight = MAIN_SAFE_TOP;
                 atTop = true;
                 break;
+
             case NONE:
                 break;
         }
@@ -170,6 +197,7 @@ public class ElevatedShooter extends SubsystemBase {
         this.endGoalPivotAngle = pivotAngle;
         this.endGoalElevatorHeight = elevatorHeight;
         this.atTop = topHalf;
+        
         return execute();
     }
 
@@ -184,11 +212,12 @@ public class ElevatedShooter extends SubsystemBase {
     public boolean execute() {
         /** the safe height to pivot at end goal (choose between MAIN_SAFE_TOP or _BOTTOM for end goal) */
         double safeTargetMainHeight = atTop ? MAIN_SAFE_TOP : MAIN_SAFE_BOTTOM;
+        
         /** the safe height to pivot at intermediate goal (choose between MAIN_SAFE_TOP or _BOTTOM for intermediate goal) */
         double safeOtherMainHeight = !atTop ? MAIN_SAFE_TOP : MAIN_SAFE_BOTTOM;
 
         // what follows is a whole bunch of logic that makes safe travel possible.
-        // it's kind confusing to follow, but I promise you it DOES WORK. I've provided
+        // it's kind of confusing to follow, but I promise you it DOES WORK. I've provided
         // a flowchart+diagram at the link below for people to look at and understand this -cole
         // https://docs.google.com/drawings/d/1LPBGhWrGQfPFZmyQl5N3DZTWH7uCNGu50NGBOTV1PWI/edit
 
@@ -245,19 +274,6 @@ public class ElevatedShooter extends SubsystemBase {
             }
         }
         return false;
-    }
-    
-    /**
-     * A combination subsyetsm that controls the Shooter and Elevator. This is used
-     * because of the close relation between where it's safe to pivot and extend.
-     * This class basically does all that checking and moving for you so you can just give
-     * it values and it moves SAFELY (theoretically)
-     */
-    public ElevatedShooter() {
-        shooter = new Shooter();
-		elevator = new Elevator();
-        SmartDashboard.putNumber("trap/angle", TRAP_ANGLE);
-        SmartDashboard.putString("position_step", "_");
     }
 
     @Override

@@ -83,6 +83,7 @@ public class AimSpeaker extends Command {
             case LOW:
                 // NOT USING
                 break;
+
             case NORMAL:
                 // NORMAL SHOT POSITION
                 // (distance, angle) (add decimals or .0 after all)
@@ -117,18 +118,14 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(0.05 + 3.81, -26.76);
                 // pitchOffsets.put(4.01, -27.9);
                 pitchOffsets.put(4.03, -26.4);
-                
                 pitchOffsets.put(4.34, -25.33);
                 pitchOffsets.put(4.95, -22.12);
 
                 //added after first match friday
 
-
-                pitchOffsets.put(5.72584, -20.21);
-                
-                
-
+                pitchOffsets.put(5.72584, -20.21);             
                 break;
+
             case HIGH:
                 // HIGH SHOT POSITION
                 // (distance, angle)
@@ -150,10 +147,8 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(4.23, -25.02);
                 pitchOffsets.put(3.44, -27.78);
                 break;
-
         }
         
-    
         // mapping of distance (meters) to target yaw offset value within frame
         // Ideally, the yaw offset should be 0 deg because that is
         // perfectly centered within PV frame, but that's only if the camera is on
@@ -169,9 +164,11 @@ public class AimSpeaker extends Command {
 
     @Override
     public void initialize() {
+        Util.consoleLog();
+
         tagNames = new AprilTagNames(alliance);
         // this.lastSight = 0;
-        Util.consoleLog();
+        
         SmartDashboard.putBoolean("Target Locked", false);
 
         // enable the "tracking" parameter so that when set,
@@ -212,6 +209,7 @@ public class AimSpeaker extends Command {
             //     double output = rotationController.calculate(idealYaw - currentYaw, 0);
             //     robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
             // }
+
             robotDrive.setTrackingRotation(Double.NaN);
             robotDrive.clearPPRotationOverride();
             return;
@@ -227,7 +225,6 @@ public class AimSpeaker extends Command {
             -photonVision.getRobotToCam().getRotation().getY(),
             Math.toRadians(target.getPitch())
         );
-
 
         // double pitchAngle = pitchOffsets.get(dist);
         double pitchAngle = pitchOffsets.get(dist);
@@ -250,13 +247,15 @@ public class AimSpeaker extends Command {
             // if joystick not moving, use PID to attempt to match the yaw offset interpolated using above values
             // at the current distance
             double output = rotationController.calculate(target.getYaw(), yawAngle);
+            
             if (RobotState.isAutonomous()) {
                 robotDrive.setPPRotationOverrideOffset(target.getYaw());
             }
+
             if (Math.abs(output) < 0.02) yawOkay = true; // if within tolerance than the yaw is good
+            
             robotDrive.setTrackingRotation(output); // will be handled in drivebase as "faked" joystick input
         }
-
 
         // ============ shooter pivot ==================================
         // pivots the shooter to the interpolated angle
@@ -277,9 +276,10 @@ public class AimSpeaker extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        Util.consoleLog("interrupted=%b", interrupted);
+
         SmartDashboard.putBoolean("Target Locked", false);
         SmartDashboard.putNumber("Distance to Speaker", Double.NaN);
-        Util.consoleLog("interrupted=%b", interrupted);
 
         elevatedShooter.shooter.stopShooting();
         robotDrive.disableTracking();
@@ -308,14 +308,12 @@ public class AimSpeaker extends Command {
         double fZ = finalShotVector.get(2, 0);
         // double fMag=Math.sqrt(Math.pow(fX,2) + Math.pow(fY,2) + Math.pow(fZ,2));
 
-
         theta = Math.toDegrees(theta);
         double alpha = -Math.toDegrees(Math.atan(fX / fY));
         double beta = Math.toDegrees(Math.atan(fZ / fY));
         double speedMultiplier = 1;//fMag / shotSpeed;
 
-        if (RobotBase.isReal())
-            alpha *= -1;
+        if (RobotBase.isReal()) alpha *= -1;
 
         double[] output = {alpha, theta - beta, speedMultiplier};
 

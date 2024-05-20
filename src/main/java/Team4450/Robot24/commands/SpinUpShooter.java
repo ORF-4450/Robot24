@@ -27,7 +27,7 @@ public class SpinUpShooter extends Command {
      * @param elevatedShooter the ElevatedShooter subsystem
      * @param robotDrive the drivebase
      * @param angle the desired angle (Double.NaN is shoot in place)
-     * @param speed the desired speed bounded [0, 1] (but it could be negativ I guess -cole)
+     * @param speed the desired speed bounded [0, 1] (but it could be negative I guess -cole)
      * @param delay whether delay=true (end right away but keep spinning),
      * or =false (don't end until another command ends it)
      */
@@ -58,9 +58,11 @@ public class SpinUpShooter extends Command {
     @Override
     public void execute() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
+        
         switch (state) {
             case NONE:
                 break;
+
             case MOVING:
                 double angleSetpoint = angle;
                 // this is one of the few times where we specify exact state instead of using PresetPosition
@@ -69,6 +71,7 @@ public class SpinUpShooter extends Command {
                     startTime = Util.timeStamp();
                 }
                 break;
+
             case BACKFEED: // run the sushis back a little so that it has more momentum feeding
                 if (Util.getElaspedTime(startTime) < 0.06) {
                     elevatedShooter.shooter.startFeeding(-0.3);
@@ -79,6 +82,7 @@ public class SpinUpShooter extends Command {
                     state = State.DONE;
                 }
                 break;
+
             case DONE:
                 elevatedShooter.shooter.stopFeeding();
                 elevatedShooter.shooter.startShooting(speed);
@@ -93,13 +97,13 @@ public class SpinUpShooter extends Command {
         elevatedShooter.shooter.stopFeeding();
         // if we aren't waiting for another command, cancel shot.
         // if we are waiting for another command, we trust it will handle cancel on its own
-        if (!delay)
-            elevatedShooter.shooter.stopShooting();
+        if (!delay) elevatedShooter.shooter.stopShooting();
     }
 
     @Override
     public boolean isFinished() {
         SmartDashboard.putString("ShootSpeaker Status", state.name());
+        
         if (delay)
             return state == State.DONE;
         else

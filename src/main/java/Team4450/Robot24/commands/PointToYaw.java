@@ -75,7 +75,6 @@ public class PointToYaw extends Command {
         SmartDashboard.putNumber("PointToWay/setpoint", desiredYaw);
         SmartDashboard.putNumber("PointToWay/measured", measured);
         SmartDashboard.putNumber("PointToWay/output", rotation);
-        
 
         if (wait) {
             // if this command is only one running on drivebase (wait) then command it to run
@@ -156,6 +155,7 @@ public class PointToYaw extends Command {
     public static double yawFromAxes(double xAxis, double yAxis) {
         double theta = Math.atan2(xAxis, yAxis) + Math.PI;
         double magnitude = Math.sqrt(Math.pow(xAxis, 2) + Math.pow(yAxis, 2));
+    
         if (theta > Math.PI) {
             theta = -(Math.PI - (theta - Math.PI));
         }

@@ -34,8 +34,7 @@ public class DriveToNote extends Command {
         this.photonVision = photonVision;
         this.alsoDrive = alsoDrive;
 
-        if (alsoDrive)
-            addRequirements(robotDrive);
+        if (alsoDrive) addRequirements(robotDrive);
 
         SendableRegistry.addLW(translationController, "DriveToNote Translation PID");
         SendableRegistry.addLW(rotationController, "DriveToNote Rotation PID");
@@ -47,6 +46,7 @@ public class DriveToNote extends Command {
 
         // store the initial field relative state to reset it later.
         initialFieldRel = robotDrive.getFieldRelative();
+        
         if (initialFieldRel)
             robotDrive.toggleFieldRelative(); // turn field relative off (to robot oriented) if it's on
 
@@ -64,7 +64,7 @@ public class DriveToNote extends Command {
         // logic for chosing "closest" target in PV subsystem
         PhotonTrackedTarget target = photonVision.getClosestTarget();
 
-        // better to check if target == null than using hasTargets() because tgere is a rare
+        // better to check if target == null than using hasTargets() because there is a rare
         // race condition where the target disappears between getTarget and hasTargets which is crazy
         // but it happened once...
         if (target == null) {
@@ -92,14 +92,14 @@ public class DriveToNote extends Command {
         }
     }
     
-
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);
-        if (alsoDrive)
-            robotDrive.drive(0, 0, 0, false);
-        if (initialFieldRel)
-            robotDrive.toggleFieldRelative(); // restore beginning state
+        
+        if (alsoDrive) robotDrive.drive(0, 0, 0, false);
+        
+        if (initialFieldRel) robotDrive.toggleFieldRelative(); // restore beginning state
+        
         robotDrive.setTrackingRotation(Double.NaN);
         robotDrive.disableTracking();
         robotDrive.clearPPRotationOverride();

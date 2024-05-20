@@ -234,21 +234,17 @@ public class RobotContainer
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)); // elevator
 			},
-		elevShooter, intake));
-		
+			elevShooter, intake));
 		
 		// intake.setDefaultCommand(new ReverseIntake(intake));
 		
-		
-
-
-			// new RunCommand(
-			// 	() -> driveBase.drive(
-			// 		-MathUtil.applyDeadband(driverController.getLeftY(), DRIVE_DEADBAND),
-			// 		-MathUtil.applyDeadband(driverController.getLeftX(), DRIVE_DEADBAND),
-			// 		-MathUtil.applyDeadband(driverController.getRightX(), DRIVE_DEADBAND),
-			// 		false),
-			// 	driveBase));
+		// new RunCommand(
+		// 	() -> driveBase.drive(
+		// 		-MathUtil.applyDeadband(driverController.getLeftY(), DRIVE_DEADBAND),
+		// 		-MathUtil.applyDeadband(driverController.getLeftX(), DRIVE_DEADBAND),
+		// 		-MathUtil.applyDeadband(driverController.getRightX(), DRIVE_DEADBAND),
+		// 		false),
+		// 	driveBase));
 
 		// Start the compressor, PDP and camera feed monitoring Tasks.
 
@@ -281,8 +277,6 @@ public class RobotContainer
 		
 		setAutoChoices();
 
-		//setStartingPoses();
-
 		// Configure the button bindings.
 		
         configureButtonBindings();
@@ -303,6 +297,7 @@ public class RobotContainer
         // CommandScheduler.getInstance().schedule(loadTrajectory);
 
 		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
+
 		Util.consoleLog("End robot container @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	}
 
@@ -325,10 +320,9 @@ public class RobotContainer
 		// POV buttons do same as alternate driving mode but without any lateral
 		// movement and increments of 45deg.
 		// new Trigger(()-> driverController.getPOV() != -1)
-		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false));
+		// 	.onTrue(new PointToYaw(()->PointToYaw.yawFromPOV(driverController.getPOV()), driveBase, false))
 
-
-		// vibrate between 30 and 25 sec left in match
+		// vibrate between 30 and 25 sec left in match.
 		new Trigger(() -> Timer.getMatchTime() < 30 && Timer.getMatchTime() > 25).whileTrue(new StartEndCommand(
 			() -> {
 				driverController.setRumble(RumbleType.kBothRumble, 0.5);
@@ -338,10 +332,10 @@ public class RobotContainer
 				utilityController.setRumble(RumbleType.kBothRumble, 0);
 		}));
 
-		// vibrate on note pickup
+		// vibrate on note pickup.
 		new Trigger(() -> elevShooter.shooter.hasNote()).onTrue(new InstantCommand(()->{
 			driverController.setRumble(RumbleType.kBothRumble, 0.5);
-		}).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->{
+			}).andThen(new WaitCommand(0.5)).andThen(new InstantCommand(()->{
 			driverController.setRumble(RumbleType.kBothRumble, 0);
 		})));
 
@@ -366,7 +360,6 @@ public class RobotContainer
 		// 	).alongWith(new AimTrap(driveBase, pvShooterCamera)
 		// ));
 
-
 		// reset field orientation
 		new Trigger(() -> driverController.getStartButton())
 			.onTrue(new InstantCommand(driveBase::zeroGyro));
@@ -386,21 +379,26 @@ public class RobotContainer
 		// hold face note
 		new Trigger(() -> driverController.getRightTrigger())// && !elevShooter.hasNote())
     	    .whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		
 		new Trigger(() -> driverController.getLeftTrigger())
 			.whileTrue(new DriveToNote(driveBase, pvNoteCamera, false));
+		
 		// new Trigger(() -> driverController.getRightTrigger())// && elevShooter.hasNote())
     	//     .whileTrue(new FaceAprilTag(driveBase, pvShooterCamera));
 		
 		// -------- Utility pad buttons ----------
+		
 		// climb position
 		new Trigger(()-> utilityController.getPOV() == 0) // up POV
 			.toggleOnTrue(new Preset(elevShooter, PresetPosition.CLIMB));
+		
 		// shoot amp
 		new Trigger(()-> utilityController.getPOV() == 90) // right POV
 			.toggleOnTrue(new ParallelCommandGroup(
 				new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 				new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 			));
+		
 		// shoot amp (same as above just the other button)
 		new Trigger(()-> utilityController.getPOV() == 270) // left POV
 			.toggleOnTrue(new ParallelCommandGroup(
@@ -412,6 +410,7 @@ public class RobotContainer
 		new Trigger(() -> driverController.getPOV() == 0).toggleOnTrue( // podium
 			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
 			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
+		
 		new Trigger(() -> driverController.getPOV() == 180).toggleOnTrue( // amp
 			new Preset(elevShooter, PresetPosition.HIGH_SHOT).andThen(
 			new SpinUpShooter(elevShooter, driveBase, -39, 1, false)));
@@ -453,7 +452,6 @@ public class RobotContainer
 			()->{elevShooter.shooter.stopFeeding();elevShooter.shooter.stopShooting();intake.stop();}
 		));
 
-
 		// outtake: doesn't really work use manual hold
 		new Trigger(() -> utilityController.getBackButton())
 			.toggleOnTrue(new ReverseIntake(intake, elevShooter));
@@ -477,6 +475,7 @@ public class RobotContainer
 		// subwoofer preset
 		new Trigger(() -> utilityController.getAButton()) // SUBWOOFER
 			.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, false));
+		
 		// new Trigger(() -> utilityController.getBButton()) // OUTER RING
 		// 	.toggleOnTrue(new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE));
 
@@ -521,6 +520,7 @@ public class RobotContainer
 		}
 
 		return autoCommand;
+		
 		// return new WaitCommand(1);
 
 		//return autoChooser.getSelected();
@@ -546,6 +546,7 @@ public class RobotContainer
 		));
 
 		NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, elevShooter));
+		
 		NamedCommands.registerCommand("IntakeNoteShooting", new StartEndCommand(()->{
 			intake.start();
 			elevShooter.shooter.startShooting();
@@ -560,10 +561,12 @@ public class RobotContainer
 			new SpinUpShooter(elevShooter, driveBase, 0, 0.1, true).andThen(
 			new WaitCommand(0).andThen(new ShootSpeaker(elevShooter))
 		));
+		
 		NamedCommands.registerCommand("ShootSpeaker",
 			new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.3).andThen(new ShootSpeaker(elevShooter))
 		));
+		
 		NamedCommands.registerCommand("ShootPodium",
 			new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
@@ -576,6 +579,7 @@ public class RobotContainer
 			new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		)));
+		
 		NamedCommands.registerCommand("ShootVision",
 			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 			new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
@@ -584,12 +588,11 @@ public class RobotContainer
 			new WaitCommand(1).andThen(new ShootSpeaker(elevShooter))
 		));
 		
-		
-
 		NamedCommands.registerCommand("ShootFar",
 			new SpinUpShooter(elevShooter, driveBase, OUTER_ANGLE, 1, true).andThen(
 			new WaitCommand(0.8).andThen(new ShootSpeaker(elevShooter))
 		));
+		
 		NamedCommands.registerCommand("SpinUp",new SpinUpShooter(elevShooter, driveBase, Double.NaN, 1, false));
 		NamedCommands.registerCommand("SpinUpSpeaker",new SpinUpShooter(elevShooter, driveBase, SUBWOOFER_ANGLE, 1, true));
 		NamedCommands.registerCommand("SpinUpPodium",new SpinUpShooter(elevShooter, driveBase, PODIUM_ANGLE, 1, true));
@@ -602,13 +605,14 @@ public class RobotContainer
 				new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 				new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
 				new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL)
-			)));
+		)));
+		
 		NamedCommands.registerCommand("AmpReady", new ParallelCommandGroup(
 			new Preset(elevShooter, PresetPosition.SHOOT_AMP_FRONT),
 			new InstantCommand(()->elevShooter.shootDoesTheSpeakerInsteadOfTheAmp = false)
 		));
-		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
 		
+		NamedCommands.registerCommand("ShootAmp", new ShootAmp(elevShooter));
 
 		// Create a chooser with the PathPlanner Autos located in the PP
 		// folders.
@@ -661,13 +665,13 @@ public class RobotContainer
 		elevShooter.elevator.lockPosition();
 		elevShooter.shooter.lockPosition();
 	}
+	
 	public void unlockMechanisms() {
 		elevShooter.elevator.unlockPosition();
 		elevShooter.shooter.unlockPosition();
 		driverController.setRumble(RumbleType.kBothRumble, 0);
 	}
 	
-         
 	/**
      * Loads a PathPlanner path file into a path planner trajectory.
      * @param fileName Name of file. Will automatically look in deploy directory and add the .path ext.

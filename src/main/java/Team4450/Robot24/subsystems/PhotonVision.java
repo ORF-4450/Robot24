@@ -146,11 +146,13 @@ public class PhotonVision extends SubsystemBase
             case APRILTAG_TRACKING:
                 visionSim.addAprilTags(fieldLayout);
                 break;
+            
             case POSE_ESTIMATION:
                 visionSim.addAprilTags(fieldLayout);
                 break;
+            
             case OBJECT_TRACKING:
-                // approximate coordinates on on-field game pieces
+                // approximate coordinates of on-field game pieces
                 addNoteSimTarget(2.9, 7, 0);
                 addNoteSimTarget(2.9, 5.6, 1);
                 addNoteSimTarget(2.9, 4.1, 2);
@@ -182,6 +184,7 @@ public class PhotonVision extends SubsystemBase
             new Pose3d(new Pose2d(x, y, new Rotation2d())), // no Z makes them kind of in floor but oh well
             noteModel
         );
+
         // instead of giving them one "type" we give them a unique "type" to re-access them later
         // because order of type list appears to be indeterminant so it's kind of a hacky solution but it works!
         visionSim.addVisionTargets("note"+Integer.toString(id), target);
@@ -195,12 +198,14 @@ public class PhotonVision extends SubsystemBase
             for (int noteID = 0; noteID < 11; noteID++) { // for each note do this:
                 String name = "note" + Integer.toString(noteID); // get the unique "type"
                 Pose2d fieldPose = visionSim.getDebugField().getObject(name).getPose();
+                
                 if (AdvantageScope.getInstance().isReservedGamepiece(noteID)) {
                     // this just means it's picked up by the robot or something else is controlling it
                     // visionSim.removeVisionTargets(name);
                 } else {
                     // get pose from field and set the note pose to that so it doesn't reset
                     if (fieldPose.getX() == 0 && fieldPose.getY() == 0) continue;
+                    
                     Pose3d pose3d = new Pose3d(fieldPose);
                     visionSim.getVisionTargets(name).forEach((target)->target.setPose(pose3d));
                     AdvantageScope.getInstance().setGamepiecePose(noteID, pose3d);
@@ -294,7 +299,6 @@ public class PhotonVision extends SubsystemBase
         else
             return null;
     }
-    
     
     /**
      * Get an array of the currently tracked Fiducial IDs.
@@ -402,12 +406,14 @@ public class PhotonVision extends SubsystemBase
      */
     public void selectPipeline(PipelineType type) {
         pipelineType = type;
+
         if (RobotBase.isSimulation()) setUpSimTargets();
         // selectPipeline(type.ordinal());
     }
 
     public Pose2d getTagPose(int id) {
         Optional<Pose3d> pose3dOptional = fieldLayout.getTagPose(id);
+        
         if (pose3dOptional.isPresent()) {
             Pose3d pose3d = pose3dOptional.get();
             return new Pose2d(pose3d.getX(), pose3d.getY(), pose3d.getRotation().toRotation2d());
@@ -484,6 +490,7 @@ public class PhotonVision extends SubsystemBase
         if (!isAprilTag()) {
             return Optional.empty();
         }
+
         Optional<EstimatedRobotPose> estimatedPoseOptional = poseEstimator.update();
 
         if (estimatedPoseOptional.isPresent()) {
@@ -499,16 +506,20 @@ public class PhotonVision extends SubsystemBase
             // logic for checking if pose is valid would go here:
             // for example:
             ArrayList<Pose3d> usedTagPoses = new ArrayList<Pose3d>();
+            
             for (int i = 0; i < estimatedPose.targetsUsed.size(); i++) {
                 int id = estimatedPose.targetsUsed.get(i).getFiducialId();
                 // if a target was used with ID > 16 then return no estimated pose
                 if (id > 16) {
                     return Optional.empty();
                 }
+                
                 Optional<Pose3d> tagPose = fieldLayout.getTagPose(id);
+                
                 if (tagPose.isPresent())
                     usedTagPoses.add(tagPose.get());
             }
+            
             // send the tag poses used to AS to show green laser indicators of tag sights
             AdvantageScope.getInstance().setVisionTargets(usedTagPoses);
             // Util.consoleLog("used %d tags for estimation", usedTagPoses.size());

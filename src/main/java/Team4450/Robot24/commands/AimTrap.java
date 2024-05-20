@@ -59,8 +59,10 @@ public class AimTrap extends Command {
 
         // prioritize the left, then right, then back trap.
         target = photonVision.getTarget(tagNames.TRAP_LEFT);
+        
         if (target == null) target = photonVision.getTarget(tagNames.TRAP_RIGHT);
         if (target == null) target = photonVision.getTarget(tagNames.TRAP_BACK);
+        
         if (target == null) {
             Util.consoleLog("null trap target");
             return;

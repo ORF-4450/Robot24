@@ -35,6 +35,7 @@ public class IntakeNote extends Command {
         this.elevatedShooter = elevatedShooter;
         this.intake = intake;
         this.shooting = shooting;
+        
         addRequirements(intake, elevatedShooter);
 
         // share the state so that we can debug
@@ -61,14 +62,17 @@ public class IntakeNote extends Command {
     @Override
     public void execute() {
         SmartDashboard.putString("IntakeNote Status", state.name());
+        
         switch (state) {
             case MOVING: // still moving to the intake position, must call executeSetPosition() every loop!
                 if (elevatedShooter.executeSetPosition(PresetPosition.INTAKE)) // returns true when done
                     state = State.INTAKING;
                 break;
+            
             case INTAKING: // waiting for a note and intaking
                 intake.start(); // run intake
                 elevatedShooter.shooter.startFeeding(1); // run feeder
+            
                 if (shooting) { // if shooting while intake, then start shooting
                     elevatedShooter.shooter.startShooting();
                 } else {
@@ -79,20 +83,23 @@ public class IntakeNote extends Command {
                 
                 // this attempts to simulate note pickup in simulation, more in AdvantageScope
                 boolean simPickup = false;
+                
                 if (RobotBase.isSimulation()) simPickup = AdvantageScope.getInstance().attemptPickup();
 
                 if (elevatedShooter.shooter.hasNote() || simPickup) { // if the note has been picked up
                     state = State.FEEDING;
                 }
                 break;
-            case FEEDING:// feed until shooter has note, depracated basically just skip it!
+
+            case FEEDING:// feed until shooter has note, deprecated basically just skip it!
                 intake.stop();
                 elevatedShooter.shooter.stopFeeding();
                 if (!shooting) elevatedShooter.shooter.stopShooting();
                 state = State.IN_FINAL_PLACE;
                 break;
+
             case IN_FINAL_PLACE: // pretty much same as FEEDING but we had that if note sensor didn't
-                                // work in case we had to use it on time only
+                                 // work in case we had to use it on time only
                 intake.stop();
                 break;
         }
@@ -102,6 +109,7 @@ public class IntakeNote extends Command {
     public boolean isFinished() {
         return state == State.IN_FINAL_PLACE;
     }
+    
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);

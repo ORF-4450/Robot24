@@ -37,12 +37,10 @@ public class Elevator extends SubsystemBase {
     private RelativeEncoder mainEncoder;
     private RelativeEncoder followEncoder;
 
-
     private final double TOLERANCE_COUNTS = 1.5; // in encoder counts, not "meters"
     private final double START_COUNTS = 0.08 / ELEVATOR_WINCH_FACTOR; // the start counts
 
     private double goal = Double.NaN;
-    
 
     public Elevator() {
         Util.consoleLog();
@@ -71,6 +69,7 @@ public class Elevator extends SubsystemBase {
         mainPID = new ProfiledPIDController(0.12, 0, 0, new Constraints(
             (1 / -ELEVATOR_WINCH_FACTOR), 8 / -ELEVATOR_WINCH_FACTOR // velocity / acceleration
         ));
+        
         SmartDashboard.putData("winch_pid", mainPID);
         mainPID.setTolerance(TOLERANCE_COUNTS);
     }
@@ -97,10 +96,7 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("winch_2_m", followEncoder.getPosition() * ELEVATOR_WINCH_FACTOR);
         SmartDashboard.putNumber("winch_setpoint", goal);
 
-        
-
-        if (Double.isNaN(goal)) // in "unlocked"/"limp" mode so just return
-            return;
+        if (Double.isNaN(goal)) return; // in "unlocked"/"limp" mode so just return
 
         // SOFT LIMITS ================
         if (goal < -59)
@@ -117,6 +113,7 @@ public class Elevator extends SubsystemBase {
 
         // output logging and simulation
         SmartDashboard.putNumber("winch_output", motorOutput);
+        
         if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
         if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
     }
@@ -176,7 +173,6 @@ public class Elevator extends SubsystemBase {
         double mainValue = mainEncoder.getPosition() * ELEVATOR_WINCH_FACTOR;
         return mainValue;
     }
-
 
     /**
      * reset the ecoders to the current position, essentially says wherever it is

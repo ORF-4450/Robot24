@@ -39,26 +39,30 @@ public class ShootAmp extends Command {
     @Override
     public void execute() {
         SmartDashboard.putString("ShootAmp Status", state.name());
+        
         switch (state) {
             case NONE:
                 break;
+        
             case SHOOTING: // start the initial shoot maneuver
                 elevatedShooter.shooter.startFeeding(-0.3);
                 boolean moveon = !elevatedShooter.shooter.hasNote() && Util.getElaspedTime(feedTime) > 0.2;
                 if (RobotBase.isSimulation()) moveon = true;
-                if (moveon)
-                    state = State.MOVING2;
+                if (moveon) state = State.MOVING2;
                 break;
+
             case MOVING2: // move the pivot to the second position
                 if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT_TWO))
                     state = State.MOVING3;
                     feedTime = Util.timeStamp();
                 break;
+
             case MOVING3: // go back to intake
                 if (elevatedShooter.executeSetPosition(PresetPosition.INTAKE))
                     state = State.DONE;
                     feedTime = Util.timeStamp();
                 break;
+
             case DONE:
                 elevatedShooter.shooter.stopFeeding();
                 break;
@@ -69,6 +73,7 @@ public class ShootAmp extends Command {
     public boolean isFinished() {
         return state == State.DONE;
     }
+    
     @Override
     public void end(boolean interrupted) {
         Util.consoleLog("interrupted=%b", interrupted);

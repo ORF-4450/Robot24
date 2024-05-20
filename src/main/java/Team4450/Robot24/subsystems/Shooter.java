@@ -97,7 +97,7 @@ public class Shooter extends SubsystemBase {
 
         resetEncoders();
 
-        // plugges into Spark MAX itself
+        // Optical sensor plugs into Spark MAX itself
         noteSensor = motorFeeder.getForwardLimitSwitch(Type.kNormallyOpen);
 
         // profiled PID controller allows us to control acceleration and
@@ -105,6 +105,7 @@ public class Shooter extends SubsystemBase {
         pivotPID = new ProfiledPIDController(0.12, 0, 0,
             new Constraints(angleToEncoderCounts(360 *8), angleToEncoderCounts(11*360)) // max velocity(/s), max accel(/s)
         );
+        
         pivotPID.setTolerance(PIVOT_TOLERANCE); // encoder counts not degrees for this one
 
         Util.consoleLog("Shooter created!");
@@ -159,8 +160,6 @@ public class Shooter extends SubsystemBase {
     public void unlockPosition() {
         goal = Double.NaN; // when setpoint NaN it doesn't do it
     }
-
-    
     
     /**
      * set whether the note sensor triggers the feed rollers to stop or not

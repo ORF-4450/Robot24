@@ -52,12 +52,11 @@ public class AdvantageScope {
     public void update() {
         // season specific mechanism values:
         Pose3d elevatorPose = new Pose3d(0, 0, elevHeight, new Rotation3d());
-        Pose3d shooterPose = new Pose3d(0.09, 0, 0.275+elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
-        Pose3d carriagePose = new Pose3d(0, 0, elevHeight+0.08, new Rotation3d());
+        Pose3d shooterPose = new Pose3d(0.09, 0, 0.275 + elevHeight, new Rotation3d(0, Math.toRadians(-25 + shooterAngle), 0));
+        Pose3d carriagePose = new Pose3d(0, 0, elevHeight + 0.08, new Rotation3d());
 
         // send components
         sendPoses("components", elevatorPose, shooterPose, carriagePose);
-
         sendPoses("robot", new Pose3d(robotPose));
         sendPoses("notes", gamepieces);
         sendPoses("targets", visionTargets.toArray(new Pose3d[0]));
@@ -83,7 +82,7 @@ public class AdvantageScope {
     }
 
     /**
-     * Decunstruct the Pose3d to a numerical quaternion array
+     * Deconstruct the Pose3d to a numerical quaternion array
      * @param pose the Pose3d
      * @return a double array of length 7 containing the quaternion values
      */
@@ -92,6 +91,7 @@ public class AdvantageScope {
             double[] empty = {0,0,0,0,0,0,0};
             return empty;
         }
+
         Quaternion quat = pose.getRotation().getQuaternion();
         double[] array = {pose.getX(), pose.getY(), pose.getZ(), quat.getW(), quat.getX(), quat.getY(), quat.getZ()};
         return array;
@@ -105,11 +105,13 @@ public class AdvantageScope {
      */
     public void sendPoses(String key, Pose3d... poses) {
         ArrayList<Double> output = new ArrayList<Double>();
+        
         for (int i=0;i<poses.length;i++) {
             double[] poseArray = poseToArray(poses[i]);
-            for (int j=0;j<poseArray.length;j++)
-                output.add(poseArray[j]);
+            
+            for (int j=0;j<poseArray.length;j++) output.add(poseArray[j]);
         }
+        
         Double[] outputArray = output.toArray(new Double[0]);
         SmartDashboard.putNumberArray("Visualization/"+key, outputArray);
     }
@@ -120,8 +122,7 @@ public class AdvantageScope {
      * @param id the gamepiece ID
      */
     public void pickupGamepiece(int id) {
-        if (!gamepieceInventory.contains(id))
-            gamepieceInventory.add(id);
+        if (!gamepieceInventory.contains(id)) gamepieceInventory.add(id);
     }
 
     /**
@@ -132,10 +133,13 @@ public class AdvantageScope {
     public boolean attemptPickup() {
         for (int i=0;i<gamepieces.length;i++) {
             Pose3d note = gamepieces[i];
+            
             if (note == null) return true;
+            
             double xdist = Math.abs(note.getX() - robotPose.getX());
             double ydist = Math.abs(note.getY() - robotPose.getY());
             double dist = Math.sqrt(Math.pow(xdist, 2) + Math.pow(ydist, 2));
+            
             if (dist < 0.5) {
                 pickupGamepiece(i);
                 return true;
@@ -213,8 +217,8 @@ public class AdvantageScope {
      * @return the AdvantageScope singleton
      */
     public static AdvantageScope getInstance() {
-        if (AdvantageScope.instance == null)
-            AdvantageScope.instance = new AdvantageScope();
+        if (AdvantageScope.instance == null) AdvantageScope.instance = new AdvantageScope();
+        
         return AdvantageScope.instance;
     }
 }

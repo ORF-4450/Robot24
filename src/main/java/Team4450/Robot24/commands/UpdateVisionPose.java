@@ -59,8 +59,10 @@ public class UpdateVisionPose extends Command {
             // return; // if simulator don't try updating pose estimator because the
                     // odometry is already "perfect"
         }
+        
         // if (RobotState.isAutonomous()) return;
         // if(true)return;
+        
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 
         // update pose estimator pose with current epoch timestamp and the pose from the camera
@@ -76,10 +78,12 @@ public class UpdateVisionPose extends Command {
                 estimatedPoseContainer.estimatedPose.getY(),
                 new Rotation2d(estimatedPoseContainer.estimatedPose.getRotation().getZ())
             );
+            
             // Util.consoleLog("%d %d",
             //     Math.round(pose2d.getRotation().getDegrees()),
             //     Math.round(robotDrive.getPose().getRotation().getDegrees())
             // );
+            
             // send the "green ghost" vision pose to AS
             AdvantageScope.getInstance().sendPoses("vision_pose", estimatedPoseContainer.estimatedPose);
             robotDrive.updateOdometryVision(pose2d, estimatedPoseContainer.timestampSeconds);

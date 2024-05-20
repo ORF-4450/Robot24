@@ -99,11 +99,6 @@ X                       Park Wheels
 Y                       [reserved]Drive to Note
 
 
-
-
-
-
-
 Utility GamePad - Left Joystick
 Button Name				Function
 -----------------------------------------------------------------------------------
@@ -132,7 +127,6 @@ POV_0                   Climb position
 POV_180                 Climb down
 POV_90                  Amp
 POV_270                 Amp
-
 
 
 Dashboard Indicators/Controls
