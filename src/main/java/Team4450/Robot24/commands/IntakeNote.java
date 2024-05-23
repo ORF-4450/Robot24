@@ -91,7 +91,7 @@ public class IntakeNote extends Command {
                 }
                 break;
 
-            case FEEDING:// feed until shooter has note, deprecated basically just skip it!
+            case FEEDING:
                 intake.stop();
                 elevatedShooter.shooter.stopFeeding();
                 if (!shooting) elevatedShooter.shooter.stopShooting();

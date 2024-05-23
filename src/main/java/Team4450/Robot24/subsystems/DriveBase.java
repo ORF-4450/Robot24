@@ -110,7 +110,7 @@ public class DriveBase extends SubsystemBase {
   // (deceleration). this has effect that deceleration is instant but acceleration is limited
   // this is the solution from 2024 to solve battery sag/stutter issues and it's been working
   // very well, extending battery life by ~3x, strongly recommend we keep with Rev code - Cole
-  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate,Double.NEGATIVE_INFINITY,0);
+  private SlewRateLimiter magLimiter = new SlewRateLimiter(DriveConstants.kMagnitudeSlewRate, Double.NEGATIVE_INFINITY, 0);
   private SlewRateLimiter rotLimiter = new SlewRateLimiter(DriveConstants.kRotationalSlewRate);
   private double prevTime = WPIUtilJNI.now() * 1e-6;
 
@@ -364,7 +364,6 @@ public class DriveBase extends SubsystemBase {
 
     // override joystick value if tracking AND trackingRotation is not NaN
     if (istracking && !Double.isNaN(trackingRotation)) rot = trackingRotation;
-
 
     if (rateLimit)
     {

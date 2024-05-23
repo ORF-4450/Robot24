@@ -526,6 +526,7 @@ public class PhotonVision extends SubsystemBase
 
             return Optional.of(estimatedPose);
         } else {
+            // Clears vision targets by loading empty list.
             AdvantageScope.getInstance().setVisionTargets(new ArrayList<Pose3d>());
             return Optional.empty();
         }

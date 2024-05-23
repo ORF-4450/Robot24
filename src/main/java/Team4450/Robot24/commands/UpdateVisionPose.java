@@ -17,7 +17,7 @@ import Team4450.Robot24.subsystems.PhotonVision;
  * This class runs as the default command of a PhotonVision
  * subsystem and regularly updates the SwerveDrivePoseEstimator
  * object with timestamped vision poses. The pose estimator then
- * merges these predicted poses with what the actual odometry on
+ * merges these observed poses with what the actual odometry on
  * the robot is doing and produces a smoothed "true" pose.
  * 
  * Also, this class updates the visionSim object with the robots
@@ -56,12 +56,10 @@ public class UpdateVisionPose extends Command {
     public void execute() {
         if (Robot.isSimulation()) {
             cameraSubsystem.updateSimulationPose(robotDrive.getPose());
-            // return; // if simulator don't try updating pose estimator because the
-                    // odometry is already "perfect"
         }
-        
+
+        // If vision pose estimation stops working, this if will not use it.
         // if (RobotState.isAutonomous()) return;
-        // if(true)return;
         
         Optional<EstimatedRobotPose> estimatedPoseOptional = cameraSubsystem.getEstimatedPose();
 

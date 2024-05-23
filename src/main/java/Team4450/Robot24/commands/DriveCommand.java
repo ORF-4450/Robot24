@@ -21,10 +21,6 @@ public class DriveCommand extends Command
     private final DoubleSupplier rotationSupplier;
     private final XboxController controller;
     
-    // private final SlewRateLimiter slewX = new SlewRateLimiter(Constants.DriveConstants.kMagnitudeSlewRate);
-    // private final SlewRateLimiter slewY = new SlewRateLimiter(Constants.DriveConstants.kMagnitudeSlewRate);
-    // private final SlewRateLimiter slewRot = new SlewRateLimiter(Constants.DriveConstants.kMagnitudeSlewRate);
-
     public DriveCommand(DriveBase driveBase,
                         DoubleSupplier throttleSupplier,
                         DoubleSupplier strafeSupplier,

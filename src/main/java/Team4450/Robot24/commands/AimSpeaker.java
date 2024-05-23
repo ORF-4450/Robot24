@@ -120,9 +120,6 @@ public class AimSpeaker extends Command {
                 pitchOffsets.put(4.03, -26.4);
                 pitchOffsets.put(4.34, -25.33);
                 pitchOffsets.put(4.95, -22.12);
-
-                //added after first match friday
-
                 pitchOffsets.put(5.72584, -20.21);             
                 break;
 
@@ -237,7 +234,7 @@ public class AimSpeaker extends Command {
         elevatedShooter.shooter.startShooting(1.0 * velocityOffsets[2]); // keep the wheels spun up!
 
         // ============= rotation of robot ==============================
-        // points the physical drivebase at the speaker usig yaw offsets
+        // points the physical drivebase at the speaker using yaw offsets
 
         if (joystickMoving) {
             robotDrive.setTrackingRotation(Double.NaN);
@@ -289,7 +286,7 @@ public class AimSpeaker extends Command {
      * Returns the degree and speed offsets for aiming based on the robot velocity.
      * This is because if we shoot while moving the Note keeps the inertia/momentum
      * so we need to rotate off target to make it go in.
-     * @param theta the desired pitch of the shooter
+     * @param theta the desired pitch of the shooter in degrees
      * @return an array of 3 values: the change in yaw angle, the change in pitch angle, and the change in speed needed
      */
     private double[] getMovementOffsets(double theta) {

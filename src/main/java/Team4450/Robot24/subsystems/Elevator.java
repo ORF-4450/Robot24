@@ -107,15 +107,15 @@ public class Elevator extends SubsystemBase {
         // main pid/profile loop
         mainPID.setGoal(goal);
         double nonclamped = mainPID.calculate(mainEncoder.getPosition());
-        double motorOutput = Util.clampValue(nonclamped, 1);
+        double motorOutput = Util.clampValue(nonclamped, .5); //1); Reduced for demos.
         SmartDashboard.putNumber("elevator speed", motorOutput);
         motorMain.set(motorOutput);
 
         // output logging and simulation
         SmartDashboard.putNumber("winch_output", motorOutput);
         
-        if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + (1*motorOutput));
-        if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + (1*motorOutput));
+        if (Robot.isSimulation()) mainEncoder.setPosition(mainEncoder.getPosition() + motorOutput);
+        if (Robot.isSimulation()) followEncoder.setPosition(followEncoder.getPosition() + motorOutput);
     }
 
     /**

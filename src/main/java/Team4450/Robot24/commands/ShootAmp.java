@@ -54,13 +54,15 @@ public class ShootAmp extends Command {
             case MOVING2: // move the pivot to the second position
                 if (elevatedShooter.executeSetPosition(PresetPosition.SHOOT_AMP_FRONT_TWO))
                     state = State.MOVING3;
-                    feedTime = Util.timeStamp();
+                
+                feedTime = Util.timeStamp();
                 break;
 
             case MOVING3: // go back to intake
                 if (elevatedShooter.executeSetPosition(PresetPosition.INTAKE))
                     state = State.DONE;
-                    feedTime = Util.timeStamp();
+
+                feedTime = Util.timeStamp();
                 break;
 
             case DONE:

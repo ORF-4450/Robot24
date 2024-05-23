@@ -85,8 +85,7 @@ public class DriveToNote extends Command {
         Util.consoleLog("in[yaw=%f, pitch=%f] out[rot=%f, mov=%f]", target.getYaw(), target.getPitch(), rotation, movement);
 
         if (alsoDrive) {
-            // robotDrive.driveRobotRelative(-movement, 0, rotation);
-            robotDrive.driveRobotRelative((-movement), 0, rotation);
+            robotDrive.driveRobotRelative(-movement, 0, rotation);
         } else {
             robotDrive.setTrackingRotation(rotation);
         }

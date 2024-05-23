@@ -298,7 +298,7 @@ public class RobotContainer
 
 		//PathPlannerTrajectory ppTestTrajectory = loadPPTrajectoryFile("richard");
 
-		Util.consoleLog("End robot container @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		Util.consoleLog("End robot container------------------------------");
 	}
 
 	/**
@@ -520,10 +520,6 @@ public class RobotContainer
 		}
 
 		return autoCommand;
-		
-		// return new WaitCommand(1);
-
-		//return autoChooser.getSelected();
   	}
 
 	public static String getAutonomousCommandName()
@@ -584,7 +580,7 @@ public class RobotContainer
 			new Preset(elevShooter, PresetPosition.SHOOT_VISION_START).andThen(
 			new SpinUpShooter(elevShooter, driveBase, -39, 1, true).andThen(
 			new AimSpeaker(driveBase, elevShooter, pvShooterCamera, driverController.getRightXDS(), Position.NORMAL))).alongWith(
-			// with
+			// AimSpeaker runs in paralell with the next two commands. 1 sec allows for aiming thhen shoot happens.
 			new WaitCommand(1).andThen(new ShootSpeaker(elevShooter))
 		));
 		
