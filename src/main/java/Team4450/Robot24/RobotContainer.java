@@ -229,12 +229,14 @@ public class RobotContainer
 
 		// up and down on left operator controller joystick pivots shooter assembly
 		// up and down on right operator controller joystick moves elevator assembly
-		elevShooter.setDefaultCommand(new RunCommand(
+
+		// Changed operator stick controls for Girls Gen 2024. -Arnav
+		/* elevShooter.setDefaultCommand(new RunCommand(
 			()->{elevShooter.moveRelative(
 				-MathUtil.applyDeadband(utilityController.getLeftY(), DRIVE_DEADBAND), // pivot
 				-MathUtil.applyDeadband(utilityController.getRightY(), DRIVE_DEADBAND)); // elevator
 			},
-			elevShooter, intake));
+			elevShooter, intake)); */
 		
 		// intake.setDefaultCommand(new ReverseIntake(intake));
 		
