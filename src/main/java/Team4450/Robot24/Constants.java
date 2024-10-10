@@ -40,49 +40,56 @@ public final class Constants
 	    
 	// Non-drive base motor controller port assignments
 
-    // INTAKE 
+    // INTAKE ======
     public static final int     INTAKE_MOTOR_1 = 9;
     public static final int     INTAKE_MOTOR_2 = 10;
     public static final double  INTAKE_SPEED = 0.90;
 
-    // SHOOTER 
+    // SHOOTER ======
     public static final int     SHOOTER_MOTOR_TOP = 11;
     public static final int     SHOOTER_MOTOR_BOTTOM = 12;
     public static final int     SHOOTER_MOTOR_FEEDER = 13;
     public static final int     SHOOTER_MOTOR_PIVOT = 14;
     // public static final int     SHOOTER_MOTOR_PIVOT_2 = 15; // if we have to add one
 
-    public static final double  SHOOTER_SPEED = .5; //1; Reduced for demos.
+    public static final double  SHOOTER_SPEED = 1;
     public static final double  SHOOTER_FEED_SPEED = 1;
 
-    // multiplied by shaft rotations to get degrees of shooter angle.
+    // multiplied by shaft rotations to get degrees of shooter angle
     public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (765.0 / 13.0)) * 360;
     public static final double  SHOOTER_PRECISE_PIVOT_FACTOR = (1.0 / 3.0) * 360;
     // public static final double  SHOOTER_PIVOT_FACTOR = (1.0 / (18.0 / 54.0)) * 360;
     
+
     public static final double  OUTER_ANGLE = -15;
     public static final double  PODIUM_ANGLE = -26;
     public static final double  SUBWOOFER_ANGLE = -55;
     public static final double  TRAP_ANGLE = -47;
     
-    // ELEVATOR motor ports.
+    // ELEVATOR ======
     public static final int     ELEVATOR_MOTOR_RIGHT = 16;
     public static final int     ELEVATOR_MOTOR_LEFT = 17;
-    //public static final int     ELEVATOR_MOTOR_INNER = 18;
+    public static final int     ELEVATOR_MOTOR_INNER = 18;
 
     // ELEVATOR_WINCH_FACTOR is multiplied by native rotations of motor shaft
-    // to get height change in MAXSpline shaft since startup or last encoder reset.
-    // math explanation:
+    // to get height change in MAXSpline shaft since startup or last encoder reset
+    // math explanation
     // ratio is (1.0 / (1014.0 / 55.0)) spool rots for every turn of shaft
-    // * 2pi for radians traveled/angular displacement * spool radius in meters to get linear displacement
+    // *2pi for radians traveled/angular displacement * spool radius in meters to get linear displacement
     // 1.25 inch radius is 0.03175 meters (source: looked it up)
     // idk why it has to be negative, probably the gears swap rotation, not a big deal tho
-    public static final double  ELEVATOR_WINCH_FACTOR = (-1.0 / (1014.0 / 55.0)) * (2 * Math.PI) * 0.03175;
+    public static final double  ELEVATOR_WINCH_FACTOR = (-1.0 / (1014.0 / 55.0)) * (2*Math.PI) * 0.03175;
     
     // same deal as above but different gear ratio and pulley size (0.451 in = 0.0114554 m)
-    public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2 * Math.PI) * 0.0114554;
+    public static final double  ELEVATOR_CENTERSTAGE_FACTOR = (1.0 / (117.0 / 7.0)) * (2*Math.PI) * 0.0114554;
 
-    // CAMERAS 
+    // CAMERAS ======
+    public static final double    PV_TARGET_PITCH = -20;
+
+    public static Transform3d   CAMERA_FRONT_TRANSFORM = new Transform3d(
+        new Translation3d(0, 0.2794, 0.5715),
+        new Rotation3d(0, 0, Math.toRadians(180))
+    );
 
     public static Transform3d   CAMERA_SHOOTER_TRANSFORM = new Transform3d(
         new Translation3d(0, 0, 0.5207), // change last value to height in METERS of lens
@@ -126,13 +133,13 @@ public final class Constants
         // Driving Parameters - Note that these are not the maximum capable speeds of
         // the robot, but instead they are the allowed maximum speeds
 
-        public static final double kMaxSpeedMetersPerSecond = 1.0;  // Speed limited for demos.
-        //public static final double kMaxSpeedMetersPerSecond = ModuleConstants.kDriveWheelFreeSpeedRps; // max speed
-        public static final double kMaxAngularSpeed = 1.5 * (2 * Math.PI); // radians per second (1.5 rots / sec)
-        public static final double kSlowModeFactor = .50; // 50% of normal.
-        public static final double kRotSlowModeFactor = .20; // 20% of normal.
+        // public static final double kMaxSpeedMetersPerSecond = 4.0;
+        public static final double kMaxSpeedMetersPerSecond = ModuleConstants.kDriveWheelFreeSpeedRps; // max speed
+        public static final double kMaxAngularSpeed = 1.5 * (2*Math.PI); // radians per second (1.5 rots / sec)
+        public static final double kSlowModeFactor = .50; // 15% of normal.
+        public static final double kRotSlowModeFactor = .20; // 15% of normal.
 
-        // these were 1.2, 1.8, 2.0 in REV base code. Controls drivebase slew limiting.
+        // these were 1.2, 1.8, 2.0 in REV base code
         public static final double kDirectionSlewRate = Double.POSITIVE_INFINITY; // radians per second.
         public static final double kMagnitudeSlewRate = 1; // percent per second (1 = 100%).
         public static final double kRotationalSlewRate = Double.POSITIVE_INFINITY; // percent per second (1 = 100%).
@@ -255,6 +262,6 @@ public final class Constants
         public static final double kFreeSpeedRpm = 5676;
     }
 
-  //-------------------- No student code above this line ------------------------------------------------------
+  //-------------------- No student code above this line (whoops -cole) ------------------------------------------------------
 
 }
