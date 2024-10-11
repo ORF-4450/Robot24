@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Amp1"
+                  "pathName": null
                 }
               }
             ]
@@ -51,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp2"
+            "pathName": null
           }
         },
         {
@@ -73,7 +73,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Amp3"
+                  "pathName": null
                 }
               }
             ]
