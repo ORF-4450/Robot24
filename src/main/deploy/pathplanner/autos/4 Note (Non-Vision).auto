@@ -39,7 +39,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootVision"
+            "name": "ShootSpeaker"
           }
         },
         {
@@ -64,7 +64,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootVision"
+            "name": "ShootSpeaker"
           }
         },
         {
@@ -89,7 +89,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootVision"
+            "name": "ShootSpeaker"
           }
         }
       ]
