@@ -232,13 +232,13 @@ public class Shooter extends SubsystemBase {
     /**
      * Get the average wheel speed of top and bottom
      * shooter rollers
-     * @return the mean wheel speed in meters per second
+     * @return the average wheel speed in meters per second
      */
     public double getWheelSpeed() {
         double wheelRadius = 1.5 * 0.0254; // 1.5 in -> meters
         double topWheelSpeed = (Math.abs(topMotorEncoder.getVelocity()) / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
         double bottomWheelSpeed = (Math.abs(bottomMotorEncoder.getVelocity()) / 60.0) * wheelRadius * 2 * Math.PI; // rpm -> m/s
-        double averageWheelSpeed = 0.2 * (topWheelSpeed + bottomWheelSpeed); // mean of top and bottom
+        double averageWheelSpeed = 0.4 * 0.5 * (topWheelSpeed + bottomWheelSpeed); // average of top and bottom (0.4 arbitrary tuning const)
         return averageWheelSpeed;
     }
 
