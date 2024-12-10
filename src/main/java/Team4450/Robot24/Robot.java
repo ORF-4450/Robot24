@@ -5,9 +5,11 @@ import static Team4450.Robot24.Constants.*;
 
 import Team4450.Lib.*;
 import Team4450.Robot24.wpilib.TimedRobot;
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.WPILibVersion;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -309,8 +311,9 @@ public class Robot extends TimedRobot
 
     // Next two lines launch teleop mode, but since we are in test
     // mode, LiveWindow will be enabled to display test data to the
-    // outlineviewer to shuffleboard. Our "test" mode is the regular
-    // telop with LW enabled.
+    // outlineviewer and shuffleboard. Our "test" mode is the regular
+    // telop with LW enabled. Our code displays more detailed test/debug
+    // data in LW mode.
 
     LiveWindow.enableAllTelemetry();
 

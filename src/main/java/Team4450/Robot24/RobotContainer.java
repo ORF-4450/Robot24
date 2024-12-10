@@ -207,6 +207,16 @@ public class RobotContainer
 		// Set the default drive command. This command will be scheduled automatically to run
 		// every teleop period and so use the gamepad joy sticks to drive the robot. 
 
+		// We pass the GetY() functions on the Joysticks as a DoubleSuppier. The point of this 
+		// is removing the direct connection between the Drive and XboxController classes. We
+		// are in effect passing functions into the Drive command so it can read the values
+		// later when the Drive command is executing under the Scheduler. Drive command code does
+		// not have to know anything about the JoySticks (or any other source) but can still read
+		// them. We can pass the DoubleSupplier two ways. First is with () -> lambda expression
+		// which wraps the getLeftY() function in a DoubleSupplier instance. Second is using the
+		// controller class convenience method getRightYDS() which returns getRightY() as a 
+		// DoubleSupplier. We show both ways here as an example.
+
 		// The joystick controls for driving:
 		// Left stick Y axis -> forward and backwards movement (throttle)
 		// Left stick X axis -> left and right movement (strafe)
@@ -223,8 +233,11 @@ public class RobotContainer
 		// the down the field axis, no matter which way the robot is pointing. Robot oriented
 		// driving movemments are in relation to the direction the robot is currently pointing.
 
+		// Note that the controller instance is passed to the drive command for use in displaying
+		// debugging information on Shuffleboard. It is not required for the driving function.
+
 		driveBase.setDefaultCommand(new DriveCommand(driveBase,
-		 							driverController.getLeftYDS(),
+		 							() -> driverController.getLeftY(),
 									driverController.getLeftXDS(), 
 									driverController.getRightXDS(),
 									driverController));
@@ -492,7 +505,7 @@ public class RobotContainer
 	}
 
 	/**
-	 * Use this to pass the autonomous command(s) to the main {@link Robot} class.
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
 	 * Determines which auto command from the selection made by the operator on the
 	 * DS drop down list of commands.
 	 * @return The Command to run in autonomous.
